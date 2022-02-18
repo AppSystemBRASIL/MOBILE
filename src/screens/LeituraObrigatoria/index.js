@@ -1,31 +1,9 @@
 import React from 'react';
-import { View, Text, ScrollView, Image } from 'react-native'
+import { View, Text, ScrollView } from 'react-native'
 
 import Header from '../../components/Header';
 
-import Feather from 'react-native-vector-icons/Feather';
-
 import { StatusBar } from 'expo-status-bar';
-
-const facilidades = [
-  'SEM BUROCRACIA',
-  'SEM ANÁLISE DE PERFIL',
-  'SEM DISTINÇÃO DE CONDUTOR'
-];
-
-const beneficios = [
-  'REBOQUE 24H',
-  'PROTEÇÃO A TERCEIROS',
-  'PROTEÇÃO PARA VIDROS',
-  'ROUBO/FURTO',
-  'ACIDENTE PESSOAL',
-  'CARRO RESERVA',
-  'AUXÍLIO FUNERAL',
-  'TROCA DE PNEU',
-  'HOSPEDAGEM EMERGENCIAL',
-  'CARGA DE BATERIA',
-  'CHAVEIRO'
-];
 
 const MeusBeneficios = ({ navigation }) => {
   const Body = () => {
@@ -52,76 +30,78 @@ const MeusBeneficios = ({ navigation }) => {
               borderRadius: 10
             }}
           >
-            <View>
-              <Text style={{
-                color: '#444',
-                fontSize: 25,
-                fontWeight: '800',
-                textAlign: 'center',
-                marginBottom: 10
-              }}>
-                FACILIDADES
-              </Text>
-            </View>
-            <View
-              style={{
-                borderBottomColor: '#999',
-                borderBottomWidth: 1,
-              }}
-            />
-            <View>
-              {facilidades.map((item, index) => (
-                <Text key={index} style={{
-                  color: '#444',
-                  fontSize: 20,
-                  fontWeight: '800',
-                  marginTop: 10
-                }}>
-                  <Feather name='check' size={25}  /> {item}
-                </Text>
-              ))}
-            </View>
-          </View>
-          <View
-            style={{
-              backgroundColor: 'white',
-              marginTop: 70,
-              paddingTop: 20,
-              paddingBottom: 20,
-              paddingHorizontal: 10,
-              borderRadius: 10
-            }}
-          >
-            <View>
-              <Text style={{
-                color: '#444',
-                fontSize: 25,
-                fontWeight: '800',
-                textAlign: 'center',
-                marginBottom: 10,
-              }}>
-                BENEFÍCIOS
-              </Text>
-            </View>
-            <View
-              style={{
-                borderBottomColor: '#999',
-                borderBottomWidth: 1,
-                marginBottom: 10
-              }}
-            />
-            <View>
-              {beneficios.map((item, index) => (
-                <Text key={index} style={{
-                  color: '#444',
-                  fontSize: 20,
-                  fontWeight: '800',
-                  marginTop: 10
-                }}>
-                  <Feather name='check' size={25}  /> {item}
-                </Text>
-              ))}
-            </View>
+            <Text style={{
+              color: '#444',
+              fontSize: 18,
+              fontWeight: '600',
+              textAlign: 'center',
+              marginBottom: 10
+            }}>
+              OS DIREITOS E DEVERES DAS PARTES DO CONTRATO DE SEGURO ESTÃO PREVISTOS NAS CONDIÇÕES GERAIS DO SEGURO DE AUTOMÓVEIS DE CADA SEGURADORA
+            </Text>
+            <Text style={{
+              color: '#444',
+              fontSize: 18,
+              fontWeight: '400',
+              textAlign: 'center',
+              marginBottom: 10,
+              marginTop: 20,
+            }}>
+              As informações fornecidas no questionário de avaliação do risco em conjunto com as informações da proposta são essenciais para a fixação do prêmio do seguro.
+              {`\n`}
+              Se em eventual sinistro for verificada alguma divergência entre o risco aceito e o constatado, o segurado perderá o direito à garantia, além de ficar obrigado ao prêmio vencido, conforme artigos 765 e 766 do Código Civil Brasileiro.
+            </Text>
+            <Text style={{
+              color: '#444',
+              fontSize: 18,
+              fontWeight: '600',
+              textAlign: 'center',
+              marginBottom: 10,
+              marginTop: 20,
+              textDecorationLine: 'underline'
+            }}>
+              EM CASO DE DÚVIDA ENTRE EM CONTATO SEU CORRETOR
+            </Text>
+            <Text style={{
+              color: '#444',
+              fontSize: 18,
+              fontWeight: '400',
+              textAlign: 'center',
+              marginBottom: 10,
+              marginTop: 20,
+            }}>
+              A definição do PRINCIPAL CONDUTOR DO VEÍCULO SEGURADO é fundamental para que o valor a ser pago pelo consumidor possa ser claramente calculado.
+              {`\n`}
+              O Principal condutor é a pessoa que utiliza o veículo a maior parte do tempo (mínimo 6 dias da semana).
+              {`\n`}
+              Outras pessoas maiores de 25 anos podem, em situações eventuais, (Para condutores menores que 25 anos, que dirigem no máximo 1 dia por semana, necessitam de uma cobertura especial)
+              {`\n`}{`\n`}
+              OBS: ALGUMAS SEGURADORAS PERMITEM 02 DIAS POR semana
+              {`\n`}{`\n`}
+              Se várias pessoas utilizarem o veículo mais de um dia por semana, o segurado deverá contratrar como principal condutor, a pessoa mais jovem.
+              {`\n`}{`\n`}
+              O CEP de pernoite é o CEP do local onde o veículo permanece durante a noite. Se o veículo pernoitar em vários locais, definir o CEP onde o veículo passa a maior parte do tempo.
+              {`\n`}{`\n`}
+              ATENÇÃO: É obrigatório o preenchimento correto das informações pessoais cuja veracidade é inteira responsabilidade do segurado.
+              {`\n`}
+              As informações inverídicas ou desatualizadas poderão acarretar a perda de direito do segurado ou cancelamento do seguro sem prévia comunicação ao segurado.
+              {`\n`}{`\n`}
+              Se houver divergência nas informações de risco o segurado deverá informar tal situação imediatamente ao corretor/seguradora.
+              {`\n`}{`\n`}
+              Quando no decorrer da vigência da apólice ocorrer qualquer alteração das informações de risco (alteração do condutor, utilização do veículo, mudança de CEP, entre outros), é obrigatório ao segurado comunicar e solicitar a alteração ao corretor/seguradora, sob a pena de perda de seus direitos.
+              {`\n`}{`\n`}
+              A aceitação da proposta de seguro está sujeita a análise do risco.
+              {`\n`}{`\n`}
+              A proposta poderá ser recusada pela seguradora em até 15 dias, contados a partir da data do seu recebimento. A eventual recusa e os motivos desta, serão informardos ao segurado/corretor por meio de e-mail, enviado ao endereço eletrônico constado nesra propsota.
+              {`\n`}{`\n`}
+              Se tiver ocorrido pagamento de prêmio, os valores serão devolvidos integralmente no prazo máximo de 10(dez) dias corridos.
+              {`\n`}{`\n`}
+              Decorrido o prazo de 15(quinze) dias da recepção da proposta sem que haja manifestação da seguradora, fica caracterizada a aceitação do risco.
+              {`\n`}{`\n`}
+              Os seguros terão início e término de vigência as 24(vinte e quatro) horas das datas iniciadas no campo 'VIGÊNCIA' de cada proposta.
+              {`\n`}{`\n`}
+              O segurado poderá consultar a situação cadastral do corretor de seguros e da sociedade seguradora no site: https://susep.gov.br
+            </Text>
           </View>
         </View>
       </ScrollView>

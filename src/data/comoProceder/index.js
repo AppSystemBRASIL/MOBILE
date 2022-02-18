@@ -70,11 +70,11 @@ const data = [
     title: 'ROUBO E FURTO',
     content: [
       <Text style={{fontSize: 18}}>
-        <Text style={{textAlign: 'center', textDecorationLine: 'underline'}}>SOLICITE TAMBÉM UM TÁXI PARA SUA RETIRADA DO LOCAL</Text>
-        {'\n\n'}
         Entre em contato com o <Text style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>190</Text> e <Text style={{fontWeight: 'bold', textDecorationLine: 'underline'}}>siga para uma delegacia física</Text>, para, assim, registrar o BOLETIM DE OCORRÊNCIA (B.O) e emitir um alerta de roubo ou furto.
         {'\n\n'}
         Esta ação deve ser feita em, no máximo, 24 horas.
+        {'\n\n'}
+        <Text style={{textAlign: 'center', textDecorationLine: 'underline'}}>SOLICITE TAMBÉM UM TÁXI PARA SUA RETIRADA DO LOCAL</Text>
       </Text>
     ]
   },

@@ -51,8 +51,6 @@ const ContatosUteis = ({ navigation }) => {
 
   const [corretoras, setCorretoras] = useState([]);
 
-  const [loadingCorretoras, setLoadingCorretoras] = useState(false);
-
   useEffect(() => {
     if(!corretora) {
       firebase.firestore().collection('corretoras').get()
@@ -65,7 +63,6 @@ const ContatosUteis = ({ navigation }) => {
           });
 
           setCorretoras(array);
-          setLoadingCorretoras(true);
         }
       });
     }
@@ -191,11 +188,12 @@ const ContatosUteis = ({ navigation }) => {
     return (
       <View style={{
         flex: 1,
-        paddingTop: 20
       }}>
         <FlatList
+          style={{
+            paddingTop: 20
+          }}
           showsVerticalScrollIndicator={false}
-          scrollEnabled={loadingCorretoras}
           data={dataList}
           renderItem={renderItem}
           keyExtractor={(item, index) => index.toString()}

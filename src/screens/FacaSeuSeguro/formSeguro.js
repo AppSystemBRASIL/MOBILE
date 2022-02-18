@@ -1,12 +1,12 @@
 import React, { useContext, useRef, useState, useEffect } from 'react';
-import { View, Text, ScrollView, Platform, TouchableOpacity, KeyboardAvoidingView, Alert } from 'react-native';
+import { View, Text, ScrollView, Platform, TouchableOpacity, KeyboardAvoidingView, Alert, BackHandler } from 'react-native';
 import { COLORS } from '../../utils/constants';
 
 import { Select, Input, Modal, Spinner, WarningOutlineIcon, FormControl } from 'native-base';
 
 import Feather from 'react-native-vector-icons/Feather';
 
-import { maskCEP, maskCPF, maskDate, maskLetters, maskPhone, maskPlaca } from '../../utils/maskedInput';
+import { maskCEP, maskCPF, maskDate, maskLetters, maskPhone, maskPlaca, maskYear } from '../../utils/maskedInput';
 
 import firebase from '../../../firebase';
 import { validateCEP, validateCPF, validateDate, validatePhone, validatePlaca } from '../../utils/validateInput';
@@ -42,6 +42,9 @@ const FazerSeguro = ({ navigation, route }) => {
     const houveSinistroRef = useRef();
 
     const placaRef = useRef();
+    const anoRef = useRef();
+    const modeloRef = useRef();
+    const veiculoRef = useRef();
     const CEPVeiculoRef = useRef();
     const financiadoRef = useRef();
     const blindadoRef = useRef();
@@ -91,6 +94,9 @@ const FazerSeguro = ({ navigation, route }) => {
 
     const [dependenteMenor, setDependenteMenor] = useState('');
     const [usoVeiculo, setUsoVeiculo] = useState('');
+    const [veiculo, setVeiculo] = useState('');
+    const [ano, setAno] = useState('');
+    const [modelo, setModelo] = useState('');
     const [residenciaVeiculo, setResidenciaVeiculo] = useState('');
     const [garagemResidencia, setGaragemResidencia] = useState('');
     const [garagemTrabalho, setGaragemTrabalho] = useState('');
@@ -103,6 +109,20 @@ const FazerSeguro = ({ navigation, route }) => {
     const [showModalLoading, setShowModalLoading] = useState(false);
 
     const [returnSeguro, setReturnSeguro] = useState(null);
+
+    const backAction = () => {
+      if(page === 0) {
+        navigation.goBack();
+      }else {
+        setPage(page-1);
+      }
+    };
+  
+    useEffect(() => {
+      BackHandler.addEventListener('hardwareBackPress', backAction);
+  
+      return () => BackHandler.removeEventListener('hardwareBackPress', backAction);
+    }, []);
 
     useEffect(() => {
       topPage();
@@ -185,8 +205,25 @@ const FazerSeguro = ({ navigation, route }) => {
           }
         }
       }else if(page === 2) {
-        if(!validatePlaca(placa)) {
-          addError('placa');
+        if(placa) {
+          if(!validatePlaca(placa)) {
+            addError('placa');
+            error = false;
+          }
+        }
+
+        if(!veiculo) {
+          addError('veiculo');
+          error = false;
+        }
+
+        if(ano.length < 4) {
+          addError('ano');
+          error = false;
+        }
+
+        if(ano.length < 4) {
+          addError('modelo');
           error = false;
         }
 
@@ -351,31 +388,30 @@ const FazerSeguro = ({ navigation, route }) => {
             estadoCivil,
             cnh: data1CNH,
             cep,
-            proprietario: Boolean(seguradoProprietario),
+            proprietario: seguradoProprietario,
           },
           created: new Date(),
           seguro: {
             tipo: tipoSeguro,
             seguradora,
             vigencia: fimVigencia,
-            sinistro: Boolean(houveSinistro),
+            sinistro: houveSinistro,
             apolice: null,
             ci: null,
           },
           veiculo: {
-            placa,
-            veiculo: null,
-            ano: null,
-            modelo:  null,
+            placa: placa || null,
+            veiculo,
+            ano,
+            modelo,
             cep: CEPVeiculo,
-            financiado: Boolean(financiado),
-            blindado: Boolean(blindado),
-            kitGas: Boolean(kitGas),
+            financiado: financiado,
+            blindado: blindado,
+            kitGas: kitGas,
             uso: usoVeiculo,
           },
           condutor: {
             nome: principalCondutor === 'VOCÊ' ? nomeCompleto : nomePrincipalCondutor,
-            nascimento: null,
             relacao: principalCondutor === 'VOCÊ' ? 'PRÓPRIO' : relacaoSegurado,
             cpf: principalCondutor === 'VOCÊ' ? CPF : CPFSegurado,
             cnh: principalCondutor === 'VOCÊ' ? data1CNH : data1CNHSegurado,
@@ -875,7 +911,7 @@ const FazerSeguro = ({ navigation, route }) => {
                           borderRadius={5}
                           color='black'
                           onValueChange={(itemValue) => {
-                            if(itemValue) {
+                            if(itemValue !== '') {
                               setSeguradoProprietario(itemValue);
                               removeError('seguradoProprietario');
                             }else {
@@ -883,8 +919,8 @@ const FazerSeguro = ({ navigation, route }) => {
                             }
                           }}
                         >
-                          <Select.Item label="SIM" value={'true'} />
-                          <Select.Item label="NÃO" value={'false'} />
+                          <Select.Item label="SIM" value={true} />
+                          <Select.Item label="NÃO" value={false} />
                         </Select>
                         <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                           Campo inválido
@@ -1057,7 +1093,7 @@ const FazerSeguro = ({ navigation, route }) => {
                               borderRadius={5}
                               color='black'
                               onValueChange={(itemValue) => {
-                                if(itemValue) {
+                                if(itemValue !== '') {
                                   setHouveSinistro(itemValue);
                                   removeError('houveSinistro');
                                 }else {
@@ -1065,8 +1101,8 @@ const FazerSeguro = ({ navigation, route }) => {
                                 }
                               }}
                             >
-                              <Select.Item label="SIM" value={'true'} />
-                              <Select.Item label="NÃO" value={'false'} />
+                              <Select.Item label="SIM" value={true} />
+                              <Select.Item label="NÃO" value={false} />
                             </Select>
                             <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                               Campo inválido
@@ -1077,6 +1113,36 @@ const FazerSeguro = ({ navigation, route }) => {
                     </>
                   ) : page === 2 ? (
                     <>
+                      <FormControl style={{marginTop: 20}} isInvalid={errors.find(response => response === 'veiculo')}>
+                        <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>VEÍCULO:</Text>
+                        <Input borderColor='#999' ref={veiculoRef} value={veiculo} returnKeyType='done' placeholder='VEÍCULO' keyboardType='default' style={{
+                          borderWidth: 1,
+                          borderRadius: 5,
+                          padding: 10,
+                          fontSize: 20,
+                          color: 'black',
+                          fontWeight: '700',
+                          textTransform: 'uppercase'
+                        }} autoCapitalize='characters' autoCorrect={false} autoCompleteType='off' onChangeText={(e) => setVeiculo(e)} onSubmitEditing={() => {
+                          if(veiculo) {
+                            placaRef.current.focus();
+                            removeError('veiculo');
+                          }else {
+                            addError('veiculo');
+                            Alert.alert(
+                              "Veículo inválidao",
+                              "",
+                              [
+                                { text: "OK", onPress: () => veiculoRef.current.focus() }
+                              ],
+                              { cancelable: false }
+                            );
+                          }
+                        }} />
+                        <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                          Campo inválido
+                        </FormControl.ErrorMessage>
+                      </FormControl>
                       <FormControl style={{marginTop: 20}} isInvalid={errors.find(response => response === 'placa')}>
                         <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>PLACA DO VEÍCULO:</Text>
                         <Input borderColor='#999' ref={placaRef} value={placa} returnKeyType='done' maxLength={7} placeholder='AAA-0000 ou AAA0A00' keyboardType='default' style={{
@@ -1089,7 +1155,7 @@ const FazerSeguro = ({ navigation, route }) => {
                           textTransform: 'uppercase'
                         }} autoCapitalize='characters' autoCorrect={false} autoCompleteType='off' onChangeText={(e) => setPlaca(maskPlaca(e))} onSubmitEditing={() => {
                           if(validatePlaca(placa)) {
-                            CEPVeiculoRef.current.focus();
+                            anoRef.current.focus();
                             removeError('placa');
                           }else {
                             addError('placa');
@@ -1098,6 +1164,66 @@ const FazerSeguro = ({ navigation, route }) => {
                               "",
                               [
                                 { text: "OK", onPress: () => placaRef.current.focus() }
+                              ],
+                              { cancelable: false }
+                            );
+                          }
+                        }} />
+                        <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                          Campo inválido
+                        </FormControl.ErrorMessage>
+                      </FormControl>
+                      <FormControl style={{marginTop: 20}} isInvalid={errors.find(response => response === 'ano')}>
+                        <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>ANO DE FABRICAÇÃO:</Text>
+                        <Input borderColor='#999' ref={anoRef} value={ano} returnKeyType='done' maxLength={4} placeholder='0000' keyboardType='number-pad' style={{
+                          borderWidth: 1,
+                          borderRadius: 5,
+                          padding: 10,
+                          fontSize: 20,
+                          color: 'black',
+                          fontWeight: '700',
+                          textTransform: 'uppercase'
+                        }} autoCapitalize='characters' autoCorrect={false} autoCompleteType='off' onChangeText={(e) => setAno(maskYear(e))} onSubmitEditing={() => {
+                          if(ano.length === 4) {
+                            modeloRef.current.focus();
+                            removeError('ano');
+                          }else {
+                            addError('ano');
+                            Alert.alert(
+                              "Ano inválido",
+                              "",
+                              [
+                                { text: "OK", onPress: () => anoRef.current.focus() }
+                              ],
+                              { cancelable: false }
+                            );
+                          }
+                        }} />
+                        <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                          Campo inválido
+                        </FormControl.ErrorMessage>
+                      </FormControl>
+                      <FormControl style={{marginTop: 20}} isInvalid={errors.find(response => response === 'modelo')}>
+                        <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>ANO DO MODELO:</Text>
+                        <Input borderColor='#999' ref={modeloRef} value={modelo} returnKeyType='done' placeholder='0000' keyboardType='number-pad' style={{
+                          borderWidth: 1,
+                          borderRadius: 5,
+                          padding: 10,
+                          fontSize: 20,
+                          color: 'black',
+                          fontWeight: '700',
+                          textTransform: 'uppercase'
+                        }} autoCapitalize='characters' autoCorrect={false} autoCompleteType='off' onChangeText={(e) => setModelo(maskYear(e))} onSubmitEditing={() => {
+                          if(modelo.length === 4) {
+                            CEPVeiculoRef.current.focus();
+                            removeError('modelo');
+                          }else {
+                            addError('modelo');
+                            Alert.alert(
+                              "Modelo inválidao",
+                              "",
+                              [
+                                { text: "OK", onPress: () => modeloRef.current.focus() }
                               ],
                               { cancelable: false }
                             );
@@ -1159,7 +1285,7 @@ const FazerSeguro = ({ navigation, route }) => {
                           borderRadius={5}
                           color='black'
                           onValueChange={(itemValue) => {
-                            if(itemValue) {
+                            if(itemValue !== '') {
                               setFinanciado(itemValue);
                               removeError('financiado');
                             }else {
@@ -1167,8 +1293,8 @@ const FazerSeguro = ({ navigation, route }) => {
                             }
                           }}
                         >
-                          <Select.Item label="SIM" value={'true'} />
-                          <Select.Item label="NÃO" value={'false'} />
+                          <Select.Item label="SIM" value={true} />
+                          <Select.Item label="NÃO" value={false} />
                         </Select>
                         <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                           Campo inválido
@@ -1197,7 +1323,7 @@ const FazerSeguro = ({ navigation, route }) => {
                           borderRadius={5}
                           color='black'
                           onValueChange={(itemValue) => {
-                            if(itemValue) {
+                            if(itemValue !== '') {
                               setBlindado(itemValue);
                               removeError('blindado');
                             }else {
@@ -1205,8 +1331,8 @@ const FazerSeguro = ({ navigation, route }) => {
                             }
                           }}
                         >
-                          <Select.Item label="SIM" value={'true'} />
-                          <Select.Item label="NÃO" value={'false'} />
+                          <Select.Item label="SIM" value={true} />
+                          <Select.Item label="NÃO" value={false} />
                         </Select>
                         <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                           Campo inválido
@@ -1235,7 +1361,7 @@ const FazerSeguro = ({ navigation, route }) => {
                           borderRadius={5}
                           color='black'
                           onValueChange={(itemValue) => {
-                            if(itemValue) {
+                            if(itemValue !== '') {
                               setKitGas(itemValue);
                               removeError('kitGas');
                             }else {
@@ -1243,8 +1369,8 @@ const FazerSeguro = ({ navigation, route }) => {
                             }
                           }}
                         >
-                          <Select.Item label="SIM" value={'true'} />
-                          <Select.Item label="NÃO" value={'false'} />
+                          <Select.Item label="SIM" value={true} />
+                          <Select.Item label="NÃO" value={false} />
                         </Select>
                         <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                           Campo inválido
@@ -1255,6 +1381,12 @@ const FazerSeguro = ({ navigation, route }) => {
                     <>
                       <FormControl style={{marginTop: 20}} isInvalid={errors.find(response => response === 'principalCondutor')}>
                         <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>PRINCIPAL CONDUTOR:</Text>
+                        {!principalCondutor && (
+                          <Text style={{ marginTop: 10 }}>
+                            <Text style={{ textTransform: 'uppercase', textDecorationLine: 'underline', fontWeight: '700' }}>Principal Condutor:</Text> É a pessoa que utiliza o veículo do segurado por 2 ou mais dias por semana.
+                            Caso exista mais de um condutor nesta condição, será definido como principal condutor sempre o de menor idade.
+                          </Text>
+                        )}
                         <Select
                           ref={principalCondutorRef}
                           style={{
@@ -1287,12 +1419,6 @@ const FazerSeguro = ({ navigation, route }) => {
                           <Select.Item label="EU MESMO" value="VOCÊ" />
                           <Select.Item label="OUTRA PESSOA" value="OUTRA PESSOA" />
                         </Select>
-                        {!principalCondutor && (
-                          <Text style={{ marginTop: 10 }}>
-                            <Text style={{ textTransform: 'uppercase', textDecorationLine: 'underline', fontWeight: '700' }}>Principal Condutor:</Text> É a pessoa que utiliza o veículo do segurado por 2 ou mais dias por semana.
-                            Caso exista mais de um condutor nesta condição, será definido como principal condutor sempre o de menor idade.
-                          </Text>
-                        )}
                         <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                           Campo inválido
                         </FormControl.ErrorMessage>
