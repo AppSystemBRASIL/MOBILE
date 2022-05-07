@@ -11,59 +11,17 @@ import Context from '../../context';
 import { themeDefault } from '../../config';
 import { StatusBar } from 'expo-status-bar';
 
-const tipoSeguro = [
-  {
-    title: 'VEICULO',
-    icon: 'car',
-    tipo: 'veicular'
-  },
-  {
-    title: 'RESIDÊNCIA',
-    icon: 'home',
-    tipo: 'residencial',
-  },
-  {
-    title: 'CONDOMÍNIO',
-    icon: 'city',
-    tipo: 'condominio'
-  },
-  {
-    title: 'VIDA',
-    icon: 'procedures',
-    tipo: 'vida'
-  },
-  {
-    title: 'SAÚDE',
-    icon: 'heartbeat',
-    tipo: 'saude'
-  },
-  {
-    title: 'PREVIDÊNCIA',
-    icon: 'file-invoice-dollar',
-    tipo: 'previdencia'
-  },
-  {
-    title: 'CONSÓRCIO',
-    icon: 'file-contract',
-    tipo: 'consorcio'
-  },
-  {
-    title: 'VIAGEM',
-    icon: 'plane-departure',
-    tipo: 'viagem'
-  },
-  {
-    title: 'OUTROS',
-    icon: 'info-circle',
-    tipo: 'outros'
-  },
-]
+import roles_security from '../../utils/roles_security';
 
 const FazerSeuSeguro = ({ navigation }) => {
   const { corretora } = useContext(Context);
 
   const Body = () => {
     const renderItem = ({item, index}) => {
+      if(!corretora.roles_security.includes(item.tipo)) {
+        //return <></>
+      }
+
       return (
         <TouchableOpacity
           key={index}
@@ -82,7 +40,7 @@ const FazerSeuSeguro = ({ navigation }) => {
             height: SIZES.width / 4,
             margin: 5,
             padding: 5,
-            marginBottom: (index + 1) === tipoSeguro.length ? 100 : 0,
+            marginBottom: (index + 1) === roles_security.length ? 100 : 0,
             paddingHorizontal: 20,
           }}
         >
@@ -100,7 +58,7 @@ const FazerSeuSeguro = ({ navigation }) => {
                 marginRight: 20,
               }}
             >
-              <FontAwesome5 size={40} color='#444' name={item.icon} />
+              <FontAwesome5 solid size={40} color='#444' name={item.icon} />
             </View>
             <Text style={{
               color: '#444',
@@ -128,7 +86,7 @@ const FazerSeuSeguro = ({ navigation }) => {
           style={{paddingTop: 20}}
           showsVerticalScrollIndicator={false}
           scrollEnabled={true}
-          data={tipoSeguro}
+          data={roles_security}
           renderItem={renderItem}
           keyExtractor={(item, index) => index.toString()}
         />

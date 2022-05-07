@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, FlatList, Image, TouchableOpacity, Share, SafeAreaView } from 'react-native';
+import { View, Text, FlatList, Image, TouchableOpacity, Share, SafeAreaView, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Feather from 'react-native-vector-icons/Feather';
@@ -17,80 +17,97 @@ import AppIntroSlider from 'react-native-app-intro-slider';
 import { themeDefault } from '../../config';
 import { StatusBar } from 'expo-status-bar';
 
-import { useToast, Box } from "native-base";
+import { useToast, Box, ScrollView } from "native-base";
 
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 const HomeScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [viewedOnboarding, setViewedOnboarding] = useState(true);
 
-  const [viewNotificationUser, setViewNotificationUser] = useState(false);
-
-  const { corretora, corretor, connected, notificationUser, setNotificationUser } = useContext(Context);
+  const { corretora, corretor, connected, notificationUser, setNotificationUser, viewNotificationUser, setViewNotificationUser } = useContext(Context);
 
   const toast = useToast();
 
+  const [firstView, setFirstView] = useState(null);
+
+  const [CPF, setCPF] = useState(null);
+
+  useEffect(() => {
+    AsyncStorage.getItem('cpf').then(e => {
+      setCPF(e);
+    }).catch(() => null);
+  }, []);
+
+  useEffect(() => {
+    AsyncStorage.getItem('firstView').then(e => {
+      setFirstView(e);
+    }).catch(() => null);
+  }, []);
+
+  useEffect(() => {
+    AsyncStorage.setItem('firstView', 'true');
+  }, [firstView]);
+
   const dataList = [
+    {
+      key: '5',
+      text: 'MEUS SEGUROS',
+      icon: <FontAwesome5 color={`${COLORS(corretora ? corretora.layout.theme : themeDefault).black}99`} name='shield-alt' size={50} />,
+      href: 'meusSeguros'
+    },
+    {
+      key: '4',
+      text: 'FAÇA SUA COTAÇÂO',
+      icon: <FontAwesome5 color={`${COLORS(corretora ? corretora.layout.theme : themeDefault).black}99`} name='book' size={50} />,
+      href: 'facaSeuSeguro'
+    },
+    {
+      key: '3',
+      text: 'INDIQUE AOS AMIGOS',
+      icon: <FontAwesome5 color={`${COLORS(corretora ? corretora.layout.theme : themeDefault).black}99`} name='share-alt' size={50} />,
+      function: () => {
+        Share.share({
+          message: `*ENCONTRE NESTE APLICATIVO:*\n\n*SEGURO VEÍCULO:*\n*Conceitos:*\n   - Principal condutor\n   - CEP de pernoite\n   - Cobertura para menores de 25 anos\n*Como agir em um acidente:*\n   - Sem vítima\n   - Com vítima\n   - Roubo ou furto\n\n*OUTROS SEGUROS:*\n   - Saúde\n   - Vida\n   - Empresarial\n   - Viagem\n   - Previdência\n   - Residencial\n   - Condomínio\n\n*PONTOS E MULTAS*\n\n*Confiança e benefícios que só uma seguradora pode oferecer*\n\n*BAIXE AGORA*\nhttps://${corretora.site ? String(corretora.site).split('https://').join('').split('http://').join('').split('www.').join('') : 'seguro.appsystembrasil.com.br'}/app\n\n Fuja da dor de cabeça`,
+          url: corretora.site,
+          title: corretora.razao_social
+        });
+      }
+    },   
     {
       key: '1',
       text: 'LEITURA OBRIGÁTORIA',
-      icon: 'book-open',
+      icon: <FontAwesome5 color={`${COLORS(corretora ? corretora.layout.theme : themeDefault).black}99`} name='book-open' size={50} />,
       href: 'leituraObrigatoria'
     },
     {
       key: '2',
       text: 'O QUE FAZER?',
-      icon: 'clipboard',
+      icon: <FontAwesome5 color={`${COLORS(corretora ? corretora.layout.theme : themeDefault).black}99`} name='car-crash' size={50} />,
       href: 'comoProceder'
-    },
-    {
-      key: '3',
-      text: 'INDIQUE AOS AMIGOS',
-      icon: 'share-2',
-      function: () => {
-        Share.share({
-          message: 
-            `*${corretora ? corretora.razao_social : 'SINISTROS E SEGUROS'}*\nCORRETORA DE SEGUROS\n\nFuja da dor de cabeça\n\n*- ESTE APLICATIVO CONTÉM:*\n\n*INFORMAÇÕES SOBRE SEGURO PARA NÃO TER NEGADA SUA INDENIZAÇÃO.*\n\n*COMO AGIR EM UM ACIDENTE:*\n- Com vítimas;\n- Sem vítimas;\n- Roubo ou furto.\n\n*PONTOS E MULTAS*\n\n*ASSISTÊNCIAS 24H DAS SEGURADORAS*\n\n*COTAÇÃO DE SEGURO*\n\n*BAIXE AGORA*\n*Android:* https://google.com\n*IOS:* https://apple.com\n\n
-          `,
-        });
-      }
-    },
-    {
-      key: '4',
-      text: 'FAÇA SUA COTAÇÂO',
-      icon: 'file-text',
-      href: 'facaSeuSeguro'
-    },
-    {
-      key: '5 ',
-      text: 'MEUS SEGUROS',
-      icon: 'shield',
-      href: 'meusSeguros'
     },
     {
       key: '6',
       text: 'FINANCIAR VEICULO',
-      icon: 'dollar-sign',
+      icon: <FontAwesome5 color={`${COLORS(corretora ? corretora.layout.theme : themeDefault).black}99`} name='dollar-sign' size={50} />,
       href: 'financiarVeiculo'
     },
     {
       key: '7',
       text: 'PONTOS E MULTAS',
-      icon: 'book-open',
-      function: async () => {
-        await WebBrowser.openBrowserAsync('https://portalservicos.senatran.serpro.gov.br/#/');
-      }
+      icon: <FontAwesome5 color={`${COLORS(corretora ? corretora.layout.theme : themeDefault).black}99`} name='university' size={50} />,
+      href: 'pontosMultas'
     },
     {
       key: '8',
       text: 'CONTATOS ÚTEIS',
-      icon: 'phone-call',
-      href: 'contatosUteis'
+      icon: <FontAwesome5 color={`${COLORS(corretora ? corretora.layout.theme : themeDefault).black}99`} name='phone' size={50} />,
+      href: 'contatosItens'
     },
     {
       key: '9',
       text: 'CONTATO DO CORRETOR',
-      icon: 'user',
+      icon: <FontAwesome5 color={`${COLORS(corretora ? corretora.layout.theme : themeDefault).black}99`} name='user-tie' size={50} />,
       href: 'contatoCorretor'
     },
   ];
@@ -125,26 +142,36 @@ const HomeScreen = ({ navigation }) => {
   }
 
   const fecharNotificacao = async (uid) => {
-    let value = JSON.parse(await AsyncStorage.getItem('notificationView'));
+    Alert.alert('APAGAR MENSAGEM', 'Deseja realmente apagar a mensagem?', [
+      {
+        text: 'NÃO',
+        style: 'cancel',
+      },
+      { text: 'SIM', onPress: () => closeMsg() },
+    ]);
 
-    if(value === null) {
-      value = [];
-    }
+    async function closeMsg() {
+      let value = JSON.parse(await AsyncStorage.getItem('notificationView'));
 
-    value = [...value];
+      if(value === null) {
+        value = [];
+      }
 
-    const filterUserData = notificationUser.filter(item => item.uid !== uid);
+      value = [...value];
 
-    setNotificationUser(filterUserData);
+      const filterUserData = notificationUser.filter(item => item.uid !== uid);
 
-    if(!value.includes(uid)) {
-      const filterNotification = [...value, uid];
+      setNotificationUser(filterUserData);
 
-      await AsyncStorage.setItem('notificationView', JSON.stringify(filterNotification));
-    }
+      if(!value.includes(uid)) {
+        const filterNotification = [...value, uid];
 
-    if(filterUserData.length === 0) {
-      setViewNotificationUser(false);
+        await AsyncStorage.setItem('notificationView', JSON.stringify(filterNotification));
+      }
+
+      if(filterUserData.length === 0) {
+        setViewNotificationUser(false);
+      }
     }
   }
 
@@ -166,15 +193,17 @@ const HomeScreen = ({ navigation }) => {
             onPress={() => fecharNotificacao(item.uid)}
           />
           <Text style={{fontSize: 20, color: 'white', fontWeight: '900', textTransform: 'uppercase'}}>
-            {item.titulo}
+            {!firstView ? 'OLÁ, SEJA BEM-VINDO!' : item.titulo}
           </Text>
           <Text style={{
             marginTop: 10,
             fontSize: 15,
             color: 'white',
-            fontWeight: '500'
+            fontWeight: '500',
+            textAlign: 'center',
+            whiteSpace: 'pre-wrap'
           }}>
-            {item.descricao}
+            {!firstView ? 'Esperamos que nossa parceria lhe seja útil e perdure por muitos anos. \n\n --------- INDIQUE AOS AMIGOS --------- \n Leve a eles estas informações, mesmo que não tenham seguro. \n\n Fique a vontade para expressar suas opiniões e comentários.' : String(item.descricao).split('\n').join(`\n`)}
           </Text>
           {item.link && (
             <TouchableOpacity
@@ -208,11 +237,11 @@ const HomeScreen = ({ navigation }) => {
     return (
       <View
         style={{
-          height: 200,
+          marginTop: 50,
+          height: !firstView ? 250 : 200,
           width: '100%',
-          position: 'fixed',
           bottom: 30,
-          paddingHorizontal: 5
+          paddingHorizontal: 5,
         }}
       >
         <View
@@ -246,7 +275,7 @@ const HomeScreen = ({ navigation }) => {
         marginBottom: 20
       }}>
         <View style={{ paddingHorizontal: 20, alignItems: 'center', paddingVertical: 15 }}>
-          <Image style={{ resizeMode: 'stretch', width: 240, height: 56 }} width={240} height={56} source={{uri: corretora ? corretora.logo  : 'https://www.statusseguros.com/wp-content/uploads/2018/05/Untitled-35.png'}} />
+          <Image style={{ resizeMode: 'stretch', width: 240, height: 56 }} width={240} height={56} source={{ uri: corretora ? corretora.logo  : 'https://www.statusseguros.com/wp-content/uploads/2018/05/Untitled-35.png', cache: 'only-if-cached' }} />
         </View>
         <View style={{
           backgroundColor: 'white',
@@ -295,14 +324,7 @@ const HomeScreen = ({ navigation }) => {
     const renderItem = ({item, index}) => {
       if((item.empty)) {
         return <View style={{
-          backgroundColor: 'transparent',
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderRadius: 15,
-          height: 100,
-          flex: 1,
-          margin: 1,
-          height: SIZES.width / (numColumns / 1.2)
+          display: 'none'
         }} />
       }
 
@@ -317,7 +339,7 @@ const HomeScreen = ({ navigation }) => {
                   navigation.navigate('contatoCorretora');
                 }
               }else {
-                navigation.navigate(item.href);
+                navigation.navigate(item.href, { cpf: CPF });
               }
             }else if(item.function) {
               item.function();
@@ -330,7 +352,6 @@ const HomeScreen = ({ navigation }) => {
             justifyContent: 'center',
             borderRadius: 15,
             flex: 1,
-            margin: 1,
             height: SIZES.width / (numColumns / 1.2),
             margin: 5,
             padding: 5
@@ -343,7 +364,9 @@ const HomeScreen = ({ navigation }) => {
               borderRadius: 100,
             }}
           >
-            <Feather size={50} color='#444' name={item.href === 'contatoCorretor' && corretora ? 'briefcase' : item.icon} />
+            {typeof item.icon === 'string' ? (
+              <Feather size={50} color='#444' name={item.href === 'contatoCorretor' && corretora ? 'briefcase' : item.icon} />
+            ) : item.icon}
           </View>
           <Text style={{
             color: '#444',
@@ -373,13 +396,81 @@ const HomeScreen = ({ navigation }) => {
     )
   }
 
+  const NotificationFirst = () => {
+    return (
+      <View
+        style={{
+          marginTop: 50,
+          height: 250,
+          width: '100%',
+          bottom: 30,
+          paddingHorizontal: 5,
+        }}
+      >
+        <View
+          style={{
+            backgroundColor: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
+            flex: 1,
+            borderRadius: 10,
+          }}
+        >
+          <View
+            style={{
+              paddingVertical: 20,
+              paddingHorizontal: 15,
+              alignItems: 'center'
+            }}
+          >
+            <Feather style={{
+              position: 'absolute',
+              top: 5,
+              right: 5
+            }} name='x-circle' size={20} color='white'
+              onPress={async () => {
+                Alert.alert('APAGAR MENSAGEM', 'Deseja realmente apagar a mensagem?', [
+                  {
+                    text: 'NÃO',
+                    style: 'cancel',
+                  },
+                  { text: 'SIM', onPress: () => closeMsg() },
+                ]);
+
+                async function closeMsg() {
+                  AsyncStorage.setItem('firstView', 'true');
+                  setFirstView(false);
+                }                
+              }}
+            />
+            <Text style={{fontSize: 20, color: 'white', fontWeight: '900', textTransform: 'uppercase'}}>
+              {'OLÁ, SEJA BEM-VINDO!'}
+            </Text>
+            <Text style={{
+              marginTop: 10,
+              fontSize: 15,
+              color: 'white',
+              fontWeight: '500',
+              textAlign: 'center',
+              whiteSpace: 'pre-wrap'
+            }}>
+              {'Esperamos que nossa parceria lhe seja útil e perdure por muitos anos. \n\n --------- INDIQUE AOS AMIGOS --------- \n Leve a eles estas informações, eles precisam saber. \n\n Fique a vontade para expressar suas opiniões e comentários.'}
+            </Text>
+          </View>
+        </View>
+      </View>
+    )
+  }
+
   return !loading ? <SplashScreen setLoading={setLoading} /> : viewedOnboarding ? (
     <View style={{flex: 1}}>
       <StatusBar style='light' />
       <SafeAreaView style={{ backgroundColor: COLORS(corretora ? corretora.layout.theme : themeDefault).primary, paddingBottom: 20 }} />
       <Header />
-      <Body />
-      <Notification />
+      <ScrollView>
+        <Body />
+        {firstView ? (
+          <NotificationFirst />
+        ) : <Notification />}
+      </ScrollView>
     </View>
   ) : <Onboarding setViewedOnboarding={setViewedOnboarding} />;
 }

@@ -8,6 +8,8 @@ import Feather from 'react-native-vector-icons/Feather';
 
 import Header from '../../components/Header';
 
+import generateToken from '../../hooks/generateToken';
+
 import { maskCEP, maskCPF, maskYear, maskCurrency, maskLetters, maskPhone } from '../../utils/maskedInput';
 
 import firebase from '../../../firebase';
@@ -25,31 +27,15 @@ const FinanciarVeiculo = ({ navigation }) => {
     const cepRef = useRef();
     const nomeCompletoRef = useRef();
     const celularRef = useRef();
-    const estadoCivilRef = useRef();
-    const veiculoZeroRef = useRef();
-    const anoFabricacaoRef = useRef();
-    const anoModeloRef = useRef();
-    const marcaRef = useRef();
-    const modeloRef = useRef();
-    const versaoRef = useRef();
     const valorVeiculoRef = useRef();
     const valorEntradaRef = useRef();
-    const condutorMaiorRef = useRef();
 
+    const [nomeCompleto, setNomeCompleto] = useState('');
     const [CPF, setCPF] = useState('');
     const [CEP, setCEP] = useState('');
-    const [nomeCompleto, setNomeCompleto] = useState('');
     const [celular, setCelular] = useState('');
-    const [estadoCivil, setEstadoCivil] = useState('');
-    const [veiculoZero, setVeiculoZero] = useState('');
-    const [anoFabricacao, setAnoFabricacao] = useState('');
-    const [anoModelo, setAnoModelo] = useState('');
-    const [marca, setMarca] = useState('');
-    const [modelo, setModelo] = useState('');
-    const [versao, setVersao] = useState('');
     const [valorVeiculo, setValorVeiculo] = useState('');
     const [valorEntrada, setValorEntrada] = useState('');
-    const [condutorMaior, setCondutorMaior] = useState('');
 
     const [errors, setErrors] = useState([]);
 
@@ -59,17 +45,10 @@ const FinanciarVeiculo = ({ navigation }) => {
 
     useEffect(() => {
       if(returnFinanciamento === 'success') {
-        setVeiculoZero('');
-        setCondutorMaior('');
-        setEstadoCivil('');
         setNomeCompleto('');
         setCPF('');
         setCEP('');
-        setAnoFabricacao('');
-        setAnoModelo('');
-        setVersao('');
-        setMarca('');
-        setModelo('');
+        setCelular('');
         setValorVeiculo('');
         setValorEntrada('');
       }
@@ -78,19 +57,7 @@ const FinanciarVeiculo = ({ navigation }) => {
     const enviarFinanciamento = async () => {
       const error = [];
 
-      if(!validateCPF(CPF) || veiculoZero === '' || condutorMaior === '' || estadoCivil === '' || !validateCEP(CEP) || !nomeCompleto.split(' ')[2] || !validatePhone(celular) || !anoFabricacao || (Number(anoFabricacao) > Number(new Date().getFullYear())) || !anoModelo || (Number(anoModelo) > Number(new Date().getFullYear())) || !marca || !modelo || !versao || !valorEntrada || !valorVeiculo) {
-        if(veiculoZero === '') {
-          error.push('veiculoZero');
-        }
-
-        if(condutorMaior === '') {
-          error.push('condutorMaior');
-        }
-
-        if(estadoCivil === '') {
-          error.push('estadoCivil');
-        }
-
+      if(!validateCPF(CPF) || !validateCEP(CEP) || !nomeCompleto || !validatePhone(celular) || !valorEntrada || !valorVeiculo) {
         if(!validateCPF(CPF)) {
           error.push('CPF');
         }
@@ -99,32 +66,12 @@ const FinanciarVeiculo = ({ navigation }) => {
           error.push('CEP');
         }
 
-        if(!nomeCompleto.split(' ')[2]) {
+        if(!nomeCompleto) {
           error.push('nomeCompleto');
         }
 
         if(!validatePhone(celular)) {
           error.push('celular');
-        }
-
-        if(!anoFabricacao || (Number(anoFabricacao) > Number(new Date().getFullYear()))) {
-          error.push('anoFabricacao');
-        }
-
-        if(!anoModelo || (Number(anoModelo) > Number(new Date().getFullYear()))) {
-          error.push('anoModelo');
-        }
-
-        if(!marca) {
-          error.push('marca');
-        }
-
-        if(!modelo) {
-          error.push('modelo');
-        }
-
-        if(!versao) {
-          error.push('versao');
         }
 
         if(!valorEntrada) {
@@ -169,31 +116,33 @@ const FinanciarVeiculo = ({ navigation }) => {
 
       setShowModalLoading(true);
 
-      await firebase.firestore().collection('solicitacaoFinanciamento').add({
-        corretora: corretora ? corretora.uid : null,
-        corretor: corretor ? corretor.uid : null,
+      const data = {
+        corretora: corretora ? {
+          uid: corretora.uid,
+          razao_social: corretora.razao_social
+        } : null,
+        corretor: corretor ? {
+          uid: corretor.uid,
+          nome: corretor.nomeCompleto,
+        } : null,
         veiculo: {
-          zeroKm: veiculoZero,
-          condutorMaior: condutorMaior,
-          anoFabricacao: anoFabricacao,
-          anoModelo: anoModelo,
-          marca: marca,
-          modelo: modelo,
-          versao: versao,
           valor: valorVeiculo
         },
         endereco: {
           cep: CEP
         },
-        informacoesPessoal: {
-          estadoCivil: estadoCivil,
-          nomeCompleto: nomeCompleto,
+        dadosPessoais: {
+          nome: nomeCompleto,
           cpf: CPF,
           celular: celular
         },
-        valorEntrada: valorEntrada,
-        id: String(new Date().getTime())
-      })
+        financiamento: {
+          entrada: valorEntrada,
+        },
+        uid: generateToken()
+      };
+
+      await firebase.firestore().collection('solicitacaoFinanciamento').doc(data.uid).set(data, { merge: true })
       .then(() => {
         setReturnFinanciamento('success');
       })
@@ -277,101 +226,6 @@ const FinanciarVeiculo = ({ navigation }) => {
               paddingBottom: 50
             }}
           >
-            <FormControl isInvalid={errors.find(response => response === 'veiculoZero')}>
-              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>O VEÍCULO É 0KM:</Text>
-                <Select
-                  ref={veiculoZeroRef}
-                  style={{
-                    padding: 10,
-                    fontSize: 20,
-                    color: 'black',
-                    fontWeight: '700'
-                  }}
-                  selectedValue={veiculoZero}
-                  minWidth='200'
-                  placeholder="Selecione a opção"
-                  _selectedItem={{
-                    bg: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
-                    endIcon: <Feather name='check' color='#FFFFFF' />,
-                  }}
-                  mt={1}
-                  borderWidth={1}
-                  borderColor="#999"
-                  borderRadius={5}
-                  color='black'
-                  onValueChange={(itemValue) => setVeiculoZero(itemValue)}
-                >
-                  <Select.Item label="SIM" value={true} />
-                  <Select.Item label="NÃO" value={false} />
-                </Select>
-                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                  Campo inválido
-                </FormControl.ErrorMessage>
-            </FormControl>
-            <FormControl style={{marginTop: 20}} isInvalid={errors.find(response => response === 'condutorMaior')}>
-              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>PRINCIPAL CONDUTOR É MAIOR:</Text>
-              <Select
-                ref={condutorMaiorRef}
-                style={{
-                  padding: 10,
-                  fontSize: 20,
-                  color: 'black',
-                  fontWeight: '700'
-                }}
-                selectedValue={condutorMaior}
-                minWidth='200'
-                placeholder="Selecione a opção"
-                _selectedItem={{
-                  bg: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
-                  endIcon: <Feather name='check' color='#FFFFFF' />,
-                }}
-                mt={1}
-                borderWidth={1}
-                borderColor="#999"
-                borderRadius={5}
-                color='black'
-                onValueChange={(itemValue) => setCondutorMaior(itemValue)}
-              >
-                <Select.Item label="SIM" value={true} />
-                <Select.Item label="NÃO" value={false} />
-              </Select>
-              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                Campo inválido
-              </FormControl.ErrorMessage>
-            </FormControl>
-            <FormControl style={{marginTop: 20}} isInvalid={errors.find(response => response === 'estadoCivil')}>
-              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>ESTADO CÍVIL:</Text>
-              <Select
-                ref={estadoCivilRef}
-                style={{
-                  padding: 10,
-                  fontSize: 20,
-                  color: 'black',
-                  fontWeight: '700'
-                }}
-                selectedValue={estadoCivil}
-                minWidth='200'
-                placeholder="Selecione seu estado cívil"
-                _selectedItem={{
-                  bg: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
-                  endIcon: <Feather name='check' color='#FFFFFF' />,
-                }}
-                mt={1}
-                borderWidth={1}
-                borderColor="#999"
-                borderRadius={5}
-                color='black'
-                onValueChange={(itemValue) => setEstadoCivil(itemValue)}
-              >
-                <Select.Item label="SOLTEIRO" value="SOLTEIRO" />
-                <Select.Item label="CASADO" value="CASADO" />
-                <Select.Item label="VIÚVO" value="VIÚVO" />
-                <Select.Item label="SEPARADO JUDICIALMENTE" value="SEPARADO JUDICIALMENTE" />
-              </Select>
-              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                Campo inválido
-              </FormControl.ErrorMessage>
-            </FormControl>
             <FormControl style={{marginTop: 20}} isInvalid={errors.find(response => response === 'nomeCompleto')}>
               <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>NOME COMPLETO:</Text>
               <Input borderColor='#999' ref={nomeCompletoRef} value={nomeCompleto} returnKeyType='done' placeholder='Seu nome completo' keyboardType='default' style={{
@@ -498,7 +352,7 @@ const FinanciarVeiculo = ({ navigation }) => {
                 }}
                 onSubmitEditing={() => {
                   if(String(CEP).length === 9) {
-                    anoFabricacaoRef.current.focus();
+                    valorVeiculoRef.current.focus();
                   }else {
                     if(String(CEP).length === 0) {
                       Alert.alert(
@@ -522,185 +376,6 @@ const FinanciarVeiculo = ({ navigation }) => {
                   }
                 }}
               />
-              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                Campo inválido
-              </FormControl.ErrorMessage>
-            </FormControl>
-            <FormControl style={{marginTop: 20}} isInvalid={errors.find(response => response === 'anoFabricacao')}>
-              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>ANO DE FABRICAÇÃO:</Text>
-              <Input maxLength={4} borderColor='#999' ref={anoFabricacaoRef} value={anoFabricacao} returnKeyType='done' placeholder='0000' keyboardType='number-pad' style={{
-                borderWidth: 1,
-                borderRadius: 5,
-                padding: 10,
-                fontSize: 20,
-                color: 'black',
-                fontWeight: '700'
-              }} onChangeText={(e) => setAnoFabricacao(maskYear(e))} onSubmitEditing={() => {
-                if(String(anoFabricacao).length === 4) {
-                  if(Number(anoFabricacao) <= new Date().getFullYear()) {
-                    anoModeloRef.current.focus()
-                  }else {
-                    Alert.alert(
-                      "Ano inválido",
-                      "",
-                      [
-                        { text: "OK", onPress: () => anoFabricacaoRef.current.focus() }
-                      ],
-                      { cancelable: false }
-                    );
-                  }
-                }else {
-                  if(String(anoFabricacao).length === 0) {
-                    Alert.alert(
-                      "Preencha o ano",
-                      "",
-                      [
-                        { text: "OK", onPress: () => anoFabricacaoRef.current.focus() }
-                      ],
-                      { cancelable: false }
-                    );
-                  }else {
-                    Alert.alert(
-                      "Ano inválido",
-                      "",
-                      [
-                        { text: "OK", onPress: () => anoFabricacaoRef.current.focus() }
-                      ],
-                      { cancelable: false }
-                    );
-                  }
-                }
-              }} />
-              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                Campo inválido
-              </FormControl.ErrorMessage>
-            </FormControl>
-            <FormControl style={{marginTop: 20}} isInvalid={errors.find(response => response === 'anoModelo')}>
-              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>ANO DO MODELO:</Text>
-              <Input maxLength={4} borderColor='#999' ref={anoModeloRef} value={anoModelo} returnKeyType='done' placeholder='0000' keyboardType='number-pad' style={{
-                borderWidth: 1,
-                borderRadius: 5,
-                padding: 10,
-                fontSize: 20,
-                color: 'black',
-                fontWeight: '700'
-              }} onChangeText={(e) => setAnoModelo(maskYear(e))} onSubmitEditing={() => {
-                if(String(anoModelo).length === 4) {
-                  if(Number(anoModelo) <= new Date().getFullYear()) {
-                    marcaRef.current.focus()
-                  }else {
-                    Alert.alert(
-                      "Ano inválido",
-                      "",
-                      [
-                        { text: "OK", onPress: () => anoModeloRef.current.focus() }
-                      ],
-                      { cancelable: false }
-                    );
-                  }
-                }else {
-                  if(String(anoModelo).length === 0) {
-                    Alert.alert(
-                      "Preencha o ano",
-                      "",
-                      [
-                        { text: "OK", onPress: () => anoModeloRef.current.focus() }
-                      ],
-                      { cancelable: false }
-                    );
-                  }else {
-                    Alert.alert(
-                      "Ano inválido",
-                      "",
-                      [
-                        { text: "OK", onPress: () => anoModeloRef.current.focus() }
-                      ],
-                      { cancelable: false }
-                    );
-                  }
-                }
-              }} />
-              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                Campo inválido
-              </FormControl.ErrorMessage>
-            </FormControl>
-            <FormControl style={{marginTop: 20}} isInvalid={errors.find(response => response === 'marca')}>
-              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>MARCA:</Text>
-              <Input borderColor='#999' ref={marcaRef} value={marca} returnKeyType='done' placeholder='Digite a marca' keyboardType='default' style={{
-                borderWidth: 1,
-                borderRadius: 5,
-                padding: 10,
-                fontSize: 20,
-                color: 'black',
-                fontWeight: '700'
-              }} autoCapitalize='characters' autoCorrect={false} autoCompleteType='off' onChangeText={(e) => setMarca(maskLetters(String(e).toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")))} onSubmitEditing={() => {
-                if(marca) {
-                  modeloRef.current.focus();
-                }else {
-                  Alert.alert(
-                    "Preencha a marca do veículo",
-                    "",
-                    [
-                      { text: "OK", onPress: () => anoModeloRef.current.focus() }
-                    ],
-                    { cancelable: false }
-                  );
-                }
-              }} />
-              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                Campo inválido
-              </FormControl.ErrorMessage>
-            </FormControl>
-            <FormControl style={{marginTop: 20}} isInvalid={errors.find(response => response === 'modelo')}>
-              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>MODELO:</Text>
-              <Input borderColor='#999' ref={modeloRef} value={modelo} returnKeyType='done' placeholder='Digite o modelo' keyboardType='default' style={{
-                borderWidth: 1,
-                borderRadius: 5,
-                padding: 10,
-                fontSize: 20,
-                color: 'black',
-                fontWeight: '700'
-              }} autoCapitalize='characters' autoCorrect={false} autoCompleteType='off' onChangeText={(e) => setModelo(String(e).toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))} onSubmitEditing={() => {
-                if(modelo) {
-                  versaoRef.current.focus()
-                }else {
-                  Alert.alert(
-                    "Preencha o modelo do veículo",
-                    "",
-                    [
-                      { text: "OK", onPress: () => modeloRef.current.focus() }
-                    ],
-                    { cancelable: false }
-                  );
-                }
-              }} />
-              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                Campo inválido
-              </FormControl.ErrorMessage>
-            </FormControl>
-            <FormControl style={{marginTop: 20}} isInvalid={errors.find(response => response === 'versao')}>
-              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>VERSÃO:</Text>
-              <Input borderColor='#999' ref={versaoRef} value={versao} returnKeyType='done' placeholder='Digite a versão do veículo' keyboardType='default' style={{
-                borderWidth: 1,
-                borderRadius: 5,
-                padding: 10,
-                fontSize: 20,
-                color: 'black',
-                fontWeight: '700'
-              }} autoCapitalize='characters' autoCorrect={false} autoCompleteType='off' onChangeText={(e) => setVersao(String(e).toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))} onSubmitEditing={() => {
-                if(versao) {
-                  valorVeiculoRef.current.focus()
-                }else {
-                  Alert.alert(
-                    "Preencha a versão do veículo",
-                    "",
-                    [
-                      { text: "OK", onPress: () => versaoRef.current.focus() }
-                    ],
-                    { cancelable: false }
-                  );
-                }
-              }} />
               <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                 Campo inválido
               </FormControl.ErrorMessage>

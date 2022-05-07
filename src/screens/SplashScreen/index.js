@@ -1,12 +1,14 @@
 import React, { useContext, useEffect } from 'react';
 import { Text, View, StatusBar, Image } from 'react-native';
-import { COLORS } from '../../utils/constants';
+import { COLORS, SIZES } from '../../utils/constants';
 
 import Context from '../../context';
 import { themeDefault } from '../../config';
 
 const SplashScreen = ({ setLoading }) => {
   const { corretora, loading } = useContext(Context);
+
+  const { width } = SIZES;
 
   if(!loading) {
     return (
@@ -30,14 +32,15 @@ const SplashScreen = ({ setLoading }) => {
       }}
     >
       <StatusBar hidden />
-      <Image style={{ resizeMode: 'stretch', width: 150, height: 150 }} width={150} height={150} source={{ uri: corretora ? corretora.icon : 'https://www.statusseguros.com/wp-content/uploads/2018/05/Untitled-35.png' }} />
+      <Image style={{ resizeMode: 'stretch', width: 150, height: 150 }} width={150} height={150} source={{ uri: corretora ? corretora.icon : 'https://www.statusseguros.com/wp-content/uploads/2018/05/Untitled-35.png', cache: 'only-if-cached' }} />
       <View>
         <Text
           style={{
             marginTop: 10,
-            fontSize: 40,
+            fontSize: width < 380 ? 25 : 40,
             color: COLORS(corretora ? corretora.layout.theme : themeDefault).secundary,
             fontWeight: '900',
+            textAlign: 'center'
           }}
         >
           {!corretora ? 'APPSYSTEM' : corretora.razao_social}

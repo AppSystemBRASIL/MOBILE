@@ -306,7 +306,7 @@ const ContatoCorretor = ({ navigation }) => {
                     >
                       <Text style={{fontWeight: 'bold'}}>RAZÃO SOCIAL:</Text>
                       <Text style={{fontSize: 17, marginBottom: 10, fontWeight: '900'}}>{String(corretoraCorretor.razao_social).toUpperCase()}</Text>
-                      <Image source={{ uri: corretoraCorretor.icon }}
+                      <Image source={{ uri: corretoraCorretor.icon, cache: 'only-if-cached' }}
                         style={{
                           width: 50,
                           height: 50,

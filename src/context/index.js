@@ -10,6 +10,7 @@ import { uidCorretoraDefault } from '../config';
 import { addDays } from 'date-fns';
 
 import NetInfo from '@react-native-community/netinfo';
+import { Select } from 'native-base';
 
 const Context = createContext({});
 
@@ -21,9 +22,14 @@ export const ContextProvider = ({ children }) => {
   const [corretoraCorretor, setCorretoraCorretor] = useState(null);
   const [dataSeguros, setDataSeguros] = useState(null);
 
+  const [cpf, setCPF] = useState(null);
+
   const [notificationUser, setNotificationUser] = useState([]);
+  const [viewNotificationUser, setViewNotificationUser] = useState(false);
 
   const [connected, setConnected] = useState(true);
+
+  const [seguradoras, setSeguradoras] = useState([]);
 
   useEffect(() => {
     NetInfo.addEventListener(state => {
@@ -43,6 +49,10 @@ export const ContextProvider = ({ children }) => {
       const filterUserData = [...data].filter(item => !value.includes(item.uid));
       
       setNotificationUser(filterUserData);
+
+      if(filterUserData.length > 0) {
+        setViewNotificationUser(true);
+      }
     })();
   }, []);
 
@@ -102,9 +112,17 @@ export const ContextProvider = ({ children }) => {
       AsyncStorage.getItem('meusSeguros')
       .then((response) => {
         if(response) {
-          setDataSeguros(JSON.parse(response));
+          const dataMeusSeguros = JSON.parse(response || null);
+          setDataSeguros(dataMeusSeguros || null);
         }
-      })
+      });
+
+      AsyncStorage.getItem('cpf')
+      .then((response) => {
+        if(response) {
+          setCPF(response);
+        }
+      });
     })();
   }, []);
 
@@ -161,6 +179,30 @@ export const ContextProvider = ({ children }) => {
     return dataContent;
   }
 
+  useEffect(() => {
+    getSeguradoras();
+  }, []);
+
+  const getSeguradoras = () => {
+    if(seguradoras) {
+      setSeguradoras(seguradoras);
+    }
+
+    firebase.firestore().collection('seguradoras').get()
+    .then((response) => {
+      const array = [];
+
+      if(!response.empty) {
+        response.forEach((item) => {
+          array.push(item.data());      
+        });
+      }
+
+      setSeguradoras(array);
+    })
+    .catch(() => null);
+  } 
+
   return (
     <Context.Provider value={{
       loading,
@@ -175,7 +217,10 @@ export const ContextProvider = ({ children }) => {
       getNotification,
       connected,
       notificationUser,
-      setNotificationUser
+      setNotificationUser,
+      cpf,
+      viewNotificationUser, setViewNotificationUser,
+      seguradoras,
     }}>
       {children}
     </Context.Provider>

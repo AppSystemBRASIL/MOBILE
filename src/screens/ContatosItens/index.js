@@ -1,34 +1,28 @@
 import React from 'react';
-import { View, Text, FlatList, Image, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 
 import Feather from 'react-native-vector-icons/Feather';
 
-import { COLORS, SIZES } from '../../utils/constants';
-
-import { themeDefault } from '../../config';
-import { useContext } from 'react/cjs/react.development';
-import Context from '../../context';
+import { SIZES } from '../../utils/constants';
 
 import Header from '../../components/Header';
 
 const dataList = [
   {
     key: '1',
-    text: 'MINHA CORRETORA',
+    text: 'CONTATOS DE EMERGÊNCIAS',
     icon: 'home',
-    href: 'contatoCorretora'
+    href: 'contatosUteis'
   },
   {
     key: '2',
-    text: 'MEU CORRETOR',
-    icon: 'user',
-    href: 'contatoCorretor'
+    text: 'CONTATOS DAS SEGURADORAS',
+    icon: 'shield',
+    href: 'contatosSeguradoras'
   },
 ];
 
-const ContatosInformativos = ({ navigation }) => {
-  const { corretora } = useContext(Context);
-
+const ContatosUteisItens = ({ navigation }) => {
   const Body = () => {
     const numColumns = 3;
 
@@ -119,10 +113,10 @@ const ContatosInformativos = ({ navigation }) => {
 
   return (
     <View style={{flex: 1}}>
-      <Header title='CONTATOS INFORMATIVOS' navigation={navigation} />
+      <Header title='CONTATOS UTÉIS' navigation={navigation} />
       <Body />
     </View>
   )
 }
 
-export default ContatosInformativos;
+export default ContatosUteisItens;

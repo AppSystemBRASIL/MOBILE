@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { View, Text, Image, TouchableOpacity, SafeAreaView } from 'react-native';
 import { COLORS } from '../../utils/constants';
 
@@ -14,9 +14,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import { StatusBar } from 'expo-status-bar';
 
 const Header = ({ navigation, title, showBackPage }) => {
-  const { corretora, notificationUser, setNotificationUser } = useContext(Context);
-
-  const [viewNotificationUser, setViewNotificationUser] = useState(false);
+  const { corretora, notificationUser, setNotificationUser, viewNotificationUser, setViewNotificationUser } = useContext(Context);
 
   const fecharNotificacao = async (uid) => {
     let value = JSON.parse(await AsyncStorage.getItem('notificationView'));
@@ -154,11 +152,10 @@ const Header = ({ navigation, title, showBackPage }) => {
         ) : (
           <View />
         )}
-        <Image style={{ resizeMode: 'stretch', width: 180, height: 50 }} width={180} height={50} source={{ uri: corretora ? corretora.logo : 'https://www.statusseguros.com/wp-content/uploads/2018/05/Untitled-35.png' }} />
+        <Image style={{ resizeMode: 'stretch', width: 180, height: 50 }} width={180} height={50} source={{ uri: corretora ? corretora.logo : 'https://www.statusseguros.com/wp-content/uploads/2018/05/Untitled-35.png', cache: 'only-if-cached' }} />
         <View>
-          <TouchableOpacity onPress={() => setViewNotificationUser(value => notificationUser.length > 0 ? !value : false)} style={{ position: 'relative', backgroundColor: viewNotificationUser ? '#f1f1f1' : 'transparent', padding: viewNotificationUser ? 5 : 0, borderRadius: 10 }}>
-            {notificationUser.length > 0 && <View style={{ backgroundColor: 'white', width: 10, height: 10, position: 'absolute', right: 2, borderRadius: 100, zIndex: 10 }} />}
-            <Feather name='bell' size={viewNotificationUser ? 20 : 30} color='white' />
+          <TouchableOpacity onPress={() => setViewNotificationUser(value => notificationUser.length > 0 ? !value : false)} style={{ position: 'relative', backgroundColor: viewNotificationUser ? 'transparent' : 'transparent', padding: viewNotificationUser ? 5 : 0, borderRadius: 10 }}>
+            
           </TouchableOpacity>
         </View>
       </View>
@@ -178,7 +175,6 @@ const Header = ({ navigation, title, showBackPage }) => {
           </Text>
         </View>
       </View>
-      <Notification />
     </>
   )
 }

@@ -1,18 +1,20 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, Image, Linking, ScrollView, Share, KeyboardAvoidingView, TouchableOpacity } from 'react-native'
-import { COLORS, SIZES } from '../../utils/constants';
+import React, { useState, useContext } from 'react';
+import { View, Text, Image, Linking, ScrollView, Share, KeyboardAvoidingView, TouchableOpacity, TextInput, Alert } from 'react-native'
 
 import Feather from 'react-native-vector-icons/Feather';
+
+import firebase from '../../../firebase';
 
 import Header from '../../components/Header';
 
 import IMG_USER from '../../assets/company-placeholder.jpeg';
 
-import { Actionsheet } from 'native-base';
+import { Actionsheet, Button, TextArea } from 'native-base';
 import * as WebBrowser from 'expo-web-browser';
 import Context from '../../context';
-import { themeDefault, uidCorretoraDefault } from '../../config';
+import { uidCorretoraDefault } from '../../config';
 import { StatusBar } from 'expo-status-bar';
+import { COLORS } from '../../utils/constants';
 
 const ContatoCorretora = ({ route, navigation }) => {
   const item = route.params;
@@ -21,8 +23,36 @@ const ContatoCorretora = ({ route, navigation }) => {
 
   const [dadosCorretora, setDadosCorretora] = useState(item || corretora);
 
+  
+
   const Body = () => {
     const [viewCallCorretora, setViewCallCorretora] = useState(false);
+
+    const [mensagem, setMensagem] = useState('');
+    async function enviarMensagem() {
+      console.log(mensagem);
+      if(!mensagem) {
+        Alert.alert('INFORME UMA MENSAGEM!');
+
+        return;
+      }
+
+      const data = {
+        corretora: !corretora ? null : corretora.uid,
+        corretor: !corretor ? null : corretor.uid,
+        created: new Date(),
+        mensagem: mensagem,
+        lida: false
+      };
+
+      console.log(data);
+      
+      await firebase.firestore().collection('feedback').add(data)
+      .then(() => {
+        Alert.alert('ENVIADO COM SUCESSO!');
+        setMensagem('');
+      })
+    }
 
     return (
       <KeyboardAvoidingView
@@ -120,13 +150,30 @@ const ContatoCorretora = ({ route, navigation }) => {
                 <Text style={{fontSize: 15, fontWeight: 'bold'}}>EMAIL:</Text>
                 <Text onPress={() => Linking.openURL(`mailto:${dadosCorretora.email}`)} style={{fontSize: 17, marginBottom: 10, fontWeight: '900'}}>{String(dadosCorretora.email).toUpperCase()}</Text>
                 <Text style={{fontSize: 15, fontWeight: 'bold'}}>TELEFONE:</Text>
-                <Text onPress={() => setViewCallCorretora(true)} style={{fontSize: 17, marginBottom: 10, fontWeight: '900'}}>{dadosCorretora.telefone}</Text>
+                <Text onPress={() => setViewCallCorretora(true)} style={{fontSize: 17, marginBottom: 10, fontWeight: '900'}}>{dadosCorretora.telefone} - (HORÁRIO COMERCIAL)</Text>
                 {dadosCorretora.site && (
                   <>
                     <Text style={{fontWeight: 'bold'}}>SITE:</Text>
                     <Text onPress={async () => await WebBrowser.openBrowserAsync(`${dadosCorretora.site}`)} style={{fontSize: 17, marginBottom: 20, fontWeight: '900', textTransform: 'uppercase'}}>{String(dadosCorretora.site).split('https://')}</Text>
                   </>
                 )}
+                <View style={{ marginTop: 25 }}>
+                  <Text style={{ fontWeight: 'bold' }}>MENSAGEM:</Text>
+                  <TextArea h={100} value={mensagem} onChangeText={(e) => setMensagem(!e ? '' : String(e).toUpperCase())} style={{
+                    borderWidth: 1,
+                    borderColor: '#999',
+                    padding: 0,
+                    minHeight: 100,
+                    fontSize: 20,
+                    textTransform: 'uppercase'
+                  }} />
+                    <Button style={{
+                      marginTop: 10,
+                      backgroundColor: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
+                    }} onPress={enviarMensagem}>
+                      ENVIAR
+                    </Button>
+                </View>
               </View>
             </>
           </View>

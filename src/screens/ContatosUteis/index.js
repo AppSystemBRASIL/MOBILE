@@ -26,6 +26,16 @@ const dataList = [
   },
   {
     key: 1,
+    text: 'POLÍCIA RODOVÍARIA ESTADUAL',
+    phone: '198'
+  },
+  {
+    key: 1,
+    text: 'POLÍCIA RODOVÍARIA FEDEREAL',
+    phone: '191'
+  },
+  {
+    key: 1,
     text: 'POLÍCIA MILITAR',
     phone: '190'
   },
@@ -39,35 +49,9 @@ const dataList = [
     text: 'POLÍCIA FEDERAL',
     phone: '194'
   },
-  {
-    key: 1,
-    text: 'POLÍCIA RODOVÍARIA FEDEREAL',
-    phone: '198'
-  }
 ]
 
 const ContatosUteis = ({ navigation }) => {
-  const { corretora } = useContext(Context);
-
-  const [corretoras, setCorretoras] = useState([]);
-
-  useEffect(() => {
-    if(!corretora) {
-      firebase.firestore().collection('corretoras').get()
-      .then((snapshot) => {
-        if(!snapshot.empty) {
-          const array = [];
-
-          snapshot.forEach((item) => {
-            array.push(item.data());
-          });
-
-          setCorretoras(array);
-        }
-      });
-    }
-  }, []);
-
   const Body = () => {
     const renderItem = ({ item, index }) => {
       return (
@@ -119,68 +103,6 @@ const ContatosUteis = ({ navigation }) => {
               </Text>
             </View>
           </TouchableOpacity>
-          {(((Number(index) + 1) === dataList.length) && !corretora) && (
-            <>
-              {corretoras.map((item1, index1) => (
-                <View key={index1}>
-                  {corretoras.length > 0 && (
-                    <View>
-                      <Divider my="2" />
-                      <Text style={{paddingHorizontal: 10, color: '#555', fontSize: 20, fontWeight: '800'}}>CORRETORAS</Text>
-                      <Divider my="2" />
-                      <TouchableOpacity
-                        key={String(index1)}
-                        onPress={() => {
-                          Linking.openURL(`tel:${String(item1.telefone).split('(').join('').split(')').join('').split('-').join('').split(' ').join('')}`)
-                        }}
-                        activeOpacity={1} 
-                        style={{
-                          backgroundColor: 'white',
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          borderRadius: 15,
-                          flex: 1,
-                          height: 100,
-                          margin: 5,
-                          padding: 5,
-                          marginBottom: (index1 + 1) === corretoras.length && 100,
-                          paddingHorizontal: 20,
-                        }}
-                      >
-                        <View
-                          style={{
-                            backgroundColor: '#f1f1f9',
-                            padding: 10, 
-                            borderRadius: 100,
-                            marginRight: 20,
-                          }}
-                        >
-                          <Feather size={40} color='#444' name='phone' />
-                        </View>
-                        <View>
-                          <Text style={{
-                            color: '#444',
-                            fontSize: String(item1.text).length > 25 ? 17 : 20,
-                            fontWeight: '800',
-                          }}>
-                            {item1.razao_social}
-                          </Text>
-                          <Text style={{
-                            color: '#888',
-                            fontSize: 17,
-                            fontWeight: '800',
-                            marginTop: 5
-                          }}>
-                            {item1.telefone}
-                          </Text>
-                        </View>
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                </View>
-              ))}
-            </>
-          )}
         </>
       )
     }
@@ -201,7 +123,6 @@ const ContatosUteis = ({ navigation }) => {
       </View>
     )
   }
-
   return (
     <>
       <StatusBar style='light' />

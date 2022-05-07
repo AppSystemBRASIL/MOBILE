@@ -1,21 +1,23 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, ScrollView, Linking } from 'react-native'
-import { COLORS, SIZES } from '../../utils/constants';
-
-import Feather from 'react-native-vector-icons/Feather';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-
+import { View, Text, ScrollView, Linking, TouchableOpacity, Platform } from 'react-native'
 import firebase from '../../../firebase';
 
 import { Skeleton } from 'native-base';
 
 import Context from '../../context';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
 
 import Header from '../../components/Header';
+import { format } from 'date-fns';
+
+
 
 const ComoProcederInfoContent = ({ route, navigation }) => {
+  if(Platform.OS === 'android') {
+    require('intl');
+    require('intl/locale-data/jsonp/pt-BR');
+  }
+
   const item = route.params;
 
   const { corretora } = useContext(Context);
@@ -26,38 +28,21 @@ const ComoProcederInfoContent = ({ route, navigation }) => {
     const [dataSeguro, setDataSeguro] = useState(item);
 
     useEffect(() => {
-      firebase.firestore().collection('corretoras').doc(item.corretora.uid).get()
-      .then(async (response) => {
-        if(response.exists) {
-          const dataTrated = {
-            razao_social: response.data().razao_social,
-            contatosUteis: response.data().contatosUteis
-          }
-
-          await AsyncStorage.setItem(`corretora_${item.corretora.uid}_dados`, JSON.stringify(dataTrated))
-
-          setDataSeguro(value => ({
-            ...value,
-            ...dataTrated
-          }));
+      firebase.firestore().collection('seguradoras').doc(dataSeguro.seguradora.uid).get()
+      .then((snap) => {
+        if(snap.exists) {
+          setDataSeguro(response => ({
+            ...response,
+            seguradora: {
+              ...response.seguradora,
+              contatos: snap.data().contatos
+            }
+          }))
         }
       })
-      .catch(async () => {
-        const dataTrated = await AsyncStorage.getItem(`corretora_${item.corretora}_dados`)
-        .then((response) => {
-          if(response) {
-            return JSON.parse(response);
-          }
-        });
-
-        setDataSeguro(value => ({
-          ...value,
-          ...dataTrated
-        }));
-      })
       .finally(() => {
-        setLoading(true);
-      })
+        setLoading(true)
+      });
     }, []);
 
     if(dataSeguro.tipo !== 'veicular') {
@@ -83,67 +68,11 @@ const ComoProcederInfoContent = ({ route, navigation }) => {
             paddingTop: 30,
           }}
         >
-          <View
-            style={{
-              alignSelf: 'center'
-            }}
-          >
-            {loading ? (
-              <Text style={{
-                color: '#444',
-                fontSize: 20,
-                fontWeight: '800',
-                textAlign: 'center',
-                marginBottom: 10
-              }}>
-                {String(dataSeguro.veiculo.tipo).toUpperCase()}
-              </Text>
-            ) : (
-              <Skeleton startColor='gray.100' endColor='gray.300' style={{width: 140, height: 27, marginBottom: 10}} />
-            )}
-          </View>
-          {loading ? (
-            <View
-              style={{
-                borderBottomColor: '#999',
-                borderBottomWidth: 1,
-              }}
-            />
-          ) : (
-            <Skeleton startColor='gray.100' endColor='gray.300' style={{width: '100%', height: 1.5, marginBottom: 10}} />
-          )}
           <View style={{
-            marginTop: 20,
             width: '100%',
             height: '100%',
             flexDirection: 'row'
           }}>
-            <View
-              style={{
-                width: '10%',
-                marginRight: 20,
-                alignItems: 'center'
-              }}
-            >
-              {loading ? (
-                <>
-                  <FontAwesome style={{ marginBottom: 15 }} name={dataSeguro.veiculo.tipo === 'automóvel' ? 'car' : dataSeguro.veiculo.tipo === 'motocicleta' ? 'motorcycle' : 'truck'} size={30} color='#555' />
-                  <View
-                    style={{
-                      borderLeftWidth: 1,
-                      height: '85%',
-                      borderColor: '#999'
-                    }}
-                  />
-                </>
-              ) : (
-                <>
-                  <Skeleton startColor='gray.100' endColor='gray.300' style={{width: '100%', height: 35, marginBottom: 15}} />
-                  <Skeleton startColor='gray.100' endColor='gray.300' style={{width: 2, height: '85%', marginBottom: 15}} />
-                </>
-              )}
-              
-            </View>
             <View>
               <View style={{
                 marginBottom: 20
@@ -165,8 +94,8 @@ const ComoProcederInfoContent = ({ route, navigation }) => {
               }}>
                 {loading ? (
                   <>
-                    <Text style={{fontWeight: 'bold', fontSize: 20}}>FINAL DA VIGÊNCIA:</Text>
-                    <Text style={{fontWeight: '900', fontSize: 25, color: '#555'}}>{dataSeguro.finalVigencia}</Text>
+                    <Text style={{fontWeight: 'bold', fontSize: 20}}>VIGÊNCIA:</Text>
+                    <Text style={{fontWeight: '900', fontSize: 25, color: '#555'}}>{format(dataSeguro.seguro.vigencia.toDate(), 'dd/MM/yyyy')} até {format(dataSeguro.seguro.vigenciaFinal.toDate(), 'dd/MM/yyyy')}</Text>
                   </>
                 ) : (
                   <>
@@ -178,12 +107,27 @@ const ComoProcederInfoContent = ({ route, navigation }) => {
               <View style={{
                 marginBottom: 20
               }}>
+                {loading ? (
+                  <>
+                    <Text style={{fontWeight: 'bold', fontSize: 20}}>SEGURADORA:</Text>
+                    <Text style={{fontWeight: '900', fontSize: 25, color: '#555'}}>{dataSeguro.seguradora.razao_social}</Text>
+                  </>
+                ) : (
+                  <>
+                    <Skeleton startColor='gray.100' endColor='gray.300' style={{width: 195, height: 23, marginBottom: 5}} />
+                    <Skeleton startColor='gray.100' endColor='gray.300' style={{width: 150, height: 27}} />
+                  </>
+                )}
+              </View>
+              <View style={{
+                marginBottom: loading ? 20 : 0
+              }}>
                 {!corretora && (
                   <>
                     {loading ? (
                       <>
                         <Text style={{fontWeight: 'bold', fontSize: 20}}>CORRETORA:</Text>
-                        <Text style={{fontWeight: '900', color: '#555', fontSize: String(dataSeguro.razao_social).length > 20 ? 22 : 25}}>{dataSeguro.razao_social}</Text>
+                        <Text style={{fontWeight: '900', color: '#555', fontSize: String(dataSeguro.corretora.razao_social).length > 20 ? 22 : 25}}>{dataSeguro.corretora.razao_social}</Text>
                       </>
                     ) : (
                       <>
@@ -195,23 +139,53 @@ const ComoProcederInfoContent = ({ route, navigation }) => {
                 )}
               </View>
               <View style={{
+                marginBottom: loading ? 20 : 0
+              }}>
+                {loading ? (
+                  <>
+                    <Text style={{fontWeight: 'bold', fontSize: 20}}>FRANQUIA:</Text>
+                    <Text style={{fontWeight: '900', fontSize: 25, color: '#555'}}>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(dataSeguro.valores.franquia)}</Text>
+                  </>
+                ) : (
+                  <>
+                    <Skeleton startColor='gray.100' endColor='gray.300' style={{width: 195, height: 23, marginBottom: 5}} />
+                    <Skeleton startColor='gray.100' endColor='gray.300' style={{width: 150, height: 27}} />
+                  </>
+                )}
+              </View>
+              <View style={{
                 marginBottom: 20
               }}>
                 {loading ? (
                   <>
                     <Text style={{fontWeight: 'bold', fontSize: 20, marginBottom: 10}}>ASSISTÊNCIA 24 HORAS:</Text>
-                    {dataSeguro.contatosUteis.map((itemContato, indexContato) => (
+                    {dataSeguro.seguradora.contatos?.map((itemContato, indexContato) => (
                       <View key={indexContato} style={{
                         marginBottom: 25
                       }}>
-                        <Text style={{fontSize: 15, fontWeight: 'bold', marginBottom: 5}}>{itemContato.titulo}</Text>
+                        <Text style={{fontSize: 15, fontWeight: 'bold', marginBottom: 5}}>{itemContato.setor}</Text>
                         {itemContato.telefones.map((itemTelefone, indexTelefone) => (
-                          <View key={indexTelefone}>
-                            <Text onPress={() => {
-                              Linking.openURL(`tel:${String(itemTelefone.telefone).split('+55').join('').split(' ').join('').split('(').join('').split(')').join('').split('-').join('')}`)
-                            }} style={{fontSize: 20, fontWeight: 'bold', marginBottom: 3}}>{itemTelefone.telefone}</Text>
-                            <Text style={{marginBottom: 10}}>({itemTelefone.locais})</Text>
-                          </View>
+                          <>
+                            {itemTelefone.telefone ? (
+                              <TouchableOpacity key={indexTelefone}
+                                onPress={() => {
+                                  const [isWhats] = String(itemContato.setor).split(' ');
+                                  const tel = String(itemTelefone.telefone).split('+55').join('').split(' ').join('').split('(').join('').split(')').join('').split('-').join('');
+
+
+                                  if(String(isWhats).toLowerCase() === 'whatsapp') {
+                                    Linking.openURL(`https://api.whatsapp.com/send?phone=+55${tel}`);
+
+                                    return;
+                                  }
+                                  Linking.openURL(`tel:${tel}`)
+                                }}
+                              >
+                                <Text style={{fontSize: 20, fontWeight: 'bold', marginBottom: 3}}>{itemTelefone.telefone}</Text>
+                                <Text style={{marginBottom: 10}}>({itemTelefone.locais})</Text>
+                              </TouchableOpacity>
+                            ) : null}
+                          </>
                         ))}
                       </View>
                     ))}
@@ -233,7 +207,7 @@ const ComoProcederInfoContent = ({ route, navigation }) => {
   return (
     <>
       <StatusBar style='light' />
-      <Header title={`PLACA: ${item.veiculo.placa}`} navigation={navigation} />
+      <Header title={`${item.veiculo.veiculo}`} navigation={navigation} />
       <Body />
     </>
   )
