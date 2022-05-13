@@ -11,7 +11,7 @@ import Context from '../../context';
 import { themeDefault } from '../../config';
 import { StatusBar } from 'expo-status-bar';
 
-import roles_security from '../../utils/roles_security';
+import roles_security from '../../data/seguros';
 
 const FazerSeuSeguro = ({ navigation }) => {
   const { corretora } = useContext(Context);
@@ -26,7 +26,10 @@ const FazerSeuSeguro = ({ navigation }) => {
         <TouchableOpacity
           key={index}
           onPress={() => {
-            navigation.navigate('formSeguro', item);
+            navigation.navigate('formSeguro', {
+              title: item.title,
+              tipo: item.tipo
+            });
           }}
           activeOpacity={1} 
           style={{
@@ -83,7 +86,7 @@ const FazerSeuSeguro = ({ navigation }) => {
         flex: 1,
       }}>
         <FlatList
-          style={{paddingTop: 20}}
+          style={{paddingTop: 20, flex: 1}}
           showsVerticalScrollIndicator={false}
           scrollEnabled={true}
           data={roles_security}
@@ -95,11 +98,11 @@ const FazerSeuSeguro = ({ navigation }) => {
   }
 
   return (
-    <> 
+    <View style={{ flex: 1 }}> 
       <StatusBar style='light' />
       <Header title='FAÇA SUA COTAÇÃO' navigation={navigation} />
       <Body />
-    </>
+    </View>
   )
 }
 

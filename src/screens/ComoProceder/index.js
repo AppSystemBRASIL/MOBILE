@@ -21,7 +21,7 @@ const ComoProceder = ({ navigation }) => {
           key={index}
           onPress={() => {
             if(item.content) {
-              navigation.navigate('comoProcederInfoContent', item);
+              navigation.navigate('comoProcederInfoContent', item.title);
             }else if(item.href) {
               navigation.navigate(item.href);
             }

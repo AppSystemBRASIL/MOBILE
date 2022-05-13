@@ -3,13 +3,14 @@ import { View, ScrollView } from 'react-native'
 
 import Header from '../../components/Header';
 
-import { StatusBar } from 'expo-status-bar';
+import ComoProceder from '../../data/comoProceder';
 
 const ComoProcederInfoContent = ({ route, navigation }) => {
-  const item = route.params;
+  const title = route.params;
 
-  const Body = () => {
-    return (
+  return (
+    <View style={{ flex: 1 }}>
+      <Header navigation={navigation} title={title} />
       <ScrollView showsVerticalScrollIndicator={false} style={{
         flex: 1,
         paddingTop: 20
@@ -28,19 +29,11 @@ const ComoProcederInfoContent = ({ route, navigation }) => {
           <View style={{
             marginTop: 20
           }}>
-            {item.content}
+            {ComoProceder.filter(e => e.title === title)[0].content()}
           </View>
         </View>
       </ScrollView>
-    )
-  }
-
-  return (
-    <>
-      <StatusBar style='light' />
-      <Header navigation={navigation} title={item.title} />
-      <Body />
-    </>
+    </View>
   )
 }
 

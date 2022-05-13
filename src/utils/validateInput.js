@@ -64,8 +64,11 @@ function validatePhone(value) {
 }
 
 function validateDate(value) {
-  return /^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/.test(value);
+  const date_regex = /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/;
+  
+  return date_regex.test(value);
 }
+
 
 function validateEmail(value) {
   const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -77,11 +80,16 @@ function validatePlaca(value) {
   return regex.test(String(value).toUpperCase());
 }
 
+function validateYear(value) {
+  return /[0-9]{4}/.test(value);
+}
+
 export {
   validateCPF,
   validateCEP,
   validatePhone,
   validateDate,
   validateEmail,
-  validatePlaca
+  validatePlaca,
+  validateYear
 }

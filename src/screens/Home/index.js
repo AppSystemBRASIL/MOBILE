@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, FlatList, Image, TouchableOpacity, Share, SafeAreaView, Alert } from 'react-native';
+import { View, Text, ScrollView, Image, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Feather from 'react-native-vector-icons/Feather';
@@ -17,9 +17,11 @@ import AppIntroSlider from 'react-native-app-intro-slider';
 import { themeDefault } from '../../config';
 import { StatusBar } from 'expo-status-bar';
 
-import { useToast, Box, ScrollView } from "native-base";
+import { useToast, Box } from "native-base";
 
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+
+import compartilharAPP from '../../utils/compartilharAPP';
 
 const HomeScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
@@ -51,37 +53,31 @@ const HomeScreen = ({ navigation }) => {
 
   const dataList = [
     {
-      key: '5',
+      key: '1',
       text: 'MEUS SEGUROS',
       icon: <FontAwesome5 color={`${COLORS(corretora ? corretora.layout.theme : themeDefault).black}99`} name='shield-alt' size={50} />,
       href: 'meusSeguros'
     },
     {
-      key: '4',
+      key: '2',
       text: 'FAÇA SUA COTAÇÂO',
       icon: <FontAwesome5 color={`${COLORS(corretora ? corretora.layout.theme : themeDefault).black}99`} name='book' size={50} />,
       href: 'facaSeuSeguro'
     },
     {
-      key: '3',
+      key: '4',
       text: 'INDIQUE AOS AMIGOS',
       icon: <FontAwesome5 color={`${COLORS(corretora ? corretora.layout.theme : themeDefault).black}99`} name='share-alt' size={50} />,
-      function: () => {
-        Share.share({
-          message: `*ENCONTRE NESTE APLICATIVO:*\n\n*SEGURO VEÍCULO:*\n*Conceitos:*\n   - Principal condutor\n   - CEP de pernoite\n   - Cobertura para menores de 25 anos\n*Como agir em um acidente:*\n   - Sem vítima\n   - Com vítima\n   - Roubo ou furto\n\n*OUTROS SEGUROS:*\n   - Saúde\n   - Vida\n   - Empresarial\n   - Viagem\n   - Previdência\n   - Residencial\n   - Condomínio\n\n*PONTOS E MULTAS*\n\n*Confiança e benefícios que só uma seguradora pode oferecer*\n\n*BAIXE AGORA*\nhttps://${corretora.site ? String(corretora.site).split('https://').join('').split('http://').join('').split('www.').join('') : 'seguro.appsystembrasil.com.br'}/app\n\n Fuja da dor de cabeça`,
-          url: corretora.site,
-          title: corretora.razao_social
-        });
-      }
+      function: () => compartilharAPP({ corretora: corretora || null })
     },   
     {
-      key: '1',
+      key: '4',
       text: 'LEITURA OBRIGÁTORIA',
       icon: <FontAwesome5 color={`${COLORS(corretora ? corretora.layout.theme : themeDefault).black}99`} name='book-open' size={50} />,
       href: 'leituraObrigatoria'
     },
     {
-      key: '2',
+      key: '5',
       text: 'O QUE FAZER?',
       icon: <FontAwesome5 color={`${COLORS(corretora ? corretora.layout.theme : themeDefault).black}99`} name='car-crash' size={50} />,
       href: 'comoProceder'
@@ -201,7 +197,6 @@ const HomeScreen = ({ navigation }) => {
             color: 'white',
             fontWeight: '500',
             textAlign: 'center',
-            whiteSpace: 'pre-wrap'
           }}>
             {!firstView ? 'Esperamos que nossa parceria lhe seja útil e perdure por muitos anos. \n\n --------- INDIQUE AOS AMIGOS --------- \n Leve a eles estas informações, mesmo que não tenham seguro. \n\n Fique a vontade para expressar suas opiniões e comentários.' : String(item.descricao).split('\n').join(`\n`)}
           </Text>
@@ -272,7 +267,6 @@ const HomeScreen = ({ navigation }) => {
       <View style={{
         backgroundColor: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
         width: '100%',
-        marginBottom: 20
       }}>
         <View style={{ paddingHorizontal: 20, alignItems: 'center', paddingVertical: 15 }}>
           <Image style={{ resizeMode: 'stretch', width: 240, height: 56 }} width={240} height={56} source={{ uri: corretora ? corretora.logo  : 'https://www.statusseguros.com/wp-content/uploads/2018/05/Untitled-35.png', cache: 'only-if-cached' }} />
@@ -301,35 +295,11 @@ const HomeScreen = ({ navigation }) => {
     )
   }
 
-  const Body = () => {
-    const numColumns = 3;
-
-    const formatData = (data, numColumns) => {
-      const totalRows = Math.floor(data.length / numColumns);
-
-      let totalLastRow = data.length - (totalRows * numColumns);
-
-      while(totalRows !== 0 && totalLastRow !== numColumns) {
-        dataList.push({
-          key: 'black',
-          empty: true
-        });
-
-        totalLastRow++;
-      }
-
-      return dataList;
-    }
-
-    const renderItem = ({item, index}) => {
-      if((item.empty)) {
-        return <View style={{
-          display: 'none'
-        }} />
-      }
-
+  const Body = ({ data, numColumns }) => {
+    const renderItem = (item, index) => {
       return (
         <TouchableOpacity
+          key={index}
           onPress={() => {
             if(item.href) {
               if(item.href === 'contatoCorretor' && corretora) {
@@ -381,21 +351,9 @@ const HomeScreen = ({ navigation }) => {
       )
     }
 
-    return (
-      <View style={{
-        flex: 1,
-      }}>
-        <FlatList
-          scrollEnabled={false}
-          data={formatData(dataList, numColumns)}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => index.toString()}
-          numColumns={numColumns}
-        />
-      </View>
-    )
+    return [...data].slice(0, numColumns)?.map((item, index) => renderItem(item, index));
   }
-
+ 
   const NotificationFirst = () => {
     return (
       <View
@@ -450,7 +408,6 @@ const HomeScreen = ({ navigation }) => {
               color: 'white',
               fontWeight: '500',
               textAlign: 'center',
-              whiteSpace: 'pre-wrap'
             }}>
               {'Esperamos que nossa parceria lhe seja útil e perdure por muitos anos. \n\n --------- INDIQUE AOS AMIGOS --------- \n Leve a eles estas informações, eles precisam saber. \n\n Fique a vontade para expressar suas opiniões e comentários.'}
             </Text>
@@ -460,13 +417,42 @@ const HomeScreen = ({ navigation }) => {
     )
   }
 
-  return !loading ? <SplashScreen setLoading={setLoading} /> : viewedOnboarding ? (
-    <View style={{flex: 1}}>
+  return !loading ? <SplashScreen corretora={corretora} setLoading={setLoading} /> : viewedOnboarding ? (
+    <View style={{ flex: 1 }}>
       <StatusBar style='light' />
       <SafeAreaView style={{ backgroundColor: COLORS(corretora ? corretora.layout.theme : themeDefault).primary, paddingBottom: 20 }} />
       <Header />
-      <ScrollView>
-        <Body />
+      <ScrollView showsVerticalScrollIndicator={false} style={{ paddingTop: 15 }}>
+        <View style={{
+          flex: 1,
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          justifyContent: 'space-between',
+          alignItems: 'stretch',
+          alignSelf: 'stretch'
+        }}>
+          <Body data={dataList.slice(0, 3)} numColumns={3} />
+        </View>
+        <View style={{
+          flex: 1,
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          justifyContent: 'space-between',
+          alignItems: 'stretch',
+          alignSelf: 'stretch'
+        }}>
+          <Body data={dataList.slice(3, dataList.length - 3)} numColumns={3} />
+        </View>
+        <View style={{
+          flex: 1,
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          justifyContent: 'space-between',
+          alignItems: 'stretch',
+          alignSelf: 'stretch'
+        }}>
+          <Body data={dataList.slice(6, dataList.length)} numColumns={3} />
+        </View>
         {firstView ? (
           <NotificationFirst />
         ) : <Notification />}

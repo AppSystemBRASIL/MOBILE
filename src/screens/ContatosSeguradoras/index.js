@@ -7,10 +7,7 @@ import firebase from '../../../firebase';
 
 import Header from '../../components/Header';
 
-import { Divider } from 'native-base';
 import { StatusBar } from 'expo-status-bar';
-
-const dataList = [''];
 
 const ContatosUteis = ({ navigation }) => {
 
@@ -31,17 +28,11 @@ const ContatosUteis = ({ navigation }) => {
     });
   }, []);
 
-  const openPhones = (data) => {
-
-  }
-
   const Body = () => {
     const renderItem = ({ item, index }) => {
       return (
         <>
-          <Divider my="2" />
-          <Text style={{paddingHorizontal: 10, color: '#555', fontSize: 20, fontWeight: '800'}}>SEGURADORAS</Text>
-          <Divider my="2" />
+          <Text style={{paddingHorizontal: 10, color: '#555', paddingBottom: 10, fontSize: 20, fontWeight: '800'}}>SEGURADORAS</Text>
           {corretoras.map((item1, index1) => (
             <View key={index1}>
               {corretoras.length > 0 && (
@@ -114,7 +105,7 @@ const ContatosUteis = ({ navigation }) => {
             paddingTop: 20
           }}
           showsVerticalScrollIndicator={false}
-          data={dataList}
+          data={['']}
           renderItem={renderItem}
           keyExtractor={(item, index) => index.toString()}
         />

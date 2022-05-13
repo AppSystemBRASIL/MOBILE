@@ -10,8 +10,6 @@ import { StatusBar } from 'expo-status-bar';
 import Header from '../../components/Header';
 import { format } from 'date-fns';
 
-
-
 const ComoProcederInfoContent = ({ route, navigation }) => {
   if(Platform.OS === 'android') {
     require('intl');
@@ -165,7 +163,7 @@ const ComoProcederInfoContent = ({ route, navigation }) => {
                       }}>
                         <Text style={{fontSize: 15, fontWeight: 'bold', marginBottom: 5}}>{itemContato.setor}</Text>
                         {itemContato.telefones.map((itemTelefone, indexTelefone) => (
-                          <>
+                          <View key={indexTelefone}>
                             {itemTelefone.telefone ? (
                               <TouchableOpacity key={indexTelefone}
                                 onPress={() => {
@@ -185,7 +183,7 @@ const ComoProcederInfoContent = ({ route, navigation }) => {
                                 <Text style={{marginBottom: 10}}>({itemTelefone.locais})</Text>
                               </TouchableOpacity>
                             ) : null}
-                          </>
+                          </View>
                         ))}
                       </View>
                     ))}

@@ -1,5 +1,5 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { ScrollView, Platform, KeyboardAvoidingView, BackHandler } from 'react-native';
+import React, { useRef } from 'react';
+import { ScrollView, Platform, KeyboardAvoidingView, View } from 'react-native';
 
 import InfoSeguro from './info';
 
@@ -9,47 +9,22 @@ import { StatusBar } from 'expo-status-bar';
 
 const FazerSeguro = ({ navigation, route }) => {
   const { tipo, title } = route.params;
-
-  const Body = () => {
-    const [page, setPage] = useState(0);
-
-    const scrollViewRef = useRef();
-
-    const backAction = () => {
-      if(page === 0) {
-        navigation.goBack();
-      }else {
-        setPage(page-1);
-      }
-    };
   
-    useEffect(() => {
-      BackHandler.addEventListener('hardwareBackPress', backAction);
-  
-      return () => BackHandler.removeEventListener('hardwareBackPress', backAction);
-    }, []);
+  const scrollRef = useRef();
 
-    useEffect(() => {
-      topPage();
-    }, [page]);
+  const topPage = () => {
+    scrollRef.current?.scrollTo({
+      x: 0,
+      y: 0,
+      animated: true,
+    });
+  }
 
-    const topPage = () => {
-      scrollViewRef.current?.scrollTo({ y: 0 });
-    }
-
-    const proximaPagina = () => {
-      setPage(e => e + 1);
-      topPage();
-    }
-
-    const paginaAnterior = () => {
-      setPage(e => e - 1);
-      topPage();
-    }
-
-    return (
-      <>
-        <Header showBackPage={page === 0} title={title} navigation={navigation} />
+  return (
+    <>
+      <StatusBar style='light' />
+      <View style={{ flex: 1 }}>
+        <Header title={title} navigation={navigation} />
         <KeyboardAvoidingView
           style={{
             flex: 1,
@@ -59,18 +34,11 @@ const FazerSeguro = ({ navigation, route }) => {
             android: null,
           })}
         >
-          <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false} style={{paddingTop: 20}}>
-            <InfoSeguro type={tipo} />
+          <ScrollView ref={scrollRef} showsVerticalScrollIndicator={false} style={{paddingTop: 20, flex: 1}}>
+            <InfoSeguro type={tipo} navigation={navigation} topPage={topPage} />
           </ScrollView>
         </KeyboardAvoidingView>
-      </>
-    )
-  }
-
-  return (
-    <>
-      <StatusBar style='light' />
-      <Body />
+      </View>
     </>
   )
 }

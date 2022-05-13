@@ -1,20 +1,11 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Text, View, StatusBar, Image } from 'react-native';
 import { COLORS, SIZES } from '../../utils/constants';
 
-import Context from '../../context';
 import { themeDefault } from '../../config';
 
-const SplashScreen = ({ setLoading }) => {
-  const { corretora, loading } = useContext(Context);
-
+const SplashScreen = ({ setLoading, corretora }) => {
   const { width } = SIZES;
-
-  if(!loading) {
-    return (
-      <></>
-    )
-  }
 
   useEffect(() => {
     setTimeout(() => {

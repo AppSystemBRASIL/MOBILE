@@ -5,8 +5,8 @@ const data = [
   {
     key: 1,
     title: 'COLISÃO SEM VÍTIMA E O VEÍCULO FUNCIONA',
-    content: [
-      <Text style={{fontSize: 18}}>
+    content: () => (
+      <Text style={{fontSize: 18, color: '#444'}}>
         <Text style={{textTransform: 'uppercase', textDecorationLine: 'underline', fontWeight: 'bold'}}>RETIRE OS VEÍCULOS DA VIA</Text>. Bloquear a passagem é uma contravenção média passível de multa (Artigo 178).
         {`\n\n`}
         Não há necessidade de chamar a fiscalização de trânsito, <Text style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>podendo ser resolvido entre as partes envolvidas</Text>.
@@ -27,13 +27,13 @@ const data = [
         {`\n\n`}
         O documento será a versão oficial do acidente e das ações tomadas pelos envolvidos, podendo proteger o condutor de eventuais problemas futuros.
       </Text>
-    ]
+    )
   },
   {
     key: 2,
     title: 'COLISÃO SEM VÍTIMA E O VEÍCULO NÃO FUNCIONA',
-    content: [
-      <Text style={{fontSize: 18}}>
+    content: () => (
+      <Text style={{fontSize: 18, color: '#444'}}>
         Não havendo a possibilidade de retirar os veículos, sinalize a área, com o <Text style={{textTransform: 'uppercase', fontWeight: 'bold', textDecorationLine: 'underline'}}>TRIÂNGULO LUMINOSO</Text> para que a situação não piore ainda mais e outros veículos se envolvam no acidente.
         {`\n\n`}
         Não há necessidade de chamar a fiscalização de trânsito, <Text style={{fontWeight: 'bold', textDecorationLine: 'underline'}}>podendo ser resolvido entre as partes envolvidas</Text>.
@@ -60,13 +60,13 @@ const data = [
         {`\n\n`}
         O documento será a versão oficial do acidente e das ações tomadas pelos envolvidos, podendo proteger o condutor de eventuais problemas futuros.
       </Text>
-    ]
+    )
   },
   {
     key: 3,
     title: 'COLISÃO COM VÍTIMA',
-    content: [
-      <Text style={{fontSize: 18}}>
+    content: () => (
+      <Text style={{fontSize: 18, color: '#444'}}>
         Mantenha a calma, <Text style={{fontWeight: 'bold', textTransform: 'uppercase', textDecorationLine: 'underline'}}>SINALIZE COM O PISCA ALERTA</Text>!
         {`\n\n`}
         É importante sinalizar a área, com o <Text style={{textTransform: 'uppercase', textDecorationLine: 'underline', fontWeight: 'bold'}}>TRIÂNGULO LUMINOSO</Text> para que a situação não piore ainda mais e outros veículos se envolvam no acidente.
@@ -94,13 +94,13 @@ const data = [
         {`\n\n`}
         Em seguida, comunique o <Text style={{fontWeight: 'bold', textDecorationLine: 'underline', textTransform: 'uppercase'}}>SINISTRO</Text> a sua seguradora em <Text style={{fontWeight: 'bold', textDecorationLine: 'underline'}}>horário comercial</Text>.
       </Text>
-    ]
+    )
   },
   {
     key: 4,
     title: 'ROUBO E FURTO',
-    content: [
-      <Text style={{fontSize: 18}}>
+    content: () => (
+      <Text style={{fontSize: 18, color: '#444'}}>
         Entre em contato com a polícia militar através do número <Text style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>190</Text> e comunique o crime. 
         {`\n\n`}
         Ligue para a assistência 24horas da sua seguradora para solicitar um taxi para seu retorno.
@@ -113,7 +113,7 @@ const data = [
         {`\n\n`}
         Em seguida, comunique o <Text style={{fontWeight: 'bold', textDecorationLine: 'underline', textTransform: 'uppercase'}}>SINISTRO</Text> a sua seguradora em <Text style={{fontWeight: 'bold', textDecorationLine: 'underline'}}>horário comercial</Text>.
       </Text>
-    ]
+    )
   },
   {
     key: 5,

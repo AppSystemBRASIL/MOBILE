@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { View, Text, ScrollView, Platform, TouchableOpacity, KeyboardAvoidingView, Alert } from 'react-native'
-import { COLORS, SIZES } from '../../utils/constants';
+import { COLORS } from '../../utils/constants';
 
-import { Select, Input, Modal, Spinner, WarningOutlineIcon, FormControl } from 'native-base';
+import { Input, Modal, Spinner, WarningOutlineIcon, FormControl } from 'native-base';
 
 import Feather from 'react-native-vector-icons/Feather';
 
@@ -10,7 +10,7 @@ import Header from '../../components/Header';
 
 import generateToken from '../../hooks/generateToken';
 
-import { maskCEP, maskCPF, maskYear, maskCurrency, maskLetters, maskPhone } from '../../utils/maskedInput';
+import { maskCEP, maskCPF, maskCurrency, maskLetters, maskPhone } from '../../utils/maskedInput';
 
 import firebase from '../../../firebase';
 import { validateCEP, validateCPF, validatePhone } from '../../utils/validateInput';
@@ -125,19 +125,19 @@ const FinanciarVeiculo = ({ navigation }) => {
           uid: corretor.uid,
           nome: corretor.nomeCompleto,
         } : null,
-        veiculo: {
-          valor: valorVeiculo
-        },
         endereco: {
           cep: CEP
         },
-        dadosPessoais: {
+        financiado: {
           nome: nomeCompleto,
           cpf: CPF,
           celular: celular
         },
-        financiamento: {
+        valores: {
           entrada: valorEntrada,
+          veiculo: {
+            valor: valorVeiculo
+          },
         },
         uid: generateToken()
       };
@@ -155,8 +155,6 @@ const FinanciarVeiculo = ({ navigation }) => {
           ],
           { cancelable: false }
         );
-
-        console.log(error);
       })
       .finally(() => {
         setTimeout(() => {
@@ -235,7 +233,8 @@ const FinanciarVeiculo = ({ navigation }) => {
                 fontSize: 20,
                 color: 'black',
                 fontWeight: '700',
-                textTransform: 'uppercase'
+                textTransform: 'uppercase',
+                borderColor: 'transparent',
               }} autoCapitalize='characters' autoCorrect={false} autoCompleteType='off' onChangeText={(e) => setNomeCompleto(maskLetters(String(e).toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")))} onSubmitEditing={() => {
                 if(String(nomeCompleto).split(' ')[2]) {
                   celularRef.current.focus();
@@ -264,7 +263,8 @@ const FinanciarVeiculo = ({ navigation }) => {
                   padding: 10,
                   fontSize: 20,
                   color: 'black',
-                  fontWeight: '700'
+                  fontWeight: '700',
+                  borderColor: 'transparent',
                 }}
                 onSubmitEditing={() => {
                   if(String(celular).length === 15) {
@@ -306,7 +306,8 @@ const FinanciarVeiculo = ({ navigation }) => {
                   padding: 10,
                   fontSize: 20,
                   color: 'black',
-                  fontWeight: '700'
+                  fontWeight: '700',
+                  borderColor: 'transparent',
                 }}
                 onSubmitEditing={() => {
                   if(String(CPF).length === 14) {
@@ -348,7 +349,8 @@ const FinanciarVeiculo = ({ navigation }) => {
                   padding: 10,
                   fontSize: 20,
                   color: 'black',
-                  fontWeight: '700'
+                  fontWeight: '700',
+                  borderColor: 'transparent',
                 }}
                 onSubmitEditing={() => {
                   if(String(CEP).length === 9) {
@@ -388,7 +390,8 @@ const FinanciarVeiculo = ({ navigation }) => {
                 padding: 10,
                 fontSize: 20,
                 color: 'black',
-                fontWeight: '700'
+                fontWeight: '700',
+                borderColor: 'transparent',
               }} onChangeText={(e) => setValorVeiculo(maskCurrency(e))} onSubmitEditing={() => {
                 if(valorVeiculo) {
                   valorEntradaRef.current.focus()
@@ -412,7 +415,8 @@ const FinanciarVeiculo = ({ navigation }) => {
                 padding: 10,
                 fontSize: 20,
                 color: 'black',
-                fontWeight: '700'
+                fontWeight: '700',
+                borderColor: 'transparent',
               }} onChangeText={(e) => setValorEntrada(maskCurrency(e))} onSubmitEditing={() => {
                 if(!valorEntrada) {
                   Alert.alert(

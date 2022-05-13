@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
 
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import firebase from '../../firebase';
@@ -10,7 +9,6 @@ import { uidCorretoraDefault } from '../config';
 import { addDays } from 'date-fns';
 
 import NetInfo from '@react-native-community/netinfo';
-import { Select } from 'native-base';
 
 const Context = createContext({});
 

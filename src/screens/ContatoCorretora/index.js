@@ -15,6 +15,7 @@ import Context from '../../context';
 import { uidCorretoraDefault } from '../../config';
 import { StatusBar } from 'expo-status-bar';
 import { COLORS } from '../../utils/constants';
+import compartilharAPP from '../../utils/compartilharAPP';
 
 const ContatoCorretora = ({ route, navigation }) => {
   const item = route.params;
@@ -30,7 +31,6 @@ const ContatoCorretora = ({ route, navigation }) => {
 
     const [mensagem, setMensagem] = useState('');
     async function enviarMensagem() {
-      console.log(mensagem);
       if(!mensagem) {
         Alert.alert('INFORME UMA MENSAGEM!');
 
@@ -45,8 +45,6 @@ const ContatoCorretora = ({ route, navigation }) => {
         lida: false
       };
 
-      console.log(data);
-      
       await firebase.firestore().collection('feedback').add(data)
       .then(() => {
         Alert.alert('ENVIADO COM SUCESSO!');
@@ -98,13 +96,7 @@ const ContatoCorretora = ({ route, navigation }) => {
                     top: 10,
                     right: 10
                   }}
-                  onPress={() => {
-                    Share.share({
-                      message: `APPSYSTEM - GESTÃO DE SEGUROS \n\nIndicação de corretor da plataforma da APPSYSTEM para um ou mais amigos.\n\nEssa é sua CORRETORA: ${dadosCorretora.uid}`,
-                      title: 'APPSYSTEM - GESTÃO DE SEGUROS',
-                      url: 'https://seguro.appsystembrasil.com.br',
-                    });
-                  }} name='share' size={30} color='black' 
+                  onPress={() => compartilharAPP({ corretora: corretora || null })} name='share' size={30} color='black' 
                 />
               )}
               {!corretor && (

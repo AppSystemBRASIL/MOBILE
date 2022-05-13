@@ -124,7 +124,7 @@ const PontosMultas = ({ navigation }) => {
   const Body = () => {
     const renderItem = ({ item, index }) => {
       return (
-        <>
+        <View style={{ paddingBottom: Number(index) === (dataList.length - 1) ? 100 : 0 }}>
           <TouchableOpacity
             onPress={async () => await openBrowserAsync(item.href)}
             activeOpacity={1} 
@@ -162,7 +162,7 @@ const PontosMultas = ({ navigation }) => {
               </Text>
             </View>
           </TouchableOpacity>
-        </>
+        </View>
       )
     }
 
@@ -172,7 +172,7 @@ const PontosMultas = ({ navigation }) => {
       }}>
         <FlatList
           style={{
-            paddingTop: 20
+            paddingTop: 20,
           }}
           showsVerticalScrollIndicator={false}
           data={dataList}

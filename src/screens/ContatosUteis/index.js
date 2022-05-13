@@ -1,16 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import { View, Text, FlatList, TouchableOpacity, Linking } from 'react-native'
-import { COLORS, SIZES } from '../../utils/constants';
 
 import Feather from 'react-native-vector-icons/Feather';
-import Context from '../../context';
-
-import firebase from '../../../firebase';
 
 import Header from '../../components/Header';
 
-import { Divider } from 'native-base';
-import { themeDefault } from '../../config';
 import { StatusBar } from 'expo-status-bar';
 
 const dataList = [
@@ -55,7 +49,7 @@ const ContatosUteis = ({ navigation }) => {
   const Body = () => {
     const renderItem = ({ item, index }) => {
       return (
-        <>
+        <View key={index} style={{ paddingBottom: (Number(index)) === dataList.length - 1 ? 100 : 0 }}>
           <TouchableOpacity
             onPress={() => {
               Linking.openURL(`tel:${String(item.phone).split('(').join('').split(')').join('').split('-').join('').split(' ').join('')}`)
@@ -103,7 +97,7 @@ const ContatosUteis = ({ navigation }) => {
               </Text>
             </View>
           </TouchableOpacity>
-        </>
+        </View>
       )
     }
 
@@ -113,7 +107,8 @@ const ContatosUteis = ({ navigation }) => {
       }}>
         <FlatList
           style={{
-            paddingTop: 20
+            paddingTop: 20,
+            paddingBottom: 20,
           }}
           showsVerticalScrollIndicator={false}
           data={dataList}
