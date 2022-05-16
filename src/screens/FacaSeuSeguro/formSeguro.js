@@ -1,14 +1,20 @@
-import React, { useRef } from 'react';
+import { StatusBar } from 'expo-status-bar';
+import React, { useState, useRef } from 'react';
 import { ScrollView, Platform, KeyboardAvoidingView, View } from 'react-native';
 
 import InfoSeguro from './info';
+import InfoDescription from './description';
 
 import Header from '../../components/Header';
 
-import { StatusBar } from 'expo-status-bar';
+
+import seguros from '../../data/seguros';
 
 const FazerSeguro = ({ navigation, route }) => {
   const { tipo, title } = route.params;
+  
+  const info = seguros.filter(e => e.tipo === tipo)[0]?.info || null;
+  const [viewPage, setViewPage] = useState(info ? false : true);
   
   const scrollRef = useRef();
 
@@ -35,7 +41,11 @@ const FazerSeguro = ({ navigation, route }) => {
           })}
         >
           <ScrollView ref={scrollRef} showsVerticalScrollIndicator={false} style={{paddingTop: 20, flex: 1}}>
-            <InfoSeguro type={tipo} navigation={navigation} topPage={topPage} />
+            {!viewPage ? (
+              <InfoDescription type={tipo} setView={setViewPage} />
+            ) : (
+              <InfoSeguro type={tipo} navigation={navigation} topPage={topPage} />
+            )}
           </ScrollView>
         </KeyboardAvoidingView>
       </View>

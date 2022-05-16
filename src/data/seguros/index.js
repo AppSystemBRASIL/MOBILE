@@ -1,3 +1,5 @@
+import { View, Text } from 'react-native';
+
 import { maskCEP, maskCNPJ, maskCPF, maskCurrency, maskDate, maskLetters, maskPhone, maskPlaca, maskYear } from '../../utils/maskedInput';
 import { validateCEP, validatePlaca, validateYear } from '../../utils/validateInput';
 import cidades from '../cidades';
@@ -169,7 +171,7 @@ const array = [
       jsonCEP({ name: 'cepSegurado', label: 'cep' }),
       jsonSelect({ name: 'dataCNHSegurado', label: 'tempo de cnh', selects: ['+10 anos', '10 anos', '9 anos', '8 anos', '7 anos', '6 anos', '5 anos', '4 anos', '3 anos', '2 anos', '1 ano', 'permissão provisória'] }),
       jsonSelect({ name: 'seguradoProprietario', label: 'o segurado é proprietário?', selects: ['sim', 'não'] }),
-      jsonSelect({ name: 'principalCondutorResideMenor', label: 'o principal condutor reside com pessoas menores de 26 anos', selects: ['sim', 'não'] }),
+      jsonSelect({ name: 'condutorResideMenor', label: 'haverá condução de pessoas menores de 26 anos?', selects: ['sim', 'não'] }),
       jsonSelect({ name: 'tipoSeguro', label: 'tipo do seguro', selects: ['novo', 'renovação'], page: 2 }),
       jsonSelect({ name: 'seguradoraSeguro', label: 'seguradora', selects: seguradoras, page: 2, view: { name: 'tipoSeguro', value: 'renovação' } }),
       jsonData({ name: 'finalVigenciaSeguro', label: 'fim da vigência', page: 2, view: { name: 'tipoSeguro', value: 'renovação' } }),
@@ -194,6 +196,67 @@ const array = [
       jsonSelect({ name: 'garagemResidencia', label: 'garagem na residência?', selects: ['não', 'sim, com portão automático', 'sim, com portão manual', 'sim, em estacionamento pago'], page: 5 }),
       jsonSelect({ name: 'garagemTrabalho', label: 'garagem no trabalho?', selects: ['sim', 'não', 'não trabalha', 'não utiliza para ir ao trabalho'], page: 5 }),
       jsonSelect({ name: 'garagemEscola', label: 'garagem na escola?', selects: ['sim', 'não', 'não estuda', 'não utiliza para ir a escola'], page: 5 }),
+    ],
+    info: [
+      <>
+        <Text style={{
+          fontWeight: 'bold',
+          fontSize: 18,
+          marginBottom: 5
+        }}>DEFINIÇÕES:</Text>
+        <Text style={{
+          fontSize: 17,
+          fontWeight: '500',
+          color: '#333333'
+        }}>
+          <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>PRINCIPAL CONDUTOR: </Text>
+          {`\n`}
+          A definição do principal condutor do veículo segurado é fundamental para que o valor a ser pago pelo consumidor possa ser claramente calculado.
+          {`\n`}{`\n`}
+          O principal condutor é a pessoa que utiliza o veículo a maior parte do tempo.
+          {`\n`}
+          <Text style={{ color: 'red', fontSize: 10 }}>( Mínimo 6 dias da semana )</Text>
+          {`\n`}{`\n`}
+          Outras pessoas maiores de 25 anos podem, em situações eventuais, também utilizá-lo.
+          {`\n`}
+          <Text style={{ color: 'red', fontSize: 10 }}>( No máximo 1 dia por semana )</Text>
+          {`\n`}{`\n`}
+          Para condutores menores que 25 anos, que dirigem no máximo 1 dia por semana, necessitam de uma cobertura especial.
+          {`\n`}
+          <Text style={{ color: 'red', fontSize: 10 }}>( Algumas seguradoras permitem até 02 dias por semana )</Text>
+          {`\n`}{`\n`}
+          Se várias pessoas utilizarem o veículo segurado mais de um dia na semana, o segurado deverá contrarar como principal condutor a pessoa mais jovem.
+        </Text>
+        <Text>{`\n`}</Text>
+        <Text style={{
+          fontSize: 17,
+          fontWeight: '500',
+          color: '#333333'
+        }}>
+          <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>CEP DE PERNOITE: </Text>
+          {`\n`}
+          O cep de pernoite é o cep do local onde o veículo permanece durante a noite. Se o veículo pernoitar em vários locais, definir o cep onde o veículo passa a maior parte do tempo.
+        </Text>
+        <Text>{`\n`}</Text>
+        <Text style={{
+          fontWeight: 'bold',
+          fontSize: 18,
+          marginBottom: 5
+        }}>ATENÇÃO:</Text>
+        <Text style={{
+          fontSize: 17,
+          fontWeight: '500',
+          color: '#333333'
+        }}>
+          É obrigatório o preenchimento correto das informações pessoais, cuja veracidade é de inteira responsabilidade do proponente.
+          {`\n`}{`\n`}
+          As informações inverídicas ou desatualizadas poderão acarretar a perda de direito do segurado/proponente ou cancelamento do seguro sem prévia comunicação ao segurado.
+          {`\n`}{`\n`}
+          Se houver divergência nas informações de risco o segurado deverá informar tal situação imediatamente a corretora/seguradora.
+          {`\n`}{`\n`}
+          É obrigação do segurado comunicar e solicitar a alteração do risco, a sua corretora ou seguradora, se no decorrer da vigência da apólice houver mudança do principal condutor, troca de veículo, utilização do veículo ou cep de pernoite.
+        </Text>
+      </>
     ]
   },
   {
@@ -239,6 +302,55 @@ const array = [
       jsonData({ name: 'nascimentoBeneficiario9', label: 'nascimento beneficiário 9', view: { name: 'qtdBeneficiario', value: 9 } }),
       jsonData({ name: 'nascimentoBeneficiario10', label: 'nascimento beneficiário 10', view: { name: 'qtdBeneficiario', value: 10 } }),
     ],
+    info: [
+      <>
+        <Text style={{
+          fontWeight: 'bold',
+          fontSize: 18
+        }}>Informações:</Text>
+        <Text style={{
+          fontSize: 17,
+          fontWeight: '500',
+          color: '#333333'
+        }}>
+          Planos médicos e odontológicos que sua fámilia ou sua empresa necessita.
+          {`\n`}
+          Saúde é o nosso bem mais valioso, jamais coloque algo acima dela, proteja-se.
+          {`\n`}
+          Ótimas soluções em plano de saúde para sua proteção com o melhor da medicina.
+        </Text>
+        <Text>{`\n`}</Text>
+        <Text style={{
+          fontWeight: 'bold',
+          fontSize: 18
+        }}>COBERTUAS: <Text style={{ color: 'red', fontSize: 10, fontWeight: '500' }}>( de acôrdo com seu plano )</Text></Text>
+        <Text style={{
+          fontSize: 17,
+          fontWeight: '500',
+          color: '#333333'
+        }}>
+          - Internações
+          {`\n`}
+          - Cirurgias
+          {`\n`}
+          - Urgências e Emergências
+          {`\n`}
+          - Consultas
+          {`\n`}
+          - Parto
+          {`\n`}
+          - Exames
+          {`\n`}
+          - Psicológia
+          {`\n`}
+          - Telemedicina
+          {`\n`}
+          - Coberturas regionais e nacionais
+          {`\n`}
+          - Reembolso
+        </Text>
+      </>
+    ]
   },
   {
     title: 'SEGURO DE VIDA',
@@ -255,6 +367,81 @@ const array = [
       jsonTitle({ view: { name: 'praticaraEsporte', value: 'sim' }, name: 'praticaraEsporteText', label: 'se sim, Qual?', placeholder: 'Esporte praticado', type: 'text' }),
       jsonSelect({ view: { name: 'praticaraEsporte', value: 'sim' }, name: 'praticaraEsporteFrenquencia', label: 'com qual frequência?', selects: ['até 3x/ano', 'cima 3x/ano'] }),
     ],
+    info: [
+      <>
+        <Text style={{
+          fontWeight: 'bold',
+          fontSize: 18
+        }}>Informações:</Text>
+        <Text style={{
+          fontSize: 17,
+          fontWeight: '500',
+          color: '#333333'
+        }}>
+          Seguro de vida é a segurança que você e sua família estarão protegidos em caso de um imprevisto.
+          {`\n`}
+          Os índices de violência só aumentam, acidentes acontecem, imagine deixar as pessoas que você tanto ama desprotegidas.
+          {`\n`}
+          O seguro de vida, também traz benefícios para você, confira abaixo as coberturas de um plano completo.
+        </Text>
+        <Text>{`\n`}</Text>
+        <Text style={{
+          fontWeight: 'bold',
+          fontSize: 18
+        }}>Coberturas: <Text style={{ color: 'red', fontSize: 10, fontWeight: '500'}}>( de acôrdo com seu plano )</Text></Text>
+        <Text style={{
+          fontSize: 17,
+          fontWeight: '500',
+          color: '#333333'
+        }}>
+          - Morte
+          {`\n`}
+          - Morte acidental
+          {`\n`}
+          - Invalidez por acidente, total ou parcial
+          {`\n`}
+          - Invalidez funcional permanente total
+          {`\n`}
+          - Doenças graves ( 14 tipos )
+          {`\n`}
+          <Text style={{ color: 'red', fontSize: 10 }}>
+            - Diagnóstico de câncer
+            {`\n`}
+            - Acidente vascular cerebral
+            {`\n`}
+            - Infarto agudo do miocárdio
+            {`\n`}
+            - Transplante de orgãos
+            {`\n`}
+            - Insuficiência renal crônica
+            {`\n`}
+            - Alzheimer
+            {`\n`}
+            - Diagnóstico de surdez
+            {`\n`}
+            - Cirurgia de Bypass
+            {`\n`}
+            - Diagnóstico de cegueira
+            {`\n`}
+            - Embolia pulmonar
+            {`\n`}
+            - Tromboembolismo
+            {`\n`}
+            - Esclerose múltipla
+            {`\n`}
+            - Parkinson
+            {`\n`}
+            - Perda total da fala
+            {`\n`}
+          </Text>
+          - Assistência funeral
+          {`\n`}
+          - Assistência nutricional
+          {`\n`}
+          - Descontos em medicamentos.
+        </Text>
+      </>
+    ]
   },
   {
     title: 'SEGURO RESIDENCIAL',
@@ -272,6 +459,133 @@ const array = [
       jsonSelect({ name: 'usoImovel', label: 'uso do imóvel', selects: ['moradia principal', 'temporada', 'moradia e comércio'] }),
       jsonSelect({ name: 'propriedadeImovel', label: 'propriedade do imóvel', selects: ['próprio', 'alugado'] }),
     ],
+    info: [
+      <>
+        <Text style={{
+          fontWeight: 'bold',
+          fontSize: 18
+        }}>INFORMAÇÕES:</Text>
+        <Text style={{
+          fontSize: 17,
+          fontWeight: '500',
+          color: '#333333'
+        }}>
+          A residência é um dos bens mais valiosos que temos.
+          {`\n`}
+          O seguro residência existe para cobrir prejuízos que poderiam facilmente detruir nossos finanças e podem custar até 4x menos que o seguro do seu carro.
+        </Text>
+        <Text>{`\n`}</Text>
+        <Text style={{
+          fontWeight: 'bold',
+          fontSize: 18
+        }}>COBERTUAS: <Text style={{ color: 'red', fontSize: 10, fontWeight: '500' }}>( de acôrdo com seu plano )</Text></Text>
+        <Text style={{
+          fontSize: 17,
+          fontWeight: '500',
+          color: '#333333'
+        }}>
+          - Incêndio
+          {`\n`}
+          - Danos elétricos
+          {`\n`}
+          - Queda de raio
+          {`\n`}
+          - Explosão de qualquer natureza
+          {`\n`}
+          - Fumaça
+          {`\n`}
+          - Roubo e furto qualificado de bens
+          {`\n`}
+          - Impacto de veículos
+          {`\n`}
+          - Vendaval, furacão, ciclone, granizo e tornado
+          {`\n`}
+          - Responsabilidade civil familiar
+          {`\n`}
+          - Perda e pagamento de aluguel
+          {`\n`}
+          - Roubo e furto qualificado de bens fora do local segurado
+          {`\n`}
+          - Quebra de vidros, mármore e granito
+          {`\n`}
+          - Desmoranamento
+          {`\n`}
+          - Danos por água
+          {`\n`}
+          - Tumultos, greve e lock-outs
+          {`\n`}
+          - Despesas extraordinárias
+          {`\n`}
+          - Jóias e obras de arte
+        </Text>
+        <Text>{`\n`}</Text>
+        <Text style={{
+          fontWeight: 'bold',
+          fontSize: 18
+        }}>ASSISTÊNCIA: <Text style={{ color: 'red', fontSize: 10, fontWeight: '500' }}>( de acordo com seu plano )</Text></Text>
+        <Text style={{
+          fontSize: 17,
+          fontWeight: '500',
+          color: '#333333'
+        }}>
+          - Chaveiro
+          {`\n`}
+          <Text style={{ color: 'red', fontSize: 10 }}>
+            - Abertura de porta
+            {`\n`}
+            - Troca de fechadura simples
+            {`\n`}
+            - Troca do segredo da fechadura
+            {`\n`}
+            - Verificação de extintores
+            {`\n`}
+          </Text>
+          - Cobertura provisória de telhado
+          {`\n`}
+          - Conserto de aquecedor de gás
+          {`\n`}
+          - Conserto de ar condicionado
+          {`\n`}
+          - Conserto de eletrodomésticos
+          {`\n`}
+          <Text style={{ color: 'red', fontSize: 10 }}>
+            - Linha branca
+            {`\n`}
+            - Linha marrom
+            {`\n`}
+          </Text>
+          - Dedetização
+          {`\n`}
+          - Hidráulica
+          {`\n`}
+          <Text style={{ color: 'red', fontSize: 10 }}>
+            - Caça vazamentos
+            {`\n`}
+            - Desemtupimento
+            {`\n`}
+            - Encanador
+            {`\n`}
+          </Text>
+          - Hospedagem
+          {`\n`}
+          - Limpeza
+          {`\n`}
+          - Recuperação de veículo
+          {`\n`}
+          - Reparos elétricos
+          {`\n`}
+          - Retorno antcipado a domicílio
+          {`\n`}
+          - Substituição de telhas
+          {`\n`}
+          - Transporte e guarda móveis
+          {`\n`}
+          - Vidraceiro
+          {`\n`}
+          - Vigilância e segurança
+        </Text>
+      </>
+    ]
   },
   {
     title: 'SEGURO EMPRESARIAL',
@@ -285,6 +599,113 @@ const array = [
       jsonSelect({ name: 'tipoSeguro', label: 'tipo do seguro', selects: ['novo', 'renovação'] }),
       jsonData({ name: 'finalVigenciaSeguro', label: 'fim da vigência', view: { name: 'tipoSeguro', value: 'renovação' } }),
     ],
+    info: [
+      <>
+        <Text style={{
+          fontWeight: 'bold',
+          fontSize: 18
+        }}>INFORMAÇÕES:</Text>
+        <Text style={{
+          fontSize: 17,
+          fontWeight: '500',
+          color: '#333333'
+        }}>
+          O seguro empresarial foi feito para você empresário , que possui uma pequena, média ou grande empresa, seja comércio, serviço ou indústria.
+          {`\n`}
+          Sua empresa não precisa correr riscos que podem levar ao encerramento de suas atividades e das suas receitas.
+        </Text>
+        <Text>{`\n`}</Text>
+        <Text style={{
+          fontWeight: 'bold',
+          fontSize: 18
+        }}>COBERTUAS: <Text style={{ color: 'red', fontSize: 10, fontWeight: '500' }}>( de acôrdo com seu plano )</Text></Text>
+        <Text style={{
+          fontSize: 17,
+          fontWeight: '500',
+          color: '#333333'
+        }}>
+          - Incêndio
+          {`\n`}
+          - Danos elétricos
+          {`\n`}
+          - Perda de lucro bruto
+          {`\n`}
+          - Despesas fixas
+          {`\n`}
+          - Quebra de máquinas e equipamentos
+          {`\n`}
+          - Alagamento
+          {`\n`}
+          - Vendaval, furacão, ciclone, granizo e tornado
+          {`\n`}
+          - Roubo
+          {`\n`}
+          - Quebra de vidros, anúncios luminosos e mármores
+        </Text>
+        <Text>{`\n`}</Text>
+        <Text style={{
+          fontWeight: 'bold',
+          fontSize: 18
+        }}>ASSISTÊNCIA: <Text style={{ color: 'red', fontSize: 10, fontWeight: '500' }}>( de acordo com seu plano )</Text></Text>
+        <Text style={{
+          fontSize: 17,
+          fontWeight: '500',
+          color: '#333333'
+        }}>
+          - Substituição de telhas
+          {`\n`}
+          - Cobertura provisória de telhado
+          {`\n`}
+          - Manutenção de portas e portões
+          {`\n`}
+          - Reparos elétricos
+          {`\n`}
+          - Reparoa hidraúlicas
+          {`\n`}
+          - Reparo de central telefônica, interfone e porteiro eletrônico <Text style={{ fontSize: 10, color: 'red' }}>( sem imagem/vídeo )</Text>
+          {`\n`}
+          - Troca de vidros
+          {`\n`}
+          - Limpeza
+          {`\n`}
+          - Limpeza de caixa d`àgua
+          {`\n`}
+          - Serviço de desintetização e desratização
+          {`\n`}
+          - Abertura de porta
+          {`\n`}
+          - Conserto de ar condicionado
+          {`\n`}
+          - Conserto de eletrodomésticos <Text style={{ color: 'red', fontSize: 10 }}>( linha branca )</Text>
+          {`\n`}
+          - Instalação de fechadura tetra
+          {`\n`}
+          - Troca de fechadura simples
+          {`\n`}
+          - Locação de microcomputadores e impressoras
+          {`\n`}
+          - Porteiro substituto
+          {`\n`}
+          - Escritório provisório
+          {`\n`}
+          - Transporte e guarda móveis
+          {`\n`}
+          - Vigilância/segurança
+          {`\n`}
+          - Checkup empresarial
+          {`\n`}
+          <Text style={{ color: 'red', fontSize: 10 }}>
+            - Instalação de luzes de mergência
+            {`\n`}
+            - Instalação de antiderrapantes
+            {`\n`}
+            - Limpeza de ar condicionado
+            {`\n`}
+            - Verificação de extintores
+          </Text>
+        </Text>
+      </>
+    ]
   },
   {
     title: 'SEGURO CONDOMÍNIO',
@@ -298,6 +719,85 @@ const array = [
       jsonSelect({ name: 'tipoSeguro', label: 'tipo do seguro', selects: ['novo', 'renovação'] }),
       jsonData({ name: 'finalVigenciaSeguro', label: 'fim da vigência', view: { name: 'tipoSeguro', value: 'renovação' } }),
     ],
+    info: [
+      <>
+        <Text style={{
+          fontWeight: 'bold',
+          fontSize: 18
+        }}>SEGURO OBRIGATÓRIO:</Text>
+        <Text style={{
+          fontSize: 17,
+          fontWeight: '500',
+          color: '#333333'
+        }}>
+          - Lei 4.591/1964
+          {`\n`}
+          - Decreto Lei 73/1966
+          {`\n`}
+          - Código Civil Lei 10.406/2002
+        </Text>
+        <Text>{`\n`}</Text>
+        <Text style={{
+          fontWeight: 'bold',
+          fontSize: 18
+        }}>INFORMAÇÕES:</Text>
+        <Text style={{
+          fontSize: 17,
+          fontWeight: '500',
+          color: '#333333'
+        }}>
+          Vale salientar que o seguro condomínio protege as areas comuns do condomínio e não as residências.
+          {`\n`}
+          O seguro Residencial protege sua residência e o que há nela, não é obrigatório e deve ser contratado pelo proprietário ou inquilino do imóvel.
+        </Text>
+        <Text>{`\n`}</Text>
+        <Text style={{
+          fontWeight: 'bold',
+          fontSize: 18
+        }}>COBERTUAS: <Text style={{ color: 'red', fontSize: 10, fontWeight: '500' }}>( de acôrdo com seu plano )</Text></Text>
+        <Text style={{
+          fontSize: 17,
+          fontWeight: '500',
+          color: '#333333'
+        }}>
+          - Incêndio
+          {`\n`}
+          - Explosão de qualquer natureza
+          {`\n`}
+          - Queda de raio e de aeronaves
+        </Text>
+        <Text>{`\n`}</Text>
+        <Text style={{
+          fontWeight: 'bold',
+          fontSize: 18
+        }}>COBERTUAS: <Text style={{ color: 'red', fontSize: 10, fontWeight: '500' }}>( adicionais )</Text></Text>
+        <Text style={{
+          fontSize: 17,
+          fontWeight: '500',
+          color: '#333333'
+        }}>
+          - Danos elétricos
+          {`\n`}
+          - Desmoranamento
+          {`\n`}
+          - Roubo de bens do condomínio
+          {`\n`}
+          - Impacto de veículos
+          {`\n`}
+          - Vendaval
+          {`\n`}
+          - Vazamento de tanques
+          {`\n`}
+          - Responsabilidade civil do síndico
+          {`\n`}
+          - Responsabilidade civil do condomínio
+          {`\n`}
+          - Coberturas regionais e nacionais
+          {`\n`}
+          - Reembolso
+        </Text>
+      </>
+    ]
   },
   {
     title: 'PREVIDÊNCIA SOCIAL',

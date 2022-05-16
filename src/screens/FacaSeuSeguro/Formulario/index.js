@@ -154,7 +154,7 @@ const Formulario = ({ type, success, error, loading, topPage }) => {
         
       },
       riscos: {
-        resideMenor: data.principalCondutorResideMenor || null,
+        condutorResideMenor: data.condutorResideMenor || null,
         usoVeiculo: data.usoVeiculo || null,
         residenciaVeiculo: data.residenciaVeiculo || null,
         garagemResidencia: data.garagemResidencia || null,
