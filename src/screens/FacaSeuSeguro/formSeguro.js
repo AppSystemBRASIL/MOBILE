@@ -1,12 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState, useRef } from 'react';
-import { ScrollView, Platform, KeyboardAvoidingView, View } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { ScrollView, Platform, KeyboardAvoidingView, View, BackHandler } from 'react-native';
 
 import InfoSeguro from './info';
 import InfoDescription from './description';
 
 import Header from '../../components/Header';
-
 
 import seguros from '../../data/seguros';
 
@@ -15,8 +14,12 @@ const FazerSeguro = ({ navigation, route }) => {
   
   const info = seguros.filter(e => e.tipo === tipo)[0]?.info || null;
   const [viewPage, setViewPage] = useState(info ? false : true);
+
+  const [show, setShow] = useState(false);
   
   const scrollRef = useRef();
+
+  const [page, setPage] = useState(info ? 0 : 1);
 
   const topPage = () => {
     scrollRef.current?.scrollTo({
@@ -25,6 +28,31 @@ const FazerSeguro = ({ navigation, route }) => {
       animated: true,
     });
   }
+
+  useEffect(() => {
+    const backAction = () => {
+      if(page >= 1) {
+        setPage(e => e - 1);
+      }else {
+        if(viewPage) {
+          navigation.goBack();
+        }else {
+          if(info ? false : true) {
+            setPage(1);
+          }
+
+          setShow(false);
+          
+          setViewPage(info ? false : true);
+        }
+      }
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+
+    return () => backHandler.remove();
+  }, []);
 
   return (
     <>
@@ -41,10 +69,10 @@ const FazerSeguro = ({ navigation, route }) => {
           })}
         >
           <ScrollView ref={scrollRef} showsVerticalScrollIndicator={false} style={{paddingTop: 20, flex: 1}}>
-            {!viewPage ? (
-              <InfoDescription type={tipo} setView={setViewPage} />
-            ) : (
-              <InfoSeguro type={tipo} navigation={navigation} topPage={topPage} />
+            {!viewPage ? info ? (
+              <InfoDescription show={show} setShow={setShow} type={tipo} setPage={setPage} setView={setViewPage} />
+            ) : <InfoSeguro setView={setViewPage} type={tipo} navigation={navigation} topPage={topPage} /> : (
+              <InfoSeguro view={viewPage} page={page} setPage={setPage} setView={setViewPage} type={tipo} navigation={navigation} topPage={topPage} />
             )}
           </ScrollView>
         </KeyboardAvoidingView>

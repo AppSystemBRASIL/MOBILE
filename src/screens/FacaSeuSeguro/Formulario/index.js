@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { View, Text, Platform, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import { View, Text, Platform, TouchableOpacity, KeyboardAvoidingView, BackHandler } from 'react-native';
 
 import { Input, WarningOutlineIcon, FormControl, Select, CheckIcon } from 'native-base';
 
@@ -15,11 +15,13 @@ import Context from '../../../context';
 import segurosArray from '../../../data/seguros';
 
 import styled from 'styled-components';
+import { useNavigation } from '@react-navigation/native';
 
-const Formulario = ({ type, success, error, loading, topPage }) => {
+const Formulario = ({ type, success, error, loading, topPage, setView, page, setPage }) => {
+  const { goBack } = useNavigation();
+
   const { corretor, corretora } = useContext(Context);
   const [errors, setErrors] = useState([]);
-  const [page, setPage] = useState(1);
 
   const inputsFull = segurosArray.filter(e => e.tipo === type)[0].inputs;
   const [inputs, setInputs] = useState(inputsFull?.filter(e => e.page === page) || []);
@@ -160,8 +162,8 @@ const Formulario = ({ type, success, error, loading, topPage }) => {
         garagemResidencia: data.garagemResidencia || null,
         garagemTrabalho: data.garagemTrabalho || null,
         garagemEscola: data.garagemEscola || null,
-        praticaraEsporte: data.praticaraEsporte === 'sim' ? data.praticaraEsporteText || praticaraEsporte : null || null,
-        praticaraEsporteFrenquencia: data.praticaraEsporteFrenquencia ? Number(data.praticaraEsporteFrenquencia?.split(' ')[0]) : null || null,
+        praticaEsporte: data.praticaEsporte === 'sim' ? data.praticaEsporteText || praticaEsporte : null || null,
+        praticaEsporteFrenquencia: data.praticaEsporteFrenquencia ? Number(data.praticaEsporteFrenquencia?.split(' ')[0]) : null || null,
         utilizaraMotocicleta: data.utilizaraMotocicleta || null,
       },
       viagem: {
@@ -244,7 +246,7 @@ const Formulario = ({ type, success, error, loading, topPage }) => {
               </Text>
             )}
             {!item.selects ? (
-              <InputStyle borderColor='#999' maxLength={item.maxLength} value={data[item.name] || ''} returnKeyType='done' placeholder={String(item.placeholder || '').toUpperCase()} keyboardType={item.inputType === 'text' ? 'default' : 'number-pad'} autoCapitalize='characters' autoCorrect={false} autoCompleteType='off' onChangeText={(value) => setData(e => ({...e, [item.name]: (item.formatter) ? item.formatter(value) : value}))} onBlur={() => {
+              <InputStyle borderColor='#999' maxLength={item.maxLength} value={data[item.name] || ''} returnKeyType='done' placeholder={String(item.placeholder || '').toUpperCase()} keyboardType={item.inputType} autoCapitalize='characters' autoCorrect={false} autoCompleteType='off' onChangeText={(value) => setData(e => ({...e, [item.name]: (item.formatter) ? item.formatter(value) : value}))} onBlur={() => {
                 if(item.required === undefined || item.required === true) {
                   if(!item.validated(data[item.name])) {
                     setErrors(e => e.filter(x => x !== item.name));
@@ -318,7 +320,7 @@ const Formulario = ({ type, success, error, loading, topPage }) => {
                     color: 'white',
                     fontSize: 20,
                   }}
-                >ENVIAR COTAÇÃO</Text>
+                >ENVIAR</Text>
                 <Feather style={{
                   position: 'absolute',
                   right: 10,

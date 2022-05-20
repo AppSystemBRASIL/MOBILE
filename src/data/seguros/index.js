@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native';
 
 import { maskCEP, maskCNPJ, maskCPF, maskCurrency, maskDate, maskLetters, maskPhone, maskPlaca, maskYear } from '../../utils/maskedInput';
-import { validateCEP, validatePlaca, validateYear } from '../../utils/validateInput';
+import { validateCEP, validatePlaca, validateYear, validateEmail } from '../../utils/validateInput';
 import cidades from '../cidades';
 import seguradoras from '../seguradoras';
 
@@ -10,10 +10,21 @@ const jsonNome = ({ page, label, name, view }) => ({
   view: view ? (value) => value[view.name] === view.value : undefined,
   name: name,
   label: label,
-  placeholder: 'Nome completo',
-  inputType: 'text',
+  placeholder: 'Nome',
+  inputType: 'default',
   formatter: maskLetters,
   validated: (value) => !String(value).split(' ')[1],
+  required: true,
+});
+
+const jsonEmail = ({ page, label, name, view }) => ({
+  page: page || 1,
+  view: view ? (value) => value[view.name] === view.value : undefined,
+  name: name || 'emailSegurado',
+  label: label || 'E-mail',
+  placeholder: 'E-mail',
+  inputType: 'email',
+  validated: (value) => !validateEmail(value),
   required: true,
 });
 
@@ -36,7 +47,7 @@ const jsonCelular = ({ page, name, label }) => ({
   label: label,
   maxLength: 15,
   placeholder: '(00) 00000-0000',
-  inputType: 'number',
+  inputType: 'number-pad',
   formatter: maskPhone,
   validated: (value) => String(value).length < 15,
   required: true,
@@ -49,7 +60,7 @@ const jsonRegistro = ({ page, name, label, mask, view }) => ({
   label: label,
   maxLength: mask === 'cpf' ? 14 : 18,
   placeholder: mask === 'cpf' ? '000.000.000-00' : '00.000.000/0000-00',
-  inputType: 'number',
+  inputType: 'number-pad',
   formatter: (value) => mask === 'cpf' ? maskCPF(value) : maskCNPJ(value),
   validated: (value) => String(value).length < (mask === 'cpf' ? 14 : 18),
   required: true,
@@ -61,7 +72,7 @@ const jsonCEP = ({ page, name, label }) => ({
   label: label,
   maxLength: 9,
   placeholder: '00000-000',
-  inputType: 'number',
+  inputType: 'number-pad',
   formatter: maskCEP,
   validated: (value) => !validateCEP(value),
   required: true,
@@ -73,7 +84,7 @@ const jsonMoney = ({ page, view, label, name }) => ({
   name: name,
   label: label,
   placeholder: 'R$ 0.000,00',
-  inputType: 'number',
+  inputType: 'number-pad',
   formatter: maskCurrency,
   validated: (value) => Number(String(value || '').split('R$ ').join('').split('.').join('').split(',').join('.')) <= 0 ? true : false || false,
   required: true,
@@ -105,7 +116,7 @@ const jsonData = ({ page, view, name, label, required }) => ({
   name: name,
   label: label,
   placeholder: '00/00/0000',
-  inputType: 'number',
+  inputType: 'number-pad',
   maxLength: 10,
   formatter: maskDate,
   validated: (value) => !validateYear(value),
@@ -114,7 +125,7 @@ const jsonData = ({ page, view, name, label, required }) => ({
 
 const jsonSelect = ({ page, view, name, label, selects: selectsArray, infoText }) => ({
   page: page || 1,
-  view: view ? (value) => value[view.name] === view.value : undefined,
+  view: view ? (value) => [value[view.name]].every(e => [...view.value.split(',')].includes(e)) : undefined,
   name: name,
   label: label,
   placeholder: 'Selecionar opção',
@@ -140,10 +151,10 @@ const jsonCidade = ({ page, name, label }) => ({
   placeholder: 'Selecionar a cidade',
   selects: (value) => {
     if(value) {
-      const estado = value.estado;
+      const estado = value.estadoSegurado;
 
       if(estado) {
-        const uf = value?.estado?.split('-')[1].split(' ').join('');
+        const uf = estado?.split('-')[1].split(' ').join('');
         const cidadesArray = cidades?.filter(e => e.sigla === uf)[0]?.cidades;
 
         return cidadesArray;
@@ -166,6 +177,7 @@ const array = [
       jsonNome({ name: 'nomeSegurado', label: 'nome do segurado' }),
       jsonRegistro({ name: 'registroSegurado', label: 'cpf', mask: 'cpf' }),
       jsonCelular({ name: 'celularSegurado', label: 'celular' }),
+      jsonEmail({ name: 'emailSegurado', label: 'E-mail' }),
       jsonSelect({ name: 'profissaoSegurado', label: 'Profissão', selects: ['militar', 'professor', 'servidor público', 'médico/dentista', 'aposentado', 'empresário', 'autônomo', 'outros'] }),
       jsonSelect({ name: 'estadoCivilSegurado', label: 'estado cívil', selects: ['solteiro', 'união estável', 'casado', 'divorciado', 'viúvo'] }),
       jsonCEP({ name: 'cepSegurado', label: 'cep' }),
@@ -185,7 +197,7 @@ const array = [
       jsonSelect({ name: 'veiculoBlindado', label: 'blindado?', selects: ['sim', 'não'], page: 3 }),
       jsonSelect({ name: 'veiculoKitGas', label: 'tem kit gás?', selects: ['sim', 'não'], page: 3 }),
       jsonSelect({ name: 'principalCondutor', label: 'principal condutor', selects: ['eu mesmo', 'outra pessoa'], infoText: { title: 'principal condutor', content: 'fsdfsdfsdf fsdfsdfsdff fsdfdsf fsd fds f dsf sd fsdf' }, page: 4 }),
-      jsonNome({ name: 'nomePrincipalCondutor', label: 'nome completo', view: { name: 'principalCondutor', value: 'outra pessoa' }, page: 4 }),
+      jsonNome({ name: 'nomePrincipalCondutor', label: 'nome', view: { name: 'principalCondutor', value: 'outra pessoa' }, page: 4 }),
       jsonRegistro({ name: 'CPFSegurado', label: 'cpf', mask: 'cpf', view: { name: 'principalCondutor', value: 'outra pessoa' }, page: 4 }),
       jsonSelect({ name: 'relacaoSegurado', label: 'relação com o segurado', selects: ['cônjugue', 'pai', 'mãe', 'filho', 'irmão', 'outros'], view: { name: 'principalCondutor', value: 'outra pessoa' }, page: 4 }),
       jsonSelect({ name: 'profissaoCondutor', label: 'Profissão', selects: ['militar', 'professor', 'servidor público', 'médico/dentista', 'aposentado', 'empresário', 'autônomo', 'outros'], view: { name: 'principalCondutor', value: 'outra pessoa' }, page: 4 }),
@@ -197,66 +209,79 @@ const array = [
       jsonSelect({ name: 'garagemTrabalho', label: 'garagem no trabalho?', selects: ['sim', 'não', 'não trabalha', 'não utiliza para ir ao trabalho'], page: 5 }),
       jsonSelect({ name: 'garagemEscola', label: 'garagem na escola?', selects: ['sim', 'não', 'não estuda', 'não utiliza para ir a escola'], page: 5 }),
     ],
-    info: [
-      <>
-        <Text style={{
-          fontWeight: 'bold',
-          fontSize: 18,
-          marginBottom: 5
-        }}>DEFINIÇÕES:</Text>
-        <Text style={{
-          fontSize: 17,
-          fontWeight: '500',
-          color: '#333333'
-        }}>
-          <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>PRINCIPAL CONDUTOR: </Text>
-          {`\n`}
-          A definição do principal condutor do veículo segurado é fundamental para que o valor a ser pago pelo consumidor possa ser claramente calculado.
-          {`\n`}{`\n`}
-          O principal condutor é a pessoa que utiliza o veículo a maior parte do tempo.
-          {`\n`}
-          <Text style={{ color: 'red', fontSize: 10 }}>( Mínimo 6 dias da semana )</Text>
-          {`\n`}{`\n`}
-          Outras pessoas maiores de 25 anos podem, em situações eventuais, também utilizá-lo.
-          {`\n`}
-          <Text style={{ color: 'red', fontSize: 10 }}>( No máximo 1 dia por semana )</Text>
-          {`\n`}{`\n`}
-          Para condutores menores que 25 anos, que dirigem no máximo 1 dia por semana, necessitam de uma cobertura especial.
-          {`\n`}
-          <Text style={{ color: 'red', fontSize: 10 }}>( Algumas seguradoras permitem até 02 dias por semana )</Text>
-          {`\n`}{`\n`}
-          Se várias pessoas utilizarem o veículo segurado mais de um dia na semana, o segurado deverá contrarar como principal condutor a pessoa mais jovem.
-        </Text>
-        <Text>{`\n`}</Text>
-        <Text style={{
-          fontSize: 17,
-          fontWeight: '500',
-          color: '#333333'
-        }}>
-          <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>CEP DE PERNOITE: </Text>
-          {`\n`}
-          O cep de pernoite é o cep do local onde o veículo permanece durante a noite. Se o veículo pernoitar em vários locais, definir o cep onde o veículo passa a maior parte do tempo.
-        </Text>
-        <Text>{`\n`}</Text>
-        <Text style={{
-          fontWeight: 'bold',
-          fontSize: 18,
-          marginBottom: 5
-        }}>ATENÇÃO:</Text>
-        <Text style={{
-          fontSize: 17,
-          fontWeight: '500',
-          color: '#333333'
-        }}>
-          É obrigatório o preenchimento correto das informações pessoais, cuja veracidade é de inteira responsabilidade do proponente.
-          {`\n`}{`\n`}
-          As informações inverídicas ou desatualizadas poderão acarretar a perda de direito do segurado/proponente ou cancelamento do seguro sem prévia comunicação ao segurado.
-          {`\n`}{`\n`}
-          Se houver divergência nas informações de risco o segurado deverá informar tal situação imediatamente a corretora/seguradora.
-          {`\n`}{`\n`}
-          É obrigação do segurado comunicar e solicitar a alteração do risco, a sua corretora ou seguradora, se no decorrer da vigência da apólice houver mudança do principal condutor, troca de veículo, utilização do veículo ou cep de pernoite.
-        </Text>
-      </>
+    info: true,
+    infos: [
+      {
+        title: 'PRINCIPAL CONDUTOR',
+        content: (
+          <View>
+            <Text style={{
+              fontSize: 17,
+              fontWeight: '400',
+              color: '#333333'
+            }}>
+              <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>PRINCIPAL CONDUTOR:</Text>
+              {`\n`}
+              A definição do principal condutor do veículo segurado é fundamental para que o valor a ser pago pelo consumidor possa ser claramente calculado.
+              {`\n`}{`\n`}
+              O principal condutor é a pessoa que utiliza o veículo a maior parte do tempo.
+              {`\n`}
+              <Text style={{ color: 'red', fontSize: 10 }}>( Mínimo 6 dias da semana )</Text>
+              {`\n`}{`\n`}
+              Outras pessoas maiores de 25 anos podem, em situações eventuais, também utilizá-lo.
+              {`\n`}
+              <Text style={{ color: 'red', fontSize: 10 }}>( No máximo 1 dia por semana )</Text>
+              {`\n`}{`\n`}
+              Para condutores menores que 25 anos, que dirigem no máximo 1 dia por semana, necessitam de uma cobertura especial.
+              {`\n`}
+              <Text style={{ color: 'red', fontSize: 10 }}>( Algumas seguradoras permitem até 02 dias por semana )</Text>
+              {`\n`}{`\n`}
+              Se várias pessoas utilizarem o veículo segurado mais de um dia na semana, o segurado deverá contrarar como principal condutor a pessoa mais jovem.
+            </Text>
+          </View>
+        )
+      },
+      {
+        title: 'CEP DE PERNOITE',
+        content: (
+          <View>
+          <Text style={{
+            fontSize: 17,
+            fontWeight: '400',
+            color: '#333333'
+          }}>
+            <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>CEP DE PERNOITE:</Text>
+            {`\n`}
+            O cep de pernoite é o cep do local onde o veículo permanece durante a noite. Se o veículo pernoitar em vários locais, definir o cep onde o veículo passa a maior parte do tempo.
+          </Text>
+        </View>
+        )
+      },
+      {
+        title: 'ATENÇÃO',
+        content: (
+          <View>
+          <Text style={{
+            fontWeight: 'bold',
+            fontSize: 18,
+            marginBottom: 5
+          }}>ATENÇÃO:</Text>
+          <Text style={{
+            fontSize: 17,
+            fontWeight: '400',
+            color: '#333333'
+          }}>
+            É obrigatório o preenchimento correto das informações pessoais, cuja veracidade é de inteira responsabilidade do proponente.
+            {`\n`}{`\n`}
+            As informações inverídicas ou desatualizadas poderão acarretar a perda de direito do segurado/proponente ou cancelamento do seguro sem prévia comunicação ao segurado.
+            {`\n`}{`\n`}
+            Se houver divergência nas informações de risco o segurado deverá informar tal situação imediatamente a corretora/seguradora.
+            {`\n`}{`\n`}
+            É obrigação do segurado comunicar e solicitar a alteração do risco, a sua corretora ou seguradora, se no decorrer da vigência da apólice houver mudança do principal condutor, troca de veículo, utilização do veículo ou cep de pernoite.
+          </Text>
+        </View>
+        )
+      }
     ]
   },
   {
@@ -264,9 +289,10 @@ const array = [
     icon: 'heartbeat',
     tipo: 'seguro-saude',
     inputs: [
-      jsonNome({ name: 'nomeSegurado', label: 'nome completo' }),
+      jsonNome({ name: 'nomeSegurado', label: 'nome' }),
       jsonRegistro({ name: 'registroSegurado', label: 'cnpj', mask: 'cnpj' }),
       jsonCelular({ name: 'celularSegurado', label: 'celular' }),
+      jsonEmail({ name: 'emailSegurado', label: 'E-mail' }),
       jsonSelect({ name: 'qtdBeneficiario', label: 'quantidades de beneficiários', selects: ['2 vidas', '3 vidas', '4 vidas', '5 vidas', '6 vidas', '7 vidas', '8 vidas', '9 vidas', '10 vidas'] }),
       jsonData({ name: 'nascimentoBeneficiario1', label: 'nascimento beneficiário 1', view: { name: 'qtdBeneficiario', value: 1 } }),
       jsonData({ name: 'nascimentoBeneficiario2', label: 'nascimento beneficiário 2', view: { name: 'qtdBeneficiario', value: 2 } }),
@@ -285,12 +311,14 @@ const array = [
     icon: 'hand-holding-heart',
     tipo: 'plano-de-saude',
     inputs: [
-      jsonNome({ name: 'nomeSegurado', label: 'nome completo' }),
+      jsonNome({ name: 'nomeSegurado', label: 'nome' }),
       jsonCelular({ name: 'celularSegurado', label: 'celular' }),
+      jsonEmail({ name: 'emailSegurado', label: 'E-mail' }),
       jsonEstado({ name: 'estadoSegurado', label: 'estado' }),
       jsonCidade({ name: 'cidadeSegurado', label: 'cidade' }),
       jsonSelect({ name: 'tipoPlanoSaude', label: 'plano', selects: ['individual', 'familiar', 'empresarial'] }),
-      jsonSelect({ name: 'qtdBeneficiario', label: 'quantidades de beneficiários', selects: ['2 vidas', '3 vidas', '4 vidas', '5 vidas', '6 vidas', '7 vidas', '8 vidas', '9 vidas', '10 vidas'] }),
+      jsonSelect({ name: 'qtdBeneficiario', label: 'quantidades de beneficiários', view: { name: 'tipoPlanoSaude', value: 'familiar,empresarial' }, selects: ['2 vidas', '3 vidas', '4 vidas', '5 vidas', '6 vidas', '7 vidas', '8 vidas', '9 vidas', '10 vidas'] }),
+      jsonData({ name: 'nascimentoBeneficiario1', label: 'nascimento beneficiário 1', view: { name: 'tipoPlanoSaude', value: 'individual' } }),
       jsonData({ name: 'nascimentoBeneficiario1', label: 'nascimento beneficiário 1', view: { name: 'qtdBeneficiario', value: 1 } }),
       jsonData({ name: 'nascimentoBeneficiario2', label: 'nascimento beneficiário 2', view: { name: 'qtdBeneficiario', value: 2 } }),
       jsonData({ name: 'nascimentoBeneficiario3', label: 'nascimento beneficiário 3', view: { name: 'qtdBeneficiario', value: 3 } }),
@@ -303,30 +331,26 @@ const array = [
       jsonData({ name: 'nascimentoBeneficiario10', label: 'nascimento beneficiário 10', view: { name: 'qtdBeneficiario', value: 10 } }),
     ],
     info: [
-      <>
-        <Text style={{
-          fontWeight: 'bold',
-          fontSize: 18
-        }}>Informações:</Text>
+      <View>
         <Text style={{
           fontSize: 17,
-          fontWeight: '500',
+          fontWeight: '400',
           color: '#333333'
         }}>
           Planos médicos e odontológicos que sua fámilia ou sua empresa necessita.
-          {`\n`}
-          Saúde é o nosso bem mais valioso, jamais coloque algo acima dela, proteja-se.
-          {`\n`}
+          {`\n`}{`\n`}
+          Saúde é o nosso bem mais valioso, proteja-se.
+          {`\n`}{`\n`}
           Ótimas soluções em plano de saúde para sua proteção com o melhor da medicina.
         </Text>
         <Text>{`\n`}</Text>
         <Text style={{
           fontWeight: 'bold',
           fontSize: 18
-        }}>COBERTUAS: <Text style={{ color: 'red', fontSize: 10, fontWeight: '500' }}>( de acôrdo com seu plano )</Text></Text>
+        }}>COBERTURAS: <Text style={{ color: 'red', fontSize: 10, fontWeight: '500' }}>( de acôrdo com seu plano )</Text></Text>
         <Text style={{
           fontSize: 17,
-          fontWeight: '500',
+          fontWeight: '400',
           color: '#333333'
         }}>
           - Internações
@@ -349,7 +373,7 @@ const array = [
           {`\n`}
           - Reembolso
         </Text>
-      </>
+      </View>
     ]
   },
   {
@@ -357,31 +381,28 @@ const array = [
     icon: 'procedures',
     tipo: 'seguro-de-vida',
     inputs: [
-      jsonNome({ name: 'nomeSegurado', label: 'nome completo' }),
+      jsonNome({ name: 'nomeSegurado', label: 'nome' }),
       jsonRegistro({ name: 'registroSegurado', label: 'cpf', mask: 'cpf' }),
       jsonCelular({ name: 'celularSegurado', label: 'celular' }),
+      jsonEmail({ name: 'emailSegurado', label: 'E-mail' }),
       jsonData({ name: 'nascimentoSegurado', label: 'nascimento' }),
       jsonSelect({ name: 'profissaoSegurado', label: 'Profissão', selects: ['militar', 'professor', 'servidor público', 'médico/dentista', 'aposentado', 'empresário', 'autônomo', 'outros'] }),
       jsonMoney({ name: 'rendaMensal', label: 'renda mensal' }),
-      jsonSelect({ name: 'praticaraEsporte', label: 'praticará esporte radical?', selects: ['sim', 'não'] }),
-      jsonTitle({ view: { name: 'praticaraEsporte', value: 'sim' }, name: 'praticaraEsporteText', label: 'se sim, Qual?', placeholder: 'Esporte praticado', type: 'text' }),
-      jsonSelect({ view: { name: 'praticaraEsporte', value: 'sim' }, name: 'praticaraEsporteFrenquencia', label: 'com qual frequência?', selects: ['até 3x/ano', 'cima 3x/ano'] }),
+      jsonSelect({ name: 'praticaEsporte', label: 'pratica esporte radical?', selects: ['sim', 'não'] }),
+      jsonTitle({ view: { name: 'praticaEsporte', value: 'sim' }, name: 'praticaEsporteText', label: 'se sim, Qual?', placeholder: 'Esporte praticado', type: 'text' }),
+      jsonSelect({ view: { name: 'praticaEsporte', value: 'sim' }, name: 'praticaEsporteFrenquencia', label: 'com qual frequência?', selects: ['até 3x/ano', 'acima 3x/ano'] }),
     ],
     info: [
-      <>
-        <Text style={{
-          fontWeight: 'bold',
-          fontSize: 18
-        }}>Informações:</Text>
+      <View>
         <Text style={{
           fontSize: 17,
-          fontWeight: '500',
+          fontWeight: '400',
           color: '#333333'
         }}>
           Seguro de vida é a segurança que você e sua família estarão protegidos em caso de um imprevisto.
-          {`\n`}
+          {`\n`}{`\n`}
           Os índices de violência só aumentam, acidentes acontecem, imagine deixar as pessoas que você tanto ama desprotegidas.
-          {`\n`}
+          {`\n`}{`\n`}
           O seguro de vida, também traz benefícios para você, confira abaixo as coberturas de um plano completo.
         </Text>
         <Text>{`\n`}</Text>
@@ -391,7 +412,7 @@ const array = [
         }}>Coberturas: <Text style={{ color: 'red', fontSize: 10, fontWeight: '500'}}>( de acôrdo com seu plano )</Text></Text>
         <Text style={{
           fontSize: 17,
-          fontWeight: '500',
+          fontWeight: '400',
           color: '#333333'
         }}>
           - Morte
@@ -404,7 +425,7 @@ const array = [
           {`\n`}
           - Doenças graves ( 14 tipos )
           {`\n`}
-          <Text style={{ color: 'red', fontSize: 10 }}>
+          <Text style={{ color: 'red', fontSize: 15 }}>
             - Diagnóstico de câncer
             {`\n`}
             - Acidente vascular cerebral
@@ -440,7 +461,7 @@ const array = [
           {`\n`}
           - Descontos em medicamentos.
         </Text>
-      </>
+      </View>
     ]
   },
   {
@@ -448,40 +469,37 @@ const array = [
     icon: 'home',
     tipo: 'seguro-residencial',
     inputs: [
-      jsonNome({ name: 'nomeSegurado', label: 'nome completo' }),
+      jsonNome({ name: 'nomeSegurado', label: 'nome' }),
       jsonRegistro({ name: 'registroSegurado', label: 'cpf', mask: 'cpf' }),
       jsonCelular({ name: 'celularSegurado', label: 'celular' }),
+      jsonEmail({ name: 'emailSegurado', label: 'E-mail' }),
       jsonCEP({ name: 'cepImovel', label: 'cep' }),
       jsonSelect({ name: 'tipoImovel', label: 'tipo da residência', selects: ['casa', 'casa em condomínio', 'apartamento'] }),
       jsonMoney({ name: 'valorImovel', label: 'valor do imóvel', view: { name: 'tipoImovel', value: 'casa' } }),
       jsonMoney({ name: 'valorMoveis', label: 'valor dos móveis e utensílios', view: { name: 'tipoImovel', value: 'casa' } }),
       jsonMoney({ name: 'valorMoveis', label: 'valor dos móveis e utensílios', view: { name: 'tipoImovel', value: 'apartamento' } }),
-      jsonSelect({ name: 'usoImovel', label: 'uso do imóvel', selects: ['moradia principal', 'temporada', 'moradia e comércio'] }),
+      jsonSelect({ name: 'usoImovel', label: 'uso do imóvel', selects: ['moradia principal', 'temporada', 'moradia e comércio', 'desocupada'] }),
       jsonSelect({ name: 'propriedadeImovel', label: 'propriedade do imóvel', selects: ['próprio', 'alugado'] }),
     ],
     info: [
-      <>
-        <Text style={{
-          fontWeight: 'bold',
-          fontSize: 18
-        }}>INFORMAÇÕES:</Text>
+      <View>
         <Text style={{
           fontSize: 17,
-          fontWeight: '500',
+          fontWeight: '400',
           color: '#333333'
         }}>
           A residência é um dos bens mais valiosos que temos.
-          {`\n`}
+          {`\n`}{`\n`}
           O seguro residência existe para cobrir prejuízos que poderiam facilmente detruir nossos finanças e podem custar até 4x menos que o seguro do seu carro.
         </Text>
         <Text>{`\n`}</Text>
         <Text style={{
           fontWeight: 'bold',
           fontSize: 18
-        }}>COBERTUAS: <Text style={{ color: 'red', fontSize: 10, fontWeight: '500' }}>( de acôrdo com seu plano )</Text></Text>
+        }}>COBERTURAS: <Text style={{ color: 'red', fontSize: 10, fontWeight: '500' }}>( de acôrdo com seu plano )</Text></Text>
         <Text style={{
           fontSize: 17,
-          fontWeight: '500',
+          fontWeight: '400',
           color: '#333333'
         }}>
           - Incêndio
@@ -525,12 +543,12 @@ const array = [
         }}>ASSISTÊNCIA: <Text style={{ color: 'red', fontSize: 10, fontWeight: '500' }}>( de acordo com seu plano )</Text></Text>
         <Text style={{
           fontSize: 17,
-          fontWeight: '500',
+          fontWeight: '400',
           color: '#333333'
         }}>
           - Chaveiro
           {`\n`}
-          <Text style={{ color: 'red', fontSize: 10 }}>
+          <Text style={{ color: 'red', fontSize: 15 }}>
             - Abertura de porta
             {`\n`}
             - Troca de fechadura simples
@@ -548,7 +566,7 @@ const array = [
           {`\n`}
           - Conserto de eletrodomésticos
           {`\n`}
-          <Text style={{ color: 'red', fontSize: 10 }}>
+          <Text style={{ color: 'red', fontSize: 15 }}>
             - Linha branca
             {`\n`}
             - Linha marrom
@@ -558,7 +576,7 @@ const array = [
           {`\n`}
           - Hidráulica
           {`\n`}
-          <Text style={{ color: 'red', fontSize: 10 }}>
+          <Text style={{ color: 'red', fontSize: 15 }}>
             - Caça vazamentos
             {`\n`}
             - Desemtupimento
@@ -584,7 +602,7 @@ const array = [
           {`\n`}
           - Vigilância e segurança
         </Text>
-      </>
+      </View>
     ]
   },
   {
@@ -592,36 +610,33 @@ const array = [
     icon: 'building',
     tipo: 'seguro-empresarial',
     inputs: [
-      jsonNome({ name: 'nomeSegurado', label: 'nome completo' }),
+      jsonNome({ name: 'nomeSegurado', label: 'nome' }),
       jsonRegistro({ name: 'registroSegurado', label: 'cnpj', mask: 'cnpj' }),
       jsonCelular({ name: 'celularSegurado', label: 'celular' }),
+      jsonEmail({ name: 'emailSegurado', label: 'E-mail' }),
       jsonCEP({ name: 'cepImovel', label: 'cep' }),
       jsonSelect({ name: 'tipoSeguro', label: 'tipo do seguro', selects: ['novo', 'renovação'] }),
       jsonData({ name: 'finalVigenciaSeguro', label: 'fim da vigência', view: { name: 'tipoSeguro', value: 'renovação' } }),
     ],
     info: [
-      <>
-        <Text style={{
-          fontWeight: 'bold',
-          fontSize: 18
-        }}>INFORMAÇÕES:</Text>
+      <View>
         <Text style={{
           fontSize: 17,
-          fontWeight: '500',
+          fontWeight: '400',
           color: '#333333'
         }}>
           O seguro empresarial foi feito para você empresário , que possui uma pequena, média ou grande empresa, seja comércio, serviço ou indústria.
-          {`\n`}
+          {`\n`}{`\n`}
           Sua empresa não precisa correr riscos que podem levar ao encerramento de suas atividades e das suas receitas.
         </Text>
         <Text>{`\n`}</Text>
         <Text style={{
           fontWeight: 'bold',
           fontSize: 18
-        }}>COBERTUAS: <Text style={{ color: 'red', fontSize: 10, fontWeight: '500' }}>( de acôrdo com seu plano )</Text></Text>
+        }}>COBERTURAS: <Text style={{ color: 'red', fontSize: 10, fontWeight: '500' }}>( de acôrdo com seu plano )</Text></Text>
         <Text style={{
           fontSize: 17,
-          fontWeight: '500',
+          fontWeight: '400',
           color: '#333333'
         }}>
           - Incêndio
@@ -649,7 +664,7 @@ const array = [
         }}>ASSISTÊNCIA: <Text style={{ color: 'red', fontSize: 10, fontWeight: '500' }}>( de acordo com seu plano )</Text></Text>
         <Text style={{
           fontSize: 17,
-          fontWeight: '500',
+          fontWeight: '400',
           color: '#333333'
         }}>
           - Substituição de telhas
@@ -694,7 +709,7 @@ const array = [
           {`\n`}
           - Checkup empresarial
           {`\n`}
-          <Text style={{ color: 'red', fontSize: 10 }}>
+          <Text style={{ color: 'red', fontSize: 15 }}>
             - Instalação de luzes de mergência
             {`\n`}
             - Instalação de antiderrapantes
@@ -704,7 +719,7 @@ const array = [
             - Verificação de extintores
           </Text>
         </Text>
-      </>
+      </View>
     ]
   },
   {
@@ -712,22 +727,23 @@ const array = [
     icon: 'city',
     tipo: 'seguro-condominio',
     inputs: [
-      jsonNome({ name: 'nomeSegurado', label: 'nome completo' }),
+      jsonNome({ name: 'nomeSegurado', label: 'nome' }),
       jsonRegistro({ name: 'registroSegurado', label: 'cnpj', mask: 'cnpj' }),
       jsonCelular({ name: 'celularSegurado', label: 'celular' }),
+      jsonEmail({ name: 'emailSegurado', label: 'E-mail' }),
       jsonCEP({ name: 'cepImovel', label: 'cep' }),
       jsonSelect({ name: 'tipoSeguro', label: 'tipo do seguro', selects: ['novo', 'renovação'] }),
       jsonData({ name: 'finalVigenciaSeguro', label: 'fim da vigência', view: { name: 'tipoSeguro', value: 'renovação' } }),
     ],
     info: [
-      <>
+      <View>
         <Text style={{
           fontWeight: 'bold',
           fontSize: 18
         }}>SEGURO OBRIGATÓRIO:</Text>
         <Text style={{
           fontSize: 17,
-          fontWeight: '500',
+          fontWeight: '400',
           color: '#333333'
         }}>
           - Lei 4.591/1964
@@ -738,26 +754,22 @@ const array = [
         </Text>
         <Text>{`\n`}</Text>
         <Text style={{
-          fontWeight: 'bold',
-          fontSize: 18
-        }}>INFORMAÇÕES:</Text>
-        <Text style={{
           fontSize: 17,
-          fontWeight: '500',
+          fontWeight: '400',
           color: '#333333'
         }}>
           Vale salientar que o seguro condomínio protege as areas comuns do condomínio e não as residências.
-          {`\n`}
+          {`\n`}{`\n`}
           O seguro Residencial protege sua residência e o que há nela, não é obrigatório e deve ser contratado pelo proprietário ou inquilino do imóvel.
         </Text>
         <Text>{`\n`}</Text>
         <Text style={{
           fontWeight: 'bold',
           fontSize: 18
-        }}>COBERTUAS: <Text style={{ color: 'red', fontSize: 10, fontWeight: '500' }}>( de acôrdo com seu plano )</Text></Text>
+        }}>COBERTURAS: <Text style={{ color: 'red', fontSize: 10, fontWeight: '500' }}>( de acôrdo com seu plano )</Text></Text>
         <Text style={{
           fontSize: 17,
-          fontWeight: '500',
+          fontWeight: '400',
           color: '#333333'
         }}>
           - Incêndio
@@ -770,10 +782,10 @@ const array = [
         <Text style={{
           fontWeight: 'bold',
           fontSize: 18
-        }}>COBERTUAS: <Text style={{ color: 'red', fontSize: 10, fontWeight: '500' }}>( adicionais )</Text></Text>
+        }}>COBERTURAS: <Text style={{ color: 'red', fontSize: 10, fontWeight: '500' }}>( adicionais )</Text></Text>
         <Text style={{
           fontSize: 17,
-          fontWeight: '500',
+          fontWeight: '400',
           color: '#333333'
         }}>
           - Danos elétricos
@@ -796,7 +808,7 @@ const array = [
           {`\n`}
           - Reembolso
         </Text>
-      </>
+      </View>
     ]
   },
   {
@@ -804,9 +816,10 @@ const array = [
     icon: 'file-invoice-dollar',
     tipo: 'previdencia-social',
     inputs: [
-      jsonNome({ name: 'nomeSegurado', label: 'nome completo' }),
+      jsonNome({ name: 'nomeSegurado', label: 'nome' }),
       jsonRegistro({ name: 'registroSegurado', label: 'cpf', mask: 'cpf' }),
       jsonCelular({ name: 'celularSegurado', label: 'celular' }),
+      jsonEmail({ name: 'emailSegurado', label: 'E-mail' }),
     ]
   },
   {
@@ -814,9 +827,10 @@ const array = [
     icon: 'plane-departure',
     tipo: 'seguro-viagem',
     inputs: [
-      jsonNome({ name: 'nomeSegurado', label: 'nome completo' }),
+      jsonNome({ name: 'nomeSegurado', label: 'nome' }),
       jsonRegistro({ name: 'registroSegurado', label: 'cpf', mask: 'cpf' }),
       jsonCelular({ name: 'celularSegurado', label: 'celular' }),
+      jsonEmail({ name: 'emailSegurado', label: 'E-mail' }),
       jsonSelect({ name: 'tipoViagem', label: 'tipo da viagem', selects: ['internacional', 'nacional'] }),
       jsonSelect({ name: 'meioTransporte', label: 'meio de transporte', selects: ['aereo', 'maritimo', 'aereo + maritimo'] }),
       jsonSelect({ name: 'motivoViagem', label: 'motivo da viagem', selects: ['lazer', 'estudo', 'negocios'] }),
@@ -824,7 +838,7 @@ const array = [
       jsonTitle({ name: 'destinoViagem', label: 'destino', placeholder: 'Destino da viagem', type: 'text' }),
       jsonData({ name: 'dataIdaViagem', label: 'data da ida' }),
       jsonData({ name: 'dataRetornoViagem', label: 'data da volta' }),
-      jsonSelect({ name: 'praticaraEsporte', label: 'praticará esporte radical?', selects: ['sim', 'não'] }),
+      jsonSelect({ name: 'praticaEsporte', label: 'praticará esporte radical?', selects: ['sim', 'não'] }),
       jsonSelect({ name: 'utilizaraMotocicleta', label: 'utilizará motocicleta durante a viagem?', selects: ['sim', 'não'] }),
       jsonSelect({ name: 'qtdBeneficiario', label: 'quantidades de passageiros', selects: ['1 passageiro', '2 passageiros', '3 passageiros', '4 passageiros', '5 passageiros', '6 passageiros', '7 passageiros', '8 passageiros', '9 passageiros', '10 passageiros'] }),
       jsonData({ name: 'nascimentoBeneficiario1', label: 'nascimento passageiros 1', view: { name: 'qtdBeneficiario', value: 1 } }),

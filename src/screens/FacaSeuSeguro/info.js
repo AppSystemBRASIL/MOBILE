@@ -8,7 +8,7 @@ import Formulario from './Formulario';
 
 import { FontAwesome5 } from '@expo/vector-icons';
 
-export default function InfoSeguro({ type, navigation, topPage }) {
+export default function InfoSeguro({ type, navigation, topPage, setView, page, setPage }) {
   const [isOpen, setIsOpen] = useState(false);
   const [typeFunction, setTypeFunction] = useState('loading');
 
@@ -84,7 +84,7 @@ export default function InfoSeguro({ type, navigation, topPage }) {
           )}
         </AlertDialog.Content>
       </AlertDialog>
-      <Formulario type={type} success={success} error={error} loading={loading} topPage={topPage} />
+      <Formulario page={page} setPage={setPage} setView={setView} type={type} success={success} error={error} loading={loading} topPage={topPage} />
     </View>
   )
 }

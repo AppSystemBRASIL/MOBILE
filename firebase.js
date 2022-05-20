@@ -1,13 +1,15 @@
+import Constant from 'expo-constants';
+
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAlGCcQx9S7SmvxAArZ3tvnH1ee8FwvmUY",
-  authDomain: "appsystembrasil-seguro.firebaseapp.com",
-  projectId: "appsystembrasil-seguro",
-  storageBucket: "appsystembrasil-seguro.appspot.com",
-  messagingSenderId: "402899438373",
-  appId: "1:402899438373:web:1e9b8c64f444392b8228cc"
+  apiKey: Constant.manifest.web.firebase.apiKey,
+  authDomain: Constant.manifest.web.firebase.authDomain,
+  projectId: Constant.manifest.web.firebase.projectId,
+  storageBucket: Constant.manifest.web.firebase.storageBucket,
+  messagingSenderId: Constant.manifest.web.firebase.messagingSenderId,
+  appId: Constant.manifest.web.firebase.appId
 };
 
 let app;
