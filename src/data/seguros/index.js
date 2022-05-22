@@ -720,7 +720,7 @@ const array = [
           {`\n`}
           - Abertura de porta
           {`\n`}
-          - Conserto de ar condicionado
+          - Conserto de ar condicionado 
           {`\n`}
           - Conserto de eletrodomésticos <Text style={{ color: 'red', fontSize: 10 }}>( linha branca )</Text>
           {`\n`}
