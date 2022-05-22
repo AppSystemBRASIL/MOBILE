@@ -73,27 +73,6 @@ const MeusBeneficios = ({ navigation }) => {
               marginBottom: 10,
               marginTop: 20,
             }}>
-              A definição do PRINCIPAL CONDUTOR DO VEÍCULO SEGURADO é fundamental para que o valor a ser pago pelo consumidor possa ser claramente calculado.
-              {`\n\n`}
-              O Principal condutor é a pessoa que utiliza o veículo a maior parte do tempo (mínimo 6 dias da semana).
-              {`\n\n`}
-              Outras pessoas maiores de 25 anos podem, em situações eventuais, também utilizá-lo por no máximo 1 dia por semana.
-              {`\n\n`}Para condutores menores que 25 anos, que dirigem no máximo 1 dia por semana, necessitam de uma cobertura especial.
-              {`\n`}{`\n`}
-              OBS: ALGUMAS SEGURADORAS PERMITEM 02 DIAS POR semana
-              {`\n`}{`\n`}
-              Se várias pessoas utilizarem o veículo mais de um dia por semana, o segurado deverá contratrar como principal condutor, a pessoa mais jovem.
-              {`\n`}{`\n`}
-              O CEP de pernoite é o CEP do local onde o veículo permanece durante a noite. Se o veículo pernoitar em vários locais, definir o CEP onde o veículo passa a maior parte do tempo.
-              {`\n`}{`\n`}
-              ATENÇÃO: É obrigatório o preenchimento correto das informações pessoais cuja veracidade é de inteira responsabilidade do segurado.
-              {`\n\n`}
-              As informações inverídicas ou desatualizadas poderão acarretar a perda de direito do segurado ou cancelamento do seguro sem prévia comunicação ao segurado.
-              {`\n`}{`\n`}
-              Leia a proposta do seguro, havendo divergência nas informações do risco o segurado deverá informar tal situação imediatamente ao seu corretor/seguradora.
-              {`\n`}{`\n`}
-              Quando no decorrer da vigência da apólice ocorrer qualquer alteração das informações de risco (alteração do condutor, utilização do veículo, mudança de CEP, entre outros), é obrigatório ao segurado comunicar e solicitar a alteração ao corretor/seguradora, sob a pena de perda de seus direitos.
-              {`\n`}{`\n`}
               A aceitação da proposta de seguro está sujeita a análise do risco.
               {`\n`}{`\n`}
               A proposta poderá ser recusada pela seguradora em até 15 dias contados a partir da data do seu recebimento.

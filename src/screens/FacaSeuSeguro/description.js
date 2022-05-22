@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { Button } from 'native-base';
-import { View, Text, BackHandler } from 'react-native';
+import { View, Text } from 'react-native';
 
 import useAuth from '../../hooks/useAuth';
 

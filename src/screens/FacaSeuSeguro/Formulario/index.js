@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { View, Text, Platform, TouchableOpacity, KeyboardAvoidingView, BackHandler } from 'react-native';
+import { View, Text, Platform, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 
 import { Input, WarningOutlineIcon, FormControl, Select, CheckIcon } from 'native-base';
 

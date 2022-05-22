@@ -245,41 +245,62 @@ const array = [
         title: 'CEP DE PERNOITE',
         content: (
           <View>
-          <Text style={{
-            fontSize: 17,
-            fontWeight: '400',
-            color: '#333333'
-          }}>
-            <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>CEP DE PERNOITE:</Text>
-            {`\n`}
-            O cep de pernoite é o cep do local onde o veículo permanece durante a noite. Se o veículo pernoitar em vários locais, definir o cep onde o veículo passa a maior parte do tempo.
-          </Text>
-        </View>
+            <Text style={{
+              fontSize: 17,
+              fontWeight: '400',
+              color: '#333333'
+            }}>
+              <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>CEP DE PERNOITE:</Text>
+              {`\n`}
+              O cep de pernoite é o cep do local onde o veículo permanece durante a noite. Se o veículo pernoitar em vários locais, definir o cep onde o veículo passa a maior parte do tempo.
+            </Text>
+          </View>
         )
       },
       {
-        title: 'ATENÇÃO',
+        title: 'COBERTURA PARA CONDUTORES ENTRE 18 E 25 ANOS',
         content: (
           <View>
-          <Text style={{
-            fontWeight: 'bold',
-            fontSize: 18,
-            marginBottom: 5
-          }}>ATENÇÃO:</Text>
-          <Text style={{
-            fontSize: 17,
-            fontWeight: '400',
-            color: '#333333'
-          }}>
-            É obrigatório o preenchimento correto das informações pessoais, cuja veracidade é de inteira responsabilidade do proponente.
-            {`\n`}{`\n`}
-            As informações inverídicas ou desatualizadas poderão acarretar a perda de direito do segurado/proponente ou cancelamento do seguro sem prévia comunicação ao segurado.
-            {`\n`}{`\n`}
-            Se houver divergência nas informações de risco o segurado deverá informar tal situação imediatamente a corretora/seguradora.
-            {`\n`}{`\n`}
-            É obrigação do segurado comunicar e solicitar a alteração do risco, a sua corretora ou seguradora, se no decorrer da vigência da apólice houver mudança do principal condutor, troca de veículo, utilização do veículo ou cep de pernoite.
-          </Text>
-        </View>
+            <Text style={{
+              fontSize: 17,
+              fontWeight: '400',
+              color: '#333333'
+            }}>
+              Deseja contratar cobertura de seguro para condutores na faixa etária de 18 a 25 anos?
+              {`\n`}
+              Se responder - SIM
+              {`\n`}{`\n`}
+              Esta pergunta define apenas uma cobertura especial, esporádica para no máximo 1 dia por semana ( algumas seguradoras permitem 2 dias na semana ) para condutores nesta faixa etária.
+              {`\n`}{`\n`}
+              Se várias pessoas utilizarem o veículo mais de um dia na semana, o segurado deverá informar como principal condutor a pessoa mais jovem.
+            </Text>
+          </View>
+        )
+      },
+      {
+        title: 'OUTROS',
+        content: (
+          <View>
+            <Text style={{
+              fontWeight: 'bold',
+              fontSize: 20
+            }}>
+              ATENÇÃO:
+            </Text>
+            <Text style={{
+              fontSize: 17,
+              fontWeight: '400',
+              color: '#333333'
+            }}>
+              É obrigatório o preenchimento correto das informações pessoais, cuja veracidade é de inteira responsabilidade do proponente.
+              {`\n`}{`\n`}
+              As informações inverídicas ou desatualizadas poderão acarretar a perda de direito do segurado/proponente ou cancelamento do seguro sem prévia comunicação ao segurado.
+              {`\n`}{`\n`}
+              Se houver divergência nas informações de risco o segurado deverá informar tal situação imediatamente a corretora/seguradora.
+              {`\n`}{`\n`}
+              É obrigação do segurado comunicar e solicitar a alteração do risco, a sua corretora ou seguradora, se no decorrer da vigência da apólice houver mudança do principal condutor, troca de veículo, utilização do veículo ou cep de pernoite.
+            </Text>
+          </View>
         )
       }
     ]
@@ -304,7 +325,8 @@ const array = [
       jsonData({ name: 'nascimentoBeneficiario8', label: 'nascimento beneficiário 8', view: { name: 'qtdBeneficiario', value: 8 } }),
       jsonData({ name: 'nascimentoBeneficiario9', label: 'nascimento beneficiário 9', view: { name: 'qtdBeneficiario', value: 9 } }),
       jsonData({ name: 'nascimentoBeneficiario10', label: 'nascimento beneficiário 10', view: { name: 'qtdBeneficiario', value: 10 } }),
-    ]
+    ],
+    info: []
   },
   {
     title: 'PLANO DE SAÚDE',
@@ -616,6 +638,7 @@ const array = [
       jsonEmail({ name: 'emailSegurado', label: 'E-mail' }),
       jsonCEP({ name: 'cepImovel', label: 'cep' }),
       jsonSelect({ name: 'tipoSeguro', label: 'tipo do seguro', selects: ['novo', 'renovação'] }),
+      jsonSelect({ name: 'seguradoraSeguro', label: 'seguradora', selects: seguradoras, view: { name: 'tipoSeguro', value: 'renovação' } }),
       jsonData({ name: 'finalVigenciaSeguro', label: 'fim da vigência', view: { name: 'tipoSeguro', value: 'renovação' } }),
     ],
     info: [
@@ -628,6 +651,14 @@ const array = [
           O seguro empresarial foi feito para você empresário , que possui uma pequena, média ou grande empresa, seja comércio, serviço ou indústria.
           {`\n`}{`\n`}
           Sua empresa não precisa correr riscos que podem levar ao encerramento de suas atividades e das suas receitas.
+        </Text>
+        <Text>{`\n`}</Text>
+        <Text style={{
+          fontSize: 15,
+          fontWeight: '400',
+          color: '#333333'
+        }}>
+          Abaixo coberturas e Assistências que podem ser acionadas em caso de sinistro:
         </Text>
         <Text>{`\n`}</Text>
         <Text style={{
@@ -733,6 +764,7 @@ const array = [
       jsonEmail({ name: 'emailSegurado', label: 'E-mail' }),
       jsonCEP({ name: 'cepImovel', label: 'cep' }),
       jsonSelect({ name: 'tipoSeguro', label: 'tipo do seguro', selects: ['novo', 'renovação'] }),
+      jsonSelect({ name: 'seguradoraSeguro', label: 'seguradora', selects: seguradoras, view: { name: 'tipoSeguro', value: 'renovação' } }),
       jsonData({ name: 'finalVigenciaSeguro', label: 'fim da vigência', view: { name: 'tipoSeguro', value: 'renovação' } }),
     ],
     info: [
@@ -758,7 +790,7 @@ const array = [
           fontWeight: '400',
           color: '#333333'
         }}>
-          Vale salientar que o seguro condomínio protege as areas comuns do condomínio e não as residências.
+          Vale salientar que o seguro condomínio protege as áreas comuns do condomínio e não as residências.
           {`\n`}{`\n`}
           O seguro Residencial protege sua residência e o que há nela, não é obrigatório e deve ser contratado pelo proprietário ou inquilino do imóvel.
         </Text>
@@ -766,7 +798,7 @@ const array = [
         <Text style={{
           fontWeight: 'bold',
           fontSize: 18
-        }}>COBERTURAS: <Text style={{ color: 'red', fontSize: 10, fontWeight: '500' }}>( de acôrdo com seu plano )</Text></Text>
+        }}>COBERTURAS OBRIGATÓRIAS:</Text>
         <Text style={{
           fontSize: 17,
           fontWeight: '400',
@@ -803,10 +835,10 @@ const array = [
           - Responsabilidade civil do síndico
           {`\n`}
           - Responsabilidade civil do condomínio
+        </Text>
+        <Text>
           {`\n`}
-          - Coberturas regionais e nacionais
-          {`\n`}
-          - Reembolso
+          <Text style={{ fontWeight: 'bold' }}>OBS:</Text> Na renovação do seu seguro atualize as coberturas e valores
         </Text>
       </View>
     ]
@@ -820,7 +852,8 @@ const array = [
       jsonRegistro({ name: 'registroSegurado', label: 'cpf', mask: 'cpf' }),
       jsonCelular({ name: 'celularSegurado', label: 'celular' }),
       jsonEmail({ name: 'emailSegurado', label: 'E-mail' }),
-    ]
+    ],
+    info: []
   },
   {
     title: 'SEGURO VIAGEM',
@@ -852,6 +885,7 @@ const array = [
       jsonData({ name: 'nascimentoBeneficiario9', label: 'nascimento passageiros 9', view: { name: 'qtdBeneficiario', value: 9 } }),
       jsonData({ name: 'nascimentoBeneficiario10', label: 'nascimento passageiros 10', view: { name: 'qtdBeneficiario', value: 10 } }),
     ],
+    info: []
   },
 ];
 

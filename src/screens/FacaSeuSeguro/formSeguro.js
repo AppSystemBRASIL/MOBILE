@@ -30,22 +30,20 @@ const FazerSeguro = ({ navigation, route }) => {
   }
 
   useEffect(() => {
-    const backAction = () => {
-      if(page >= 1) {
-        setPage(e => e - 1);
-      }else {
-        if(viewPage) {
-          navigation.goBack();
-        }else {
-          if(info ? false : true) {
-            setPage(1);
-          }
+    if(page === 0) {
+      setViewPage(info ? false : true);
+    }
+  }, [page])
 
-          setShow(false);
-          
-          setViewPage(info ? false : true);
-        }
+  useEffect(() => {
+    const backAction = () => {
+      setPage(e => e - 1);
+
+      if(show) {
+        setShow(false);
+        setViewPage(info ? false : true);
       }
+
       return true;
     };
 
