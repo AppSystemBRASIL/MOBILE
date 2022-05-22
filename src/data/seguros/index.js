@@ -843,18 +843,20 @@ const array = [
       </View>
     ]
   },
-  {
-    title: 'PREVIDÊNCIA SOCIAL',
-    icon: 'file-invoice-dollar',
-    tipo: 'previdencia-social',
-    inputs: [
-      jsonNome({ name: 'nomeSegurado', label: 'nome' }),
-      jsonRegistro({ name: 'registroSegurado', label: 'cpf', mask: 'cpf' }),
-      jsonCelular({ name: 'celularSegurado', label: 'celular' }),
-      jsonEmail({ name: 'emailSegurado', label: 'E-mail' }),
-    ],
-    info: []
-  },
+  /*
+    {
+      title: 'PREVIDÊNCIA SOCIAL',
+      icon: 'file-invoice-dollar',
+      tipo: 'previdencia-social',
+      inputs: [
+        jsonNome({ name: 'nomeSegurado', label: 'nome' }),
+        jsonRegistro({ name: 'registroSegurado', label: 'cpf', mask: 'cpf' }),
+        jsonCelular({ name: 'celularSegurado', label: 'celular' }),
+        jsonEmail({ name: 'emailSegurado', label: 'E-mail' }),
+      ],
+      info: []
+    },
+  */
   {
     title: 'SEGURO VIAGEM',
     icon: 'plane-departure',
