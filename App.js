@@ -20,6 +20,9 @@ import PontosMultas from './src/screens/PontosMultas';
 import ContatosItens from './src/screens/ContatosItens';
 import ContatosSeguradoras from './src/screens/ContatosSeguradoras';
 
+import InformacaoSeguro from './src/screens/FacaSeuSeguro/description';
+import FormularioSeguro from './src/screens/FacaSeuSeguro/Formulario';
+
 import { NativeBaseProvider } from 'native-base';
 import { ContextProvider } from './src/context';
 
@@ -47,6 +50,9 @@ export default function App() {
             <Stack.Screen name='pontosMultas' component={PontosMultas} />
             <Stack.Screen name='contatosItens' component={ContatosItens} />
             <Stack.Screen name='contatosSeguradoras' component={ContatosSeguradoras} />
+
+            <Stack.Screen name='informacaoSeguro' component={InformacaoSeguro} />
+            <Stack.Screen name='formularioSeguro' component={FormularioSeguro} />
           </Stack.Navigator>
         </NavigationContainer>
       </NativeBaseProvider>

@@ -1,7 +1,10 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { View, Text, Platform, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import React, { useContext, useState, useEffect, useRef } from 'react';
+import { View, Text, Platform, TouchableOpacity, KeyboardAvoidingView, BackHandler } from 'react-native';
 
-import { Input, WarningOutlineIcon, FormControl, Select, CheckIcon } from 'native-base';
+import { Input, WarningOutlineIcon, FormControl, Select, CheckIcon, ScrollView } from 'native-base';
+
+import { AlertDialog, Button, Heading, Icon, Spinner } from 'native-base';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 import Feather from 'react-native-vector-icons/Feather';
 
@@ -15,15 +18,21 @@ import Context from '../../../context';
 import segurosArray from '../../../data/seguros';
 
 import styled from 'styled-components';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import Header from '../../../components/Header';
 
-const Formulario = ({ type, success, error, loading, topPage, setView, page, setPage }) => {
-  const { goBack } = useNavigation();
+const Formulario = ({ type }) => {
+  const { goBack, navigate } = useNavigation();
+  const { tipo } = useRoute().params;
+
+  const title = segurosArray.filter(e => e.tipo == (type || tipo))[0].title;
+
+  const [page, setPage] = useState(1);
 
   const { corretor, corretora } = useContext(Context);
   const [errors, setErrors] = useState([]);
 
-  const inputsFull = segurosArray.filter(e => e.tipo === type)[0].inputs;
+  const inputsFull = segurosArray.filter(e => e.tipo === (type || tipo))[0].inputs;
   const [inputs, setInputs] = useState(inputsFull?.filter(e => e.page === page) || []);
   
   const pageMax = Math.max.apply(null, inputsFull?.map(e => e.page));
@@ -33,10 +42,59 @@ const Formulario = ({ type, success, error, loading, topPage, setView, page, set
     return acc;
   }, {}));
 
+  const scrollRef = useRef(null);
+
+  const topPage = () => {
+    scrollRef.current?.scrollTo({
+      x: 0,
+      y: 0,
+      animated: true,
+    });
+  }
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [typeFunction, setTypeFunction] = useState('loading');
+
+  const cancelRef = useRef(null);
+
+  function loading() {
+    setTypeFunction('loading');
+    setIsOpen(true);
+  }
+
+  function success() {
+    setTypeFunction('success');
+
+    setTimeout(() => {
+      navigate('home');
+    }, 5000);
+  }
+  
+  function error() {
+    setTypeFunction('error');
+
+    setTimeout(() => {
+      setIsOpen(false);
+    }, 5000);
+  }
+
   useEffect(() => {
     topPage();
     setInputs(getInputs);
+
+    if(page === 0) {
+      goBack();
+    }
   }, [page]);
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      setPage(e => e - 1);
+      return true;
+    });
+
+    return () => backHandler.remove();
+  }, []);
 
   function getInputs() {
     const inputsPages = inputsFull?.filter(e => e.page === page) || [];
@@ -62,9 +120,7 @@ const Formulario = ({ type, success, error, loading, topPage, setView, page, set
   }
 
   function previusPage() {
-    if(page > 1) {
-      setPage(e => e - 1);
-    }
+    setPage(e => e - 1);
   }
 
   function nextPage() {
@@ -87,7 +143,7 @@ const Formulario = ({ type, success, error, loading, topPage, setView, page, set
     loading();
 
     await firebase.firestore().collection('cotacoes').add({
-      tipo: type,
+      tipo: type || tipo,
       corretora: corretora ? {
         uid: corretora.uid,
         razao_social: corretora.razao_social,
@@ -220,143 +276,189 @@ const Formulario = ({ type, success, error, loading, topPage, setView, page, set
       }}
       behavior={Platform.OS === "ios" ? "padding" : null}
     >
-      <View
-        activeOpacity={1} 
-        style={{
-          backgroundColor: 'white',
-          borderRadius: 15,
-          margin: 5,
-          marginBottom: 100,
-          paddingHorizontal: 20,
-          paddingTop: 30,
-          paddingBottom: 50
-        }}
-      >
-        {[...inputs].map((item, index) => (item.view === undefined || item.view(data)) && (
-          <FormControl key={index} style={{ marginTop: index > 0 ? 20 : 0 }} isInvalid={errors.find(response => response === item.name)}>
-            <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>{String(item.label || '').toUpperCase()}: {(item.required === undefined || item.required === true) && <Text style={{ color: 'red' }}>*</Text>}</Text>
-            {(!data[item.name] && item.infoText) && (
-              <Text style={{ marginTop: 10 }}>
-                <Text style={{ textTransform: 'uppercase', textDecorationLine: 'underline', fontWeight: '700' }}>
-                  {item.infoText.title}:
-                </Text>
-                {`\n`}
-                {item.infoText.content}
-                {`\n`}
+      <AlertDialog leastDestructiveRef={cancelRef} isOpen={isOpen} onClose={() => setIsOpen(false)}>
+        <AlertDialog.Content>
+          {typeFunction !== 'loading' && (
+            <AlertDialog.Header>
+              <Text style={{ color: typeFunction === 'success' ? 'green' : typeFunction === 'loading' ? '' : 'red', fontWeight: 'bold', fontSize: 20, textAlign: 'center' }}>{typeFunction === 'success' ? 'ENVIADA COM SUCESSO!' : 'ERROR AO ENVIAR COTAÇÃO'}</Text>
+            </AlertDialog.Header>
+          )}
+          <AlertDialog.Body>
+            {typeFunction !== 'error' && (
+              <>
+                {typeFunction === 'loading' ? (
+                  <>
+                    <Spinner color='black' size='lg' />
+                    <Heading textAlign='center' alignSelf='center' color="black" fontSize="lg" marginTop={5}>
+                      AGUARDE...
+                    </Heading>
+                  </>
+                ) : (
+                  <Icon alignSelf='center' as={FontAwesome5} marginBottom={30} name='check-circle' size={20} style={{ color: 'green' }} />
+                )}
+              </>
+            )}
+            {typeFunction !== 'loading' && (
+              <Text style={{ fontSize: 18, fontWeight: '500', textAlign: 'center', marginBottom: 15 }}>
+                {typeFunction === 'success' ? (
+                  'Sua cotação foi enviada com sucesso.'
+                ) : (
+                  'Ocorreu algum error ao enviar sua cotação, tente novamente!'
+                )}
               </Text>
             )}
-            {!item.selects ? (
-              <InputStyle borderColor='#999' maxLength={item.maxLength} value={data[item.name] || ''} returnKeyType='done' placeholder={String(item.placeholder || '').toUpperCase()} keyboardType={item.inputType} autoCapitalize='characters' autoCorrect={false} autoCompleteType='off' onChangeText={(value) => setData(e => ({...e, [item.name]: (item.formatter) ? item.formatter(value) : value}))} onBlur={() => {
-                if(item.required === undefined || item.required === true) {
-                  if(!item.validated(data[item.name])) {
-                    setErrors(e => e.filter(x => x !== item.name));
-                  }else {
-                    setErrors(e => [...e, item.name]);
+          </AlertDialog.Body>
+          {typeFunction === 'error' && (
+            <AlertDialog.Footer>
+              <Button.Group space={2}>
+                <Button colorScheme='red' onPress={() => setIsOpen(false)}>
+                  FECHAR
+                </Button>
+              </Button.Group>
+            </AlertDialog.Footer>
+          )}
+        </AlertDialog.Content>
+      </AlertDialog>
+      <Header title={title} showBackPage={page === 1} />
+      <ScrollView ref={scrollRef}>
+        <View
+          activeOpacity={1} 
+          style={{
+            backgroundColor: 'white',
+            borderRadius: 15,
+            margin: 5,
+            marginBottom: 100,
+            paddingHorizontal: 20,
+            paddingTop: 30,
+            paddingBottom: 50
+          }}
+        >
+          {[...inputs].map((item, index) => (item.view === undefined || item.view(data)) && (
+            <FormControl key={index} style={{ marginTop: index > 0 ? 20 : 0 }} isInvalid={errors.find(response => response === item.name)}>
+              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>{String(item.label || '').toUpperCase()}: {(item.required === undefined || item.required === true) && <Text style={{ color: 'red' }}>*</Text>}</Text>
+              {item.infoText && (
+                <Text style={{ marginTop: 10 }}>
+                  <Text style={{ textTransform: 'uppercase', textDecorationLine: 'underline', fontWeight: '700' }}>
+                    {item.infoText.title}:
+                  </Text>
+                  {`\n`}
+                  {item.infoText.content}
+                  {`\n`}
+                </Text>
+              )}
+              {!item.selects ? (
+                <InputStyle borderColor='#999' maxLength={item.maxLength} value={data[item.name] || ''} returnKeyType='done' placeholder={String(item.placeholder || '').toUpperCase()} keyboardType={item.inputType} autoCapitalize='characters' autoCorrect={false} autoCompleteType='off' onChangeText={(value) => setData(e => ({...e, [item.name]: (item.formatter) ? item.formatter(value) : value}))} onBlur={() => {
+                  if(item.required === undefined || item.required === true) {
+                    if(!item.validated(data[item.name])) {
+                      setErrors(e => e.filter(x => x !== item.name));
+                    }else {
+                      setErrors(e => [...e, item.name]);
+                    }
                   }
-                }
-              }} />
-            ) : (
-              <SelectStyle borderColor='#999' selectedValue={data[item.name]} accessibilityLabel={String(item.placeholder || '')?.toUpperCase()} placeholder={String(item.placeholder || '')?.toUpperCase()} onValueChange={(value) => {
-                if(value) {
-                  setData(e => ({...e, [item.name]: value}));
-                  setErrors(e => e.filter(x => x !== item.name))
-                }
-              }} _selectedItem={{
-                bg: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
-                endIcon: <CheckIcon size="5" />,
-              }} collapsable>
-                {item.selects(data).map((itemSelect, indexSelect) => (
-                  <Select.Item value={itemSelect} label={String(itemSelect).toUpperCase()} key={indexSelect}>{itemSelect}</Select.Item>
-                ))}
-              </SelectStyle>
-            )}
-            <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-              Campo inválido
-            </FormControl.ErrorMessage>
-          </FormControl>
-        ))}
-        <View style={{marginTop: 50}}>
-          <View
-            style={{
-              flexDirection: 'row',
-            }}
-          >
-            {(page > 1 && pageMax > 1) && (
-              <TouchableOpacity
-                onPress={previusPage}
-                style={{
-                  backgroundColor: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
-                  padding: 10,
-                  paddingVertical: 12,
-                  alignItems: 'center',
-                  borderRadius: 5,
-                  width: '15%',
-                  marginRight: 5
-                }}
-              >
-                <Feather style={{
-                  position: 'absolute',
-                  left: 10,
-                  top: '50%'
-                }} name='arrow-left' color='white' size={25} />
-              </TouchableOpacity>
-            )}
-            {page === pageMax ? (
-              <TouchableOpacity
-                onPress={gerarCotacao}
-                style={{
-                  backgroundColor: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
-                  padding: 10,
-                  paddingVertical: 12,
-                  alignItems: 'center',
-                  borderRadius: 5,
-                  width: pageMax === 1 ? '100%' : page === pageMax ? '85%' : '100%',
-                  marginRight: 5
-                }}
-              >
-                <Text
+                }} />
+              ) : (
+                <SelectStyle borderColor='#999' selectedValue={data[item.name]} accessibilityLabel={String(item.placeholder || '')?.toUpperCase()} placeholder={String(item.placeholder || '')?.toUpperCase()} onValueChange={(value) => {
+                  if(value) {
+                    setData(e => ({...e, [item.name]: value}));
+                    setErrors(e => e.filter(x => x !== item.name))
+                  }
+                }} _selectedItem={{
+                  bg: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
+                  endIcon: <CheckIcon size="5" />,
+                }} collapsable>
+                  {item.selects(data).map((itemSelect, indexSelect) => (
+                    <Select.Item value={itemSelect} label={String(itemSelect).toUpperCase()} key={indexSelect}>{itemSelect}</Select.Item>
+                  ))}
+                </SelectStyle>
+              )}
+              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                Campo inválido
+              </FormControl.ErrorMessage>
+            </FormControl>
+          ))}
+          <View style={{marginTop: 50}}>
+            <View
+              style={{
+                flexDirection: 'row',
+              }}
+            >
+              {(page > 1 && pageMax > 1) && (
+                <TouchableOpacity
+                  onPress={previusPage}
                   style={{
-                    fontWeight: '800',
-                    color: 'white',
-                    fontSize: 20,
+                    backgroundColor: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
+                    padding: 10,
+                    paddingVertical: 12,
+                    alignItems: 'center',
+                    borderRadius: 5,
+                    width: '15%',
+                    marginRight: 5
                   }}
-                >ENVIAR</Text>
-                <Feather style={{
-                  position: 'absolute',
-                  right: 10,
-                  top: '50%'
-                }} name='send' color='white' size={25} />
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                onPress={nextPage}
-                style={{
-                  backgroundColor: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
-                  padding: 10,
-                  paddingVertical: 12,
-                  alignItems: 'center',
-                  borderRadius: 5,
-                  width: page === 1 ? '100%' : '85%',
-                  marginRight: 5
-                }}
-              >
-                <Text
+                >
+                  <Feather style={{
+                    position: 'absolute',
+                    left: 10,
+                    top: '50%'
+                  }} name='arrow-left' color='white' size={25} />
+                </TouchableOpacity>
+              )}
+              {page === pageMax ? (
+                <TouchableOpacity
+                  onPress={gerarCotacao}
                   style={{
-                    fontWeight: '800',
-                    color: 'white',
-                    fontSize: 20,
+                    backgroundColor: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
+                    padding: 10,
+                    paddingVertical: 12,
+                    alignItems: 'center',
+                    borderRadius: 5,
+                    width: pageMax === 1 ? '100%' : page === pageMax ? '85%' : '100%',
+                    marginRight: 5
                   }}
-                >PRÓXIMA</Text>
-                <Feather style={{
-                  position: 'absolute',
-                  right: 10,
-                  top: '50%'
-                }} name='arrow-right' color='white' size={25} />
-              </TouchableOpacity>
-            )}
+                >
+                  <Text
+                    style={{
+                      fontWeight: '800',
+                      color: 'white',
+                      fontSize: 20,
+                    }}
+                  >ENVIAR</Text>
+                  <Feather style={{
+                    position: 'absolute',
+                    right: 10,
+                    top: '50%'
+                  }} name='send' color='white' size={25} />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={nextPage}
+                  style={{
+                    backgroundColor: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
+                    padding: 10,
+                    paddingVertical: 12,
+                    alignItems: 'center',
+                    borderRadius: 5,
+                    width: page === 1 ? '100%' : '85%',
+                    marginRight: 5
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontWeight: '800',
+                      color: 'white',
+                      fontSize: 20,
+                    }}
+                  >PRÓXIMA</Text>
+                  <Feather style={{
+                    position: 'absolute',
+                    right: 10,
+                    top: '50%'
+                  }} name='arrow-right' color='white' size={25} />
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
         </View>
-      </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   )
 }

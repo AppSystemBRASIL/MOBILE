@@ -23,7 +23,7 @@ const jsonEmail = ({ page, label, name, view }) => ({
   name: name || 'emailSegurado',
   label: label || 'E-mail',
   placeholder: 'E-mail',
-  inputType: 'email',
+  inputType: 'email-address',
   validated: (value) => !validateEmail(value),
   required: true,
 });
@@ -34,7 +34,7 @@ const jsonTitle = ({ page, view, name, label, placeholder, formatter, validated,
   name: name,
   label: label,
   placeholder: placeholder || '',
-  inputType: type || 'text',
+  inputType: type || 'default',
   formatter: (value) => formatter ? formatter(value) : value,
   validated: (value) => validated ? !validated(value) : String(value || '').length <= 0,
   required: true,
@@ -204,7 +204,7 @@ const array = [
       jsonSelect({ name: 'dataCNHCondutor', label: 'tempo de cnh', selects: ['+10 anos', '10 anos', '9 anos', '8 anos', '7 anos', '6 anos', '5 anos', '4 anos', '3 anos', '2 anos', '1 ano', 'permissão provisória'], view: { name: 'principalCondutor', value: 'outra pessoa' }, page: 4 }),
       jsonSelect({ name: 'estadoCivilCondutor', label: 'estado cívil', selects: ['solteiro', 'união estável', 'casado', 'divorciado', 'viúvo'], view: { name: 'principalCondutor', value: 'outra pessoa' }, page: 4 }),
       jsonSelect({ name: 'usoVeiculo', label: 'uso do veículo', selects: ['lazer e ida e volta ao trabalho', 'só lazer', 'visita a clientes', 'motorista de aplicativo', 'táxi', 'para entregas'], page: 5 }),
-      jsonSelect({ name: 'residenciaVeiculo', label: 'reside em', selects: ['casa', 'apartamento', 'condomínio'], page: 5 }),
+      jsonSelect({ name: 'residenciaVeiculo', label: 'reside em', selects: ['casa', 'apartamento', 'condomínio de casas'], page: 5 }),
       jsonSelect({ name: 'garagemResidencia', label: 'garagem na residência?', selects: ['não', 'sim, com portão automático', 'sim, com portão manual', 'sim, em estacionamento pago'], page: 5 }),
       jsonSelect({ name: 'garagemTrabalho', label: 'garagem no trabalho?', selects: ['sim', 'não', 'não trabalha', 'não utiliza para ir ao trabalho'], page: 5 }),
       jsonSelect({ name: 'garagemEscola', label: 'garagem na escola?', selects: ['sim', 'não', 'não estuda', 'não utiliza para ir a escola'], page: 5 }),
@@ -398,94 +398,96 @@ const array = [
       </View>
     ]
   },
-  {
-    title: 'SEGURO DE VIDA',
-    icon: 'procedures',
-    tipo: 'seguro-de-vida',
-    inputs: [
-      jsonNome({ name: 'nomeSegurado', label: 'nome' }),
-      jsonRegistro({ name: 'registroSegurado', label: 'cpf', mask: 'cpf' }),
-      jsonCelular({ name: 'celularSegurado', label: 'celular' }),
-      jsonEmail({ name: 'emailSegurado', label: 'E-mail' }),
-      jsonData({ name: 'nascimentoSegurado', label: 'nascimento' }),
-      jsonSelect({ name: 'profissaoSegurado', label: 'Profissão', selects: ['militar', 'professor', 'servidor público', 'médico/dentista', 'aposentado', 'empresário', 'autônomo', 'outros'] }),
-      jsonMoney({ name: 'rendaMensal', label: 'renda mensal' }),
-      jsonSelect({ name: 'praticaEsporte', label: 'pratica esporte radical?', selects: ['sim', 'não'] }),
-      jsonTitle({ view: { name: 'praticaEsporte', value: 'sim' }, name: 'praticaEsporteText', label: 'se sim, Qual?', placeholder: 'Esporte praticado', type: 'text' }),
-      jsonSelect({ view: { name: 'praticaEsporte', value: 'sim' }, name: 'praticaEsporteFrenquencia', label: 'com qual frequência?', selects: ['até 3x/ano', 'acima 3x/ano'] }),
-    ],
-    info: [
-      <View>
-        <Text style={{
-          fontSize: 17,
-          fontWeight: '400',
-          color: '#333333'
-        }}>
-          Seguro de vida é a segurança que você e sua família estarão protegidos em caso de um imprevisto.
-          {`\n`}{`\n`}
-          Os índices de violência só aumentam, acidentes acontecem, imagine deixar as pessoas que você tanto ama desprotegidas.
-          {`\n`}{`\n`}
-          O seguro de vida, também traz benefícios para você, confira abaixo as coberturas de um plano completo.
-        </Text>
-        <Text>{`\n`}</Text>
-        <Text style={{
-          fontWeight: 'bold',
-          fontSize: 18
-        }}>Coberturas: <Text style={{ color: 'red', fontSize: 10, fontWeight: '500'}}>( de acôrdo com seu plano )</Text></Text>
-        <Text style={{
-          fontSize: 17,
-          fontWeight: '400',
-          color: '#333333'
-        }}>
-          - Morte
-          {`\n`}
-          - Morte acidental
-          {`\n`}
-          - Invalidez por acidente, total ou parcial
-          {`\n`}
-          - Invalidez funcional permanente total
-          {`\n`}
-          - Doenças graves ( 14 tipos )
-          {`\n`}
-          <Text style={{ color: 'red', fontSize: 15 }}>
-            - Diagnóstico de câncer
-            {`\n`}
-            - Acidente vascular cerebral
-            {`\n`}
-            - Infarto agudo do miocárdio
-            {`\n`}
-            - Transplante de orgãos
-            {`\n`}
-            - Insuficiência renal crônica
-            {`\n`}
-            - Alzheimer
-            {`\n`}
-            - Diagnóstico de surdez
-            {`\n`}
-            - Cirurgia de Bypass
-            {`\n`}
-            - Diagnóstico de cegueira
-            {`\n`}
-            - Embolia pulmonar
-            {`\n`}
-            - Tromboembolismo
-            {`\n`}
-            - Esclerose múltipla
-            {`\n`}
-            - Parkinson
-            {`\n`}
-            - Perda total da fala
-            {`\n`}
+  /*
+    {
+      title: 'SEGURO DE VIDA',
+      icon: 'procedures',
+      tipo: 'seguro-de-vida',
+      inputs: [
+        jsonNome({ name: 'nomeSegurado', label: 'nome' }),
+        jsonRegistro({ name: 'registroSegurado', label: 'cpf', mask: 'cpf' }),
+        jsonCelular({ name: 'celularSegurado', label: 'celular' }),
+        jsonEmail({ name: 'emailSegurado', label: 'E-mail' }),
+        jsonData({ name: 'nascimentoSegurado', label: 'nascimento' }),
+        jsonSelect({ name: 'profissaoSegurado', label: 'Profissão', selects: ['militar', 'professor', 'servidor público', 'médico/dentista', 'aposentado', 'empresário', 'autônomo', 'outros'] }),
+        jsonMoney({ name: 'rendaMensal', label: 'renda mensal' }),
+        jsonSelect({ name: 'praticaEsporte', label: 'pratica esporte radical?', selects: ['sim', 'não'] }),
+        jsonTitle({ view: { name: 'praticaEsporte', value: 'sim' }, name: 'praticaEsporteText', label: 'se sim, Qual?', placeholder: 'Esporte praticado', type: 'default' }),
+        jsonSelect({ view: { name: 'praticaEsporte', value: 'sim' }, name: 'praticaEsporteFrenquencia', label: 'com qual frequência?', selects: ['até 3x/ano', 'acima 3x/ano'] }),
+      ],
+      info: [
+        <View>
+          <Text style={{
+            fontSize: 17,
+            fontWeight: '400',
+            color: '#333333'
+          }}>
+            Seguro de vida é a segurança que você e sua família estarão protegidos em caso de um imprevisto.
+            {`\n`}{`\n`}
+            Os índices de violência só aumentam, acidentes acontecem, imagine deixar as pessoas que você tanto ama desprotegidas.
+            {`\n`}{`\n`}
+            O seguro de vida, também traz benefícios para você, confira abaixo as coberturas de um plano completo.
           </Text>
-          - Assistência funeral
-          {`\n`}
-          - Assistência nutricional
-          {`\n`}
-          - Descontos em medicamentos.
-        </Text>
-      </View>
-    ]
-  },
+          <Text>{`\n`}</Text>
+          <Text style={{
+            fontWeight: 'bold',
+            fontSize: 18
+          }}>Coberturas: <Text style={{ color: 'red', fontSize: 10, fontWeight: '500'}}>( de acôrdo com seu plano )</Text></Text>
+          <Text style={{
+            fontSize: 17,
+            fontWeight: '400',
+            color: '#333333'
+          }}>
+            - Morte
+            {`\n`}
+            - Morte acidental
+            {`\n`}
+            - Invalidez por acidente, total ou parcial
+            {`\n`}
+            - Invalidez funcional permanente total
+            {`\n`}
+            - Doenças graves ( 14 tipos )
+            {`\n`}
+            <Text style={{ color: 'red', fontSize: 15 }}>
+              - Diagnóstico de câncer
+              {`\n`}
+              - Acidente vascular cerebral
+              {`\n`}
+              - Infarto agudo do miocárdio
+              {`\n`}
+              - Transplante de orgãos
+              {`\n`}
+              - Insuficiência renal crônica
+              {`\n`}
+              - Alzheimer
+              {`\n`}
+              - Diagnóstico de surdez
+              {`\n`}
+              - Cirurgia de Bypass
+              {`\n`}
+              - Diagnóstico de cegueira
+              {`\n`}
+              - Embolia pulmonar
+              {`\n`}
+              - Tromboembolismo
+              {`\n`}
+              - Esclerose múltipla
+              {`\n`}
+              - Parkinson
+              {`\n`}
+              - Perda total da fala
+              {`\n`}
+            </Text>
+            - Assistência funeral
+            {`\n`}
+            - Assistência nutricional
+            {`\n`}
+            - Descontos em medicamentos.
+          </Text>
+        </View>
+      ]
+    },
+  */
   {
     title: 'SEGURO RESIDENCIAL',
     icon: 'home',
@@ -869,8 +871,8 @@ const array = [
       jsonSelect({ name: 'tipoViagem', label: 'tipo da viagem', selects: ['internacional', 'nacional'] }),
       jsonSelect({ name: 'meioTransporte', label: 'meio de transporte', selects: ['aereo', 'maritimo', 'aereo + maritimo'] }),
       jsonSelect({ name: 'motivoViagem', label: 'motivo da viagem', selects: ['lazer', 'estudo', 'negocios'] }),
-      jsonTitle({ name: 'origemViagem', label: 'origem', placeholder: 'Origem da viagem', type: 'text' }),
-      jsonTitle({ name: 'destinoViagem', label: 'destino', placeholder: 'Destino da viagem', type: 'text' }),
+      jsonTitle({ name: 'origemViagem', label: 'origem', placeholder: 'Origem da viagem', type: 'default' }),
+      jsonTitle({ name: 'destinoViagem', label: 'destino', placeholder: 'Destino da viagem', type: 'default' }),
       jsonData({ name: 'dataIdaViagem', label: 'data da ida' }),
       jsonData({ name: 'dataRetornoViagem', label: 'data da volta' }),
       jsonSelect({ name: 'praticaEsporte', label: 'praticará esporte radical?', selects: ['sim', 'não'] }),

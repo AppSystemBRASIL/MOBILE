@@ -12,9 +12,12 @@ import Context from '../../context';
 import Feather from 'react-native-vector-icons/Feather';
 
 import { StatusBar } from 'expo-status-bar';
+import { useNavigation } from '@react-navigation/native';
 
-const Header = ({ navigation, title, showBackPage }) => {
+const Header = ({ title, showBackPage }) => {
   const { corretora, notificationUser, setNotificationUser, viewNotificationUser, setViewNotificationUser } = useContext(Context);
+
+  const navigation = useNavigation();
 
   const fecharNotificacao = async (uid) => {
     let value = JSON.parse(await AsyncStorage.getItem('notificationView'));
