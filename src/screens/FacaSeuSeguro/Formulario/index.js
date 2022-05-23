@@ -88,6 +88,12 @@ const Formulario = ({ type }) => {
   }, [page]);
 
   useEffect(() => {
+    if([...errors || []].length > 0) {
+      topPage();
+    }
+  }, [errors]);
+
+  useEffect(() => {
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
       setPage(e => e - 1);
       return true;

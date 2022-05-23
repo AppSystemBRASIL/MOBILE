@@ -13,7 +13,7 @@ const jsonNome = ({ page, label, name, view }) => ({
   placeholder: 'Nome',
   inputType: 'default',
   formatter: maskLetters,
-  validated: (value) => !String(value).split(' ')[1],
+  validated: (value) => !value,
   required: true,
 });
 
@@ -55,7 +55,7 @@ const jsonCelular = ({ page, name, label }) => ({
 
 const jsonRegistro = ({ page, name, label, mask, view }) => ({
   page: page || 1,
-  view: view ? (value) => value[view.name] === view.value : undefined,
+  view: view ? (value) => [value[view.name]].every(e => [...view.value.split(',')].includes(e)) : undefined,
   name: name,
   label: label,
   maxLength: mask === 'cpf' ? 14 : 18,
@@ -196,7 +196,7 @@ const array = [
       jsonSelect({ name: 'veiculoFinanciado', label: 'financiado?', selects: ['sim', 'não'], page: 3 }),
       jsonSelect({ name: 'veiculoBlindado', label: 'blindado?', selects: ['sim', 'não'], page: 3 }),
       jsonSelect({ name: 'veiculoKitGas', label: 'tem kit gás?', selects: ['sim', 'não'], page: 3 }),
-      jsonSelect({ name: 'principalCondutor', label: 'principal condutor', selects: ['eu mesmo', 'outra pessoa'], infoText: { title: 'principal condutor', content: 'fsdfsdfsdf fsdfsdfsdff fsdfdsf fsd fds f dsf sd fsdf' }, page: 4 }),
+      jsonSelect({ name: 'principalCondutor', label: 'principal condutor', selects: ['eu mesmo', 'outra pessoa'], infoText: { title: 'principal condutor', content: `É a pessoa que utiliza o veículo segurado 2 ou mais vezes por semana. \n Caso existam mais de um condutor nesta condição, será definido como principal o condutor o de menor idade.` }, page: 4 }),
       jsonNome({ name: 'nomePrincipalCondutor', label: 'nome', view: { name: 'principalCondutor', value: 'outra pessoa' }, page: 4 }),
       jsonRegistro({ name: 'CPFSegurado', label: 'cpf', mask: 'cpf', view: { name: 'principalCondutor', value: 'outra pessoa' }, page: 4 }),
       jsonSelect({ name: 'relacaoSegurado', label: 'relação com o segurado', selects: ['cônjugue', 'pai', 'mãe', 'filho', 'irmão', 'outros'], view: { name: 'principalCondutor', value: 'outra pessoa' }, page: 4 }),
@@ -305,29 +305,31 @@ const array = [
       }
     ]
   },
-  {
-    title: 'SEGURO SAÚDE',
-    icon: 'heartbeat',
-    tipo: 'seguro-saude',
-    inputs: [
-      jsonNome({ name: 'nomeSegurado', label: 'nome' }),
-      jsonRegistro({ name: 'registroSegurado', label: 'cnpj', mask: 'cnpj' }),
-      jsonCelular({ name: 'celularSegurado', label: 'celular' }),
-      jsonEmail({ name: 'emailSegurado', label: 'E-mail' }),
-      jsonSelect({ name: 'qtdBeneficiario', label: 'quantidades de beneficiários', selects: ['2 vidas', '3 vidas', '4 vidas', '5 vidas', '6 vidas', '7 vidas', '8 vidas', '9 vidas', '10 vidas'] }),
-      jsonData({ name: 'nascimentoBeneficiario1', label: 'nascimento beneficiário 1', view: { name: 'qtdBeneficiario', value: 1 } }),
-      jsonData({ name: 'nascimentoBeneficiario2', label: 'nascimento beneficiário 2', view: { name: 'qtdBeneficiario', value: 2 } }),
-      jsonData({ name: 'nascimentoBeneficiario3', label: 'nascimento beneficiário 3', view: { name: 'qtdBeneficiario', value: 3 } }),
-      jsonData({ name: 'nascimentoBeneficiario4', label: 'nascimento beneficiário 4', view: { name: 'qtdBeneficiario', value: 4 } }),
-      jsonData({ name: 'nascimentoBeneficiario5', label: 'nascimento beneficiário 5', view: { name: 'qtdBeneficiario', value: 5 } }),
-      jsonData({ name: 'nascimentoBeneficiario6', label: 'nascimento beneficiário 6', view: { name: 'qtdBeneficiario', value: 6 } }),
-      jsonData({ name: 'nascimentoBeneficiario7', label: 'nascimento beneficiário 7', view: { name: 'qtdBeneficiario', value: 7 } }),
-      jsonData({ name: 'nascimentoBeneficiario8', label: 'nascimento beneficiário 8', view: { name: 'qtdBeneficiario', value: 8 } }),
-      jsonData({ name: 'nascimentoBeneficiario9', label: 'nascimento beneficiário 9', view: { name: 'qtdBeneficiario', value: 9 } }),
-      jsonData({ name: 'nascimentoBeneficiario10', label: 'nascimento beneficiário 10', view: { name: 'qtdBeneficiario', value: 10 } }),
-    ],
-    info: []
-  },
+  /*
+    {
+      title: 'SEGURO SAÚDE',
+      icon: 'heartbeat',
+      tipo: 'seguro-saude',
+      inputs: [
+        jsonNome({ name: 'nomeSegurado', label: 'nome' }),
+        jsonRegistro({ name: 'registroSegurado', label: 'cnpj', mask: 'cnpj' }),
+        jsonCelular({ name: 'celularSegurado', label: 'celular' }),
+        jsonEmail({ name: 'emailSegurado', label: 'E-mail' }),
+        jsonSelect({ name: 'qtdBeneficiario', label: 'quantidades de beneficiários', selects: ['2 vidas', '3 vidas', '4 vidas', '5 vidas', '6 vidas', '7 vidas', '8 vidas', '9 vidas', '10 vidas'] }),
+        jsonData({ name: 'nascimentoBeneficiario1', label: 'nascimento beneficiário 1', view: { name: 'qtdBeneficiario', value: 1 } }),
+        jsonData({ name: 'nascimentoBeneficiario2', label: 'nascimento beneficiário 2', view: { name: 'qtdBeneficiario', value: 2 } }),
+        jsonData({ name: 'nascimentoBeneficiario3', label: 'nascimento beneficiário 3', view: { name: 'qtdBeneficiario', value: 3 } }),
+        jsonData({ name: 'nascimentoBeneficiario4', label: 'nascimento beneficiário 4', view: { name: 'qtdBeneficiario', value: 4 } }),
+        jsonData({ name: 'nascimentoBeneficiario5', label: 'nascimento beneficiário 5', view: { name: 'qtdBeneficiario', value: 5 } }),
+        jsonData({ name: 'nascimentoBeneficiario6', label: 'nascimento beneficiário 6', view: { name: 'qtdBeneficiario', value: 6 } }),
+        jsonData({ name: 'nascimentoBeneficiario7', label: 'nascimento beneficiário 7', view: { name: 'qtdBeneficiario', value: 7 } }),
+        jsonData({ name: 'nascimentoBeneficiario8', label: 'nascimento beneficiário 8', view: { name: 'qtdBeneficiario', value: 8 } }),
+        jsonData({ name: 'nascimentoBeneficiario9', label: 'nascimento beneficiário 9', view: { name: 'qtdBeneficiario', value: 9 } }),
+        jsonData({ name: 'nascimentoBeneficiario10', label: 'nascimento beneficiário 10', view: { name: 'qtdBeneficiario', value: 10 } }),
+      ],
+      info: []
+    },
+  */
   {
     title: 'PLANO DE SAÚDE',
     icon: 'hand-holding-heart',
@@ -339,8 +341,10 @@ const array = [
       jsonEstado({ name: 'estadoSegurado', label: 'estado' }),
       jsonCidade({ name: 'cidadeSegurado', label: 'cidade' }),
       jsonSelect({ name: 'tipoPlanoSaude', label: 'plano', selects: ['individual', 'familiar', 'empresarial'] }),
+      jsonRegistro({ name: 'registroSegurado', label: 'cpf', mask: 'cpf', view: { name: 'tipoPlanoSaude', value: 'individual' } }),
+      jsonRegistro({ name: 'registroSegurado', label: 'cnpj', mask: 'cnpj', view: { name: 'tipoPlanoSaude', value: 'familiar,empresarial' } }),
       jsonSelect({ name: 'qtdBeneficiario', label: 'quantidades de beneficiários', view: { name: 'tipoPlanoSaude', value: 'familiar,empresarial' }, selects: ['2 vidas', '3 vidas', '4 vidas', '5 vidas', '6 vidas', '7 vidas', '8 vidas', '9 vidas', '10 vidas'] }),
-      jsonData({ name: 'nascimentoBeneficiario1', label: 'nascimento beneficiário 1', view: { name: 'tipoPlanoSaude', value: 'individual' } }),
+      jsonData({ name: 'nascimentoBeneficiario1', label: 'nascimento beneficiário', view: { name: 'tipoPlanoSaude', value: 'individual' } }),
       jsonData({ name: 'nascimentoBeneficiario1', label: 'nascimento beneficiário 1', view: { name: 'qtdBeneficiario', value: 1 } }),
       jsonData({ name: 'nascimentoBeneficiario2', label: 'nascimento beneficiário 2', view: { name: 'qtdBeneficiario', value: 2 } }),
       jsonData({ name: 'nascimentoBeneficiario3', label: 'nascimento beneficiário 3', view: { name: 'qtdBeneficiario', value: 3 } }),
@@ -889,7 +893,42 @@ const array = [
       jsonData({ name: 'nascimentoBeneficiario9', label: 'nascimento passageiros 9', view: { name: 'qtdBeneficiario', value: 9 } }),
       jsonData({ name: 'nascimentoBeneficiario10', label: 'nascimento passageiros 10', view: { name: 'qtdBeneficiario', value: 10 } }),
     ],
-    info: []
+    info: [
+      <View>
+        <Text style={{
+          fontSize: 17,
+          fontWeight: '400',
+          color: '#333333'
+        }}>
+          Acidente em viagem, nacional ou internacional a trabalho ou férias, o importante é ter risco totalmente coberto com uma proteção que <Text style={{ fontWeight: 'bold' }}>CUSTA POUCO</Text> e garante imprevistos que podem ter um custo muito elevado como:
+        </Text>
+        <Text>{`\n`}</Text>
+        <Text style={{ color: 'red', fontWeight: 'bold' }}>De acordo com seu plano:</Text>
+        <Text style={{
+          fontSize: 17,
+          fontWeight: '400',
+          color: '#333333'
+        }}>
+          - Despesas médicas e hospitalares (DMH)
+          {`\n`}
+          - Translado médico
+          {`\n`}
+          - Translado de corpo
+          {`\n`}
+          - Regresso sanitário
+          {`\n`}
+          - Morte acidental
+          {`\n`}
+          - Extrávio de bagagem
+          {`\n`}
+          - Invalidez permanente total ou parcial por acidente
+          {`\n`}
+          - Assistência funeral
+          {`\n`}
+          - Entre outras
+        </Text>
+      </View>
+    ]
   },
 ];
 
