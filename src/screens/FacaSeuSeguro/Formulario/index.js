@@ -162,6 +162,7 @@ const Formulario = ({ type }) => {
         nome: data.nomeSegurado || null,
         cpf: data.registroSegurado || null,
         celular: data.celularSegurado,
+        email: data.emailSegurado || null,
         profissao: data.profissaoSegurado || null,
         estadoCivil: data.estadoCivilSegurado || null,
         cnh: data.dataCNHSegurado || null,

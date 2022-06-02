@@ -342,7 +342,7 @@ const array = [
       jsonCidade({ name: 'cidadeSegurado', label: 'cidade' }),
       jsonSelect({ name: 'tipoPlanoSaude', label: 'plano', selects: ['individual', 'familiar', 'empresarial'] }),
       jsonRegistro({ name: 'registroSegurado', label: 'cpf', mask: 'cpf', view: { name: 'tipoPlanoSaude', value: 'individual' } }),
-      jsonRegistro({ name: 'registroSegurado', label: 'cnpj', mask: 'cnpj', view: { name: 'tipoPlanoSaude', value: 'familiar,empresarial' } }),
+      jsonRegistro({ name: 'registroSegurado', label: 'cnpj', mask: 'cnpj', view: { name: 'tipoPlanoSaude', value: 'empresarial' } }),
       jsonSelect({ name: 'qtdBeneficiario', label: 'quantidades de beneficiários', view: { name: 'tipoPlanoSaude', value: 'familiar,empresarial' }, selects: ['2 vidas', '3 vidas', '4 vidas', '5 vidas', '6 vidas', '7 vidas', '8 vidas', '9 vidas', '10 vidas'] }),
       jsonData({ name: 'nascimentoBeneficiario1', label: 'nascimento beneficiário', view: { name: 'tipoPlanoSaude', value: 'individual' } }),
       jsonData({ name: 'nascimentoBeneficiario1', label: 'nascimento beneficiário 1', view: { name: 'qtdBeneficiario', value: 1 } }),
