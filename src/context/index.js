@@ -216,7 +216,7 @@ export const ContextProvider = ({ children }) => {
       connected,
       notificationUser,
       setNotificationUser,
-      cpf,
+      cpf, setCPF,
       viewNotificationUser, setViewNotificationUser,
       seguradoras,
     }}>

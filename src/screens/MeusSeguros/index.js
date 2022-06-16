@@ -29,9 +29,8 @@ const MeusSeguros = ({ navigation, route }) => {
 
   const [loading, setLoading] = useState(true);
 
-  const { dataSeguros, setDataSeguros } = useContext(Context);
-
-  const [CPF, setCPF] = useState(route.params.cpf);
+  const { dataSeguros, setDataSeguros, cpf, setCPF } = useContext(Context);
+  console.log(cpf);
 
   const [errors, setErrors] = useState([]);
 
@@ -51,14 +50,14 @@ const MeusSeguros = ({ navigation, route }) => {
   const buscarSeguros = async (init) => {
     const array = [];
 
-    if(!CPF) {
+    if(!cpf) {
       desvincularSeguros();
 
       return;
     }
 
-    if(!validateCPF(CPF)) {
-      if(!validateCPF(CPF)) {
+    if(!validateCPF(cpf)) {
+      if(!validateCPF(cpf)) {
         array.push('CPF');
 
         if(!init) {
@@ -80,7 +79,7 @@ const MeusSeguros = ({ navigation, route }) => {
 
     setLoading(false);
     
-    let queryFilter = firebase.firestore().collection('seguros').where('segurado.cpf', '==', CPF);
+    let queryFilter = firebase.firestore().collection('seguros').where('segurado.cpf', '==', cpf);
 
     if(corretora) {
       queryFilter = queryFilter.where('corretora.uid', '==', corretora.uid);
@@ -105,7 +104,7 @@ const MeusSeguros = ({ navigation, route }) => {
 
         setDataSeguros(array || null);
         AsyncStorage.setItem('meusSeguros', JSON.stringify(array));
-        AsyncStorage.setItem('cpf', CPF);
+        AsyncStorage.setItem('cpf', cpf);
       }else {
         if(!init) {
           Alert.alert(
@@ -342,7 +341,7 @@ const MeusSeguros = ({ navigation, route }) => {
                   fontWeight: 'bold',
                   marginBottom: 10
                 }}>CPF:</Text>
-                <Input ref={CPFRef} onSubmitEditing={() => buscarSeguros()} returnKeyType='done' keyboardType='number-pad' value={CPF || ''} onChangeText={(e) => setCPF(maskCPF(e))} style={{ fontSize: 20, padding: 20, fontWeight: '500', borderColor: '#999' }} />
+                <Input ref={CPFRef} onSubmitEditing={() => buscarSeguros()} returnKeyType='done' keyboardType='number-pad' value={cpf || ''} onChangeText={(e) => setCPF(maskCPF(e))} style={{ fontSize: 20, padding: 20, fontWeight: '500', borderColor: '#999' }} />
               </FormControl>
               <View>
                 <TouchableOpacity

@@ -27,13 +27,11 @@ const HomeScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [viewedOnboarding, setViewedOnboarding] = useState(true);
 
-  const { corretora, corretor, connected, notificationUser, setNotificationUser, viewNotificationUser, setViewNotificationUser } = useContext(Context);
+  const { corretora, corretor, connected, notificationUser, setNotificationUser, viewNotificationUser, setViewNotificationUser, cpf, setCPF } = useContext(Context);
 
   const toast = useToast();
 
   const [firstView, setFirstView] = useState(null);
-
-  const [CPF, setCPF] = useState(null);
 
   useEffect(() => {
     AsyncStorage.getItem('cpf').then(e => {
@@ -309,7 +307,7 @@ const HomeScreen = ({ navigation }) => {
                   navigation.navigate('contatoCorretora');
                 }
               }else {
-                navigation.navigate(item.href, { cpf: CPF });
+                navigation.navigate(item.href, { cpf: cpf });
               }
             }else if(item.function) {
               item.function();
