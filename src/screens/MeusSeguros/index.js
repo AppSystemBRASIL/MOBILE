@@ -30,7 +30,6 @@ const MeusSeguros = ({ navigation, route }) => {
   const [loading, setLoading] = useState(true);
 
   const { dataSeguros, setDataSeguros, cpf, setCPF } = useContext(Context);
-  console.log(cpf);
 
   const [errors, setErrors] = useState([]);
 

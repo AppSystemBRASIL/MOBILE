@@ -191,7 +191,7 @@ const array = [
       jsonTitle({ name: 'veiculoSeguro', label: 'veículo', placeholder: 'Veículo', page: 3 }),
       jsonTitle({ name: 'placaVeiculoSeguro', label: 'placa do veículo', placeholder: 'AAA0000 ou AAA0A00', formatter: maskPlaca, validated: validatePlaca, page: 3 }),
       jsonTitle({ name: 'anoFabricacaoSeguro', label: 'ano de fabricação', placeholder: '0000', formatter: maskYear, validated: validateYear, page: 3 }),
-      jsonTitle({ name: 'anoModeloSeguro', label: 'modelo do modelo', placeholder: '0000', formatter: maskYear, validated: validateYear, page: 3 }),
+      jsonTitle({ name: 'anoModeloSeguro', label: 'ano do modelo', placeholder: '0000', formatter: maskYear, validated: validateYear, page: 3 }),
       jsonCEP({ name: 'cepVeiculo', label: 'cep onde veículo dorme', page: 3 }),
       jsonSelect({ name: 'veiculoFinanciado', label: 'financiado?', selects: ['sim', 'não'], page: 3 }),
       jsonSelect({ name: 'veiculoBlindado', label: 'blindado?', selects: ['sim', 'não'], page: 3 }),
