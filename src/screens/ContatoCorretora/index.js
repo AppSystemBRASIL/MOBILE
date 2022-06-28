@@ -17,6 +17,9 @@ import { StatusBar } from 'expo-status-bar';
 import { COLORS } from '../../utils/constants';
 import compartilharAPP from '../../utils/compartilharAPP';
 
+import { validatePhone } from '../../utils/validateInput';
+import { maskLetters, maskPhone } from '../../utils/maskedInput';
+
 const ContatoCorretora = ({ route, navigation }) => {
   const item = route.params;
 
@@ -29,8 +32,21 @@ const ContatoCorretora = ({ route, navigation }) => {
   const Body = () => {
     const [viewCallCorretora, setViewCallCorretora] = useState(false);
 
+    const [nome, setNome] = useState('');
+    const [telefone, setTelefone] = useState('');
     const [mensagem, setMensagem] = useState('');
+
     async function enviarMensagem() {
+      if(String(nome).split(' ').length <= 1) {
+        Alert.alert('NOME INCOMPLETO!');
+
+        return;
+      }
+      if(!validatePhone(telefone)) {
+        Alert.alert('TELEFONE INVÁLIDO!');
+
+        return;
+      }
       if(!mensagem) {
         Alert.alert('INFORME UMA MENSAGEM!');
 
@@ -42,13 +58,18 @@ const ContatoCorretora = ({ route, navigation }) => {
         corretor: !corretor ? null : corretor.uid,
         created: new Date(),
         mensagem: mensagem,
-        lida: false
+        lida: false,
+        nome: nome,
+        telefone: telefone
       };
 
       await firebase.firestore().collection('feedback').add(data)
       .then(() => {
-        Alert.alert('ENVIADO COM SUCESSO!');
+        setNome('');
+        setTelefone('');
         setMensagem('');
+
+        Alert.alert('ENVIADO COM SUCESSO!');
       })
     }
 
@@ -150,8 +171,26 @@ const ContatoCorretora = ({ route, navigation }) => {
                   </>
                 )}
                 <View style={{ marginTop: 25 }}>
+                  <Text style={{ fontWeight: 'bold' }}>NOME:</Text>
+                  <TextInput autoCorrect={false} autoComplete='off' keyboardType='default' value={nome} onChangeText={(e) => setNome(!e ? '' : maskLetters(String(e).toUpperCase()))} style={{
+                    borderWidth: 1,
+                    borderColor: '#999',
+                    padding: 0,
+                    fontSize: 20,
+                    marginBottom: 20,
+                    textTransform: 'uppercase'
+                  }} />
+                  <Text style={{ fontWeight: 'bold' }}>TELEFONE:</Text>
+                  <TextInput autoCorrect={false} autoComplete='off' maxLength={15} keyboardType='number-pad' value={telefone} onChangeText={(e) => setTelefone(!e ? '' : maskPhone(e))} style={{
+                    borderWidth: 1,
+                    borderColor: '#999',
+                    padding: 0,
+                    fontSize: 20,
+                    marginBottom: 20,
+                    textTransform: 'uppercase'
+                  }} />
                   <Text style={{ fontWeight: 'bold' }}>MENSAGEM:</Text>
-                  <TextArea h={100} value={mensagem} onChangeText={(e) => setMensagem(!e ? '' : String(e).toUpperCase())} style={{
+                  <TextArea autoCorrect={false} autoComplete='off' h={100} value={mensagem} onChangeText={(e) => setMensagem(!e ? '' : String(e).toUpperCase())} style={{
                     borderWidth: 1,
                     borderColor: '#999',
                     padding: 0,
@@ -159,12 +198,12 @@ const ContatoCorretora = ({ route, navigation }) => {
                     fontSize: 20,
                     textTransform: 'uppercase'
                   }} />
-                    <Button style={{
-                      marginTop: 10,
-                      backgroundColor: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
-                    }} onPress={enviarMensagem}>
-                      ENVIAR
-                    </Button>
+                  <Button style={{
+                    marginTop: 10,
+                    backgroundColor: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
+                  }} onPress={enviarMensagem}>
+                    ENVIAR
+                  </Button>
                 </View>
               </View>
             </>
