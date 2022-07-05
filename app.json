@@ -1,10 +1,10 @@
 {
   "expo": {
-    "scheme": "xcar-corretora",
     "name": "xcar-corretora",
     "slug": "xcar-corretora",
+    "scheme": "xcar-corretora",
     "orientation": "portrait",
-    "icon": "https://firebasestorage.googleapis.com/v0/b/appsystembrasil-seguro.appspot.com/o/corretora%2FX0hXIOdA5pOkyLquPIxj%2Ficon%2Ficon.png?alt=media&token=47ea79cf-001a-4b7e-9a70-a0b5dcf6e728",
+    "icon": "./src/assets/icon.png",
     "splash": {
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
@@ -16,12 +16,12 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.xcarcorretora.app"
     },
     "android": {
-      "versionCode": 29,
       "adaptiveIcon": {
-        "foregroundImage": "https://firebasestorage.googleapis.com/v0/b/appsystembrasil-seguro.appspot.com/o/corretora%2FX0hXIOdA5pOkyLquPIxj%2Ficon%2Ficon.png?alt=media&token=47ea79cf-001a-4b7e-9a70-a0b5dcf6e728",
+        "foregroundImage": "./src/assets/icon.png",
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.xcarcorretora.app"
