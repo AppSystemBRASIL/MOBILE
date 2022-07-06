@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, ScrollView, Image, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
+import { View, Text, ScrollView, Image, TouchableOpacity, SafeAreaView, Alert, useWindowDimensions } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Feather from 'react-native-vector-icons/Feather';
@@ -26,6 +26,8 @@ import compartilharAPP from '../../utils/compartilharAPP';
 const HomeScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [viewedOnboarding, setViewedOnboarding] = useState(true);
+
+  const { width } = useWindowDimensions();
 
   const { corretora, corretor, connected, notificationUser, setNotificationUser, viewNotificationUser, setViewNotificationUser, cpf, setCPF } = useContext(Context);
 
@@ -266,8 +268,8 @@ const HomeScreen = ({ navigation }) => {
         backgroundColor: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
         width: '100%',
       }}>
-        <View style={{ paddingHorizontal: 20, alignItems: 'center', paddingVertical: 15 }}>
-          <Image style={{ resizeMode: 'stretch', width: 240, height: 56 }} width={240} height={56} source={{ uri: corretora ? corretora.logo  : 'https://www.statusseguros.com/wp-content/uploads/2018/05/Untitled-35.png', cache: 'only-if-cached' }} />
+        <View style={{ paddingHorizontal: 20, alignItems: 'center', paddingVertical: width > 768 ? 30 : 15 }}>
+          <Image style={{ resizeMode: 'stretch', width: 240, height: 56 }} width={width > 768 ? 300 : 240} height={width > 768 ? 100 : 56} source={{ uri: corretora.logo }} />
         </View>
         <View style={{
           backgroundColor: 'white',

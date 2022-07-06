@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { View, Text, Image, TouchableOpacity, SafeAreaView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, SafeAreaView, useWindowDimensions } from 'react-native';
 import { COLORS } from '../../utils/constants';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -17,6 +17,8 @@ import { useNavigation } from '@react-navigation/native';
 const Header = ({ title, showBackPage }) => {
   const { corretora, notificationUser, setNotificationUser, viewNotificationUser, setViewNotificationUser } = useContext(Context);
 
+  const { width } = useWindowDimensions();
+  
   const navigation = useNavigation();
 
   const fecharNotificacao = async (uid) => {
@@ -155,11 +157,9 @@ const Header = ({ title, showBackPage }) => {
         ) : (
           <View />
         )}
-        <Image style={{ resizeMode: 'stretch', width: 180, height: 50 }} width={180} height={50} source={{ uri: corretora ? corretora.logo : 'https://www.statusseguros.com/wp-content/uploads/2018/05/Untitled-35.png', cache: 'only-if-cached' }} />
+        <Image style={{ resizeMode: 'stretch', width: 240, height: 56 }} width={width > 768 ? 300 : 240} height={width > 768 ? 100 : 56} source={{ uri: corretora.logo }} />
         <View>
-          <TouchableOpacity onPress={() => setViewNotificationUser(value => notificationUser.length > 0 ? !value : false)} style={{ position: 'relative', backgroundColor: viewNotificationUser ? 'transparent' : 'transparent', padding: viewNotificationUser ? 5 : 0, borderRadius: 10 }}>
-            
-          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setViewNotificationUser(value => notificationUser.length > 0 ? !value : false)} style={{ position: 'relative', backgroundColor: viewNotificationUser ? 'transparent' : 'transparent', padding: viewNotificationUser ? 5 : 0, borderRadius: 10 }} />
         </View>
       </View>
       <View style={{
