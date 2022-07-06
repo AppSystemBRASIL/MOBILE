@@ -111,7 +111,7 @@ const ContatosUteis = ({ navigation }) => {
             paddingBottom: 20,
           }}
           showsVerticalScrollIndicator={false}
-          data={dataList}
+          data={dataList.sort((a, b) => a.text.localeCompare(b.text))}
           renderItem={renderItem}
           keyExtractor={(item, index) => index.toString()}
         />

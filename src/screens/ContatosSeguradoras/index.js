@@ -33,7 +33,7 @@ const ContatosUteis = ({ navigation }) => {
       return (
         <>
           <Text style={{paddingHorizontal: 10, color: '#555', paddingBottom: 10, fontSize: 20, fontWeight: '800'}}>SEGURADORAS</Text>
-          {corretoras.map((item1, index1) => (
+          {corretoras.sort((a, b) => a.razao_social.localeCompare(b.razao_social)).map((item1, index1) => (
             <View key={index1}>
               {corretoras.length > 0 && (
                 <View>
