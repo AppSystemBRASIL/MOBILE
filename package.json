@@ -3,8 +3,8 @@
   "scripts": {
     "start": "npx expo-cli start",
     "git": "git add . && git commit -m 'first commit' && git push",
-    "eas-build": "npx eas-cli build",
-    "eas-submit": "npx eas-cli build --auto-submit"
+    "build": "yarn git && npx eas-cli build",
+    "submit": "yarn git && npx eas-cli build --auto-submit"
   },
   "dependencies": {
     "@motify/skeleton": "^0.15.3",

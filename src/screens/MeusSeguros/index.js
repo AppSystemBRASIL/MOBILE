@@ -218,7 +218,7 @@ const MeusSeguros = ({ navigation }) => {
                           fontWeight: '500'
                         }}
                       >
-                        <Text style={{fontWeight: 'bold'}}>VEÍCULO:</Text> {String(item.veiculo.veiculo)}
+                        <Text style={{fontWeight: 'bold'}}>VEÍCULO{item?.veiculo?.modelo ? ` / MODELO` : ''}:</Text>{'\n'}{String(item.veiculo.veiculo)} {item?.veiculo?.modelo ? `/ ${String(item.veiculo.modelo)}` : ''}{'\n'}
                       </Text>
                       <Text
                         style={{
@@ -228,7 +228,7 @@ const MeusSeguros = ({ navigation }) => {
                         }}
                       >
                         <Text>
-                          <Text style={{fontWeight: 'bold'}}>VIGÊNCIA:</Text> {format(item.seguro.vigencia.seconds * 1000, 'dd/MM/yyyy')} até {format(item.seguro.vigenciaFinal.seconds * 1000, 'dd/MM/yyyy')}{`\n`}
+                          <Text style={{fontWeight: 'bold'}}>VIGÊNCIA:</Text>{'\n'}{format(item.seguro.vigencia.seconds * 1000, 'dd/MM/yyyy')} até {format(item.seguro.vigenciaFinal.seconds * 1000, 'dd/MM/yyyy')} {`\n`}
                         </Text> 
                       </Text>
                       <Text
@@ -248,6 +248,23 @@ const MeusSeguros = ({ navigation }) => {
                           marginTop: 10
                         }}
                       >SEGURADORA: {String(item.seguradora.razao_social).toUpperCase()}</Text>
+                      {!corretora && (
+                        <Text
+                          style={{
+                            fontSize: 12,
+                            fontWeight: 'bold',
+                            color: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
+                            marginTop: 3
+                          }}
+                        >CORRETORA: {String(item.corretora.razao_social).toUpperCase()}</Text>
+                      )}
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          fontWeight: 'bold',
+                          color: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
+                        }}
+                      >USO DO VEÍCULO: {String(item?.riscos?.usoVeiculo || 'OUTROS').toUpperCase()}</Text>
                       {!corretora && (
                         <Text
                           style={{
