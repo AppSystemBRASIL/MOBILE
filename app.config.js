@@ -22,7 +22,8 @@ export default function appConfig({ config }) {
     },
     ios: {
       ...config.ios,
-      buildNumber: String(BUILD)
+      buildNumber: String(BUILD),
+      bundleIdentifier: DOMAINS
     },
     android: {
       ...config.android,
