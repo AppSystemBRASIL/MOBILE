@@ -2,10 +2,9 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "npx expo-cli start",
-    "android": "npx expo-cli start --android",
-    "ios": "npx expo-cli start --ios",
-    "eject": "npx expo-cli eject",
-    "git": "git add . && git commit -m 'first commit' && git push"
+    "git": "git add . && git commit -m 'first commit' && git push",
+    "eas-build": "npx eas-cli build",
+    "eas-submit": "npx eas-cli build --auto-submit"
   },
   "dependencies": {
     "@motify/skeleton": "^0.15.3",
