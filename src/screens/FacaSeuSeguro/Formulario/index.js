@@ -187,8 +187,9 @@ const Formulario = ({ type }) => {
         seguradora: data.seguradoraSeguro || null,
         vigencia: data.finalVigenciaSeguro || null,
         sinistro: data.houveSinistroSeguro || null,
-        apolice: null,
-        ci: null,
+        apolice: data.apolice || null,
+        ci: data.ci || null,
+        classeBonus: data.classeBonus || null
       },
       veiculo: {
         placa: data.placaVeiculoSeguro || null,
