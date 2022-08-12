@@ -17,6 +17,11 @@
       "android": {
         "serviceAccountKeyPath": "./private/pc-api-4724455207831779768-362-83beba03b9e5.json",
         "track": "production"
+      },
+      "ios": {
+        "appleId": "juniormelo271101@icloud.com",
+        "ascAppId": "1633237741",
+        "appleTeamId": "K79SZZG6T2"
       }
     }
   }

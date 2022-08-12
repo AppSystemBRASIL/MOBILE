@@ -1,6 +1,6 @@
 const VERSION = '1.0.0';
 const DOMAINS = 'com.xcarcorretora.app';
-const BUILD = 32;
+const BUILD = 33;
 
 export default function appConfig({ config }) {
   return {
