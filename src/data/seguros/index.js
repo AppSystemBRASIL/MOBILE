@@ -207,6 +207,7 @@ const array = [
       jsonSelect({ name: 'dataCNHCondutor', label: 'tempo de cnh', selects: ['+10 anos', '10 anos', '9 anos', '8 anos', '7 anos', '6 anos', '5 anos', '4 anos', '3 anos', '2 anos', '1 ano', 'permissão provisória'], view: { name: 'principalCondutor', value: 'outra pessoa' }, page: 4 }),
       jsonSelect({ name: 'estadoCivilCondutor', label: 'estado cívil', selects: ['solteiro', 'união estável', 'casado', 'divorciado', 'viúvo'], view: { name: 'principalCondutor', value: 'outra pessoa' }, page: 4 }),
       jsonSelect({ name: 'usoVeiculo', label: 'uso do veículo', selects: ['lazer e ida e volta ao trabalho', 'só lazer', 'visita a clientes', 'motorista de aplicativo', 'táxi', 'para entregas'], page: 5 }),
+      jsonRegistro({ name: 'cepPernoite', label: 'CEP Pernoite', mask: 'cpf', page: 5 }),
       jsonSelect({ name: 'residenciaVeiculo', label: 'reside em', selects: ['casa', 'apartamento', 'condomínio de casas'], page: 5 }),
       jsonSelect({ name: 'garagemResidencia', label: 'garagem na residência?', selects: ['não', 'sim, com portão automático', 'sim, com portão manual', 'sim, em estacionamento pago'], page: 5 }),
       jsonSelect({ name: 'garagemTrabalho', label: 'garagem no trabalho?', selects: ['sim', 'não', 'não trabalha', 'não utiliza para ir ao trabalho'], page: 5 }),

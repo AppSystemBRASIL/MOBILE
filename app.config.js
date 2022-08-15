@@ -1,6 +1,11 @@
 const VERSION = '1.0.0';
 const DOMAINS = 'com.xcarcorretora.app';
-const BUILD = 33;
+const BUILD = 34;
+
+const API_KEY_FIREBASE = 'AIzaSyAlGCcQx9S7SmvxAArZ3tvnH1ee8FwvmUY';
+const PROJECT_ID = 'appsystembrasil-seguro';
+const MESSAGING_SENDER_ID = '402899438373';
+const APP_ID = '1:402899438373:web:1e9b8c64f444392b8228cc';
 
 export default function appConfig({ config }) {
   return {
@@ -12,12 +17,12 @@ export default function appConfig({ config }) {
     version: VERSION,
     web: {
       firebase: {
-        apiKey: "AIzaSyAlGCcQx9S7SmvxAArZ3tvnH1ee8FwvmUY",
-        authDomain: "appsystembrasil-seguro.firebaseapp.com",
-        projectId: "appsystembrasil-seguro",
-        storageBucket: "appsystembrasil-seguro.appspot.com",
-        messagingSenderId: "402899438373",
-        appId: "1:402899438373:web:1e9b8c64f444392b8228cc"
+        apiKey: API_KEY_FIREBASE,
+        authDomain: `${PROJECT_ID}.firebaseapp.com`,
+        projectId: PROJECT_ID,
+        storageBucket: `${PROJECT_ID}.appspot.com`,
+        messagingSenderId: MESSAGING_SENDER_ID,
+        appId: APP_ID
       }
     },
     ios: {

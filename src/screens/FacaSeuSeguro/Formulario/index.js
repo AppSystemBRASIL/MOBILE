@@ -201,6 +201,7 @@ const Formulario = ({ type }) => {
         blindado: data.veiculoBlindado || null,
         kitGas: data.veiculoKitGas || null,
         uso: data.usoVeiculo || null,
+        cepPernoite: data.cepPernoite || null
       },
       imovel: {
         cep: data.cepImovel || null,
