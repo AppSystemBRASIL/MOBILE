@@ -238,7 +238,16 @@ const MeusSeguros = ({ navigation }) => {
                           fontWeight: '500'
                         }}
                       >
-                        <Text style={{fontWeight: 'bold'}}>PRINCIPAL CONDUTOR:</Text> {`\n`+String((item.veiculo.condutor === 'O MESMO' || item.veiculo.condutor === '' || !item.veiculo.condutor) ? item.segurado.nome : item.veiculo.condutor).toUpperCase()}
+                        <Text style={{fontWeight: 'bold'}}>PRINCIPAL CONDUTOR:</Text> {`\n`+String((item.veiculo.condutor === 'O MESMO' || item.veiculo.condutor === '' || !item.veiculo.condutor) ? item.segurado.nome : item.veiculo.condutor).toUpperCase()} {`\n`}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 17,
+                          color: '#333',
+                          fontWeight: '500'
+                        }}
+                      >
+                        <Text style={{fontWeight: 'bold'}}>CEP DE PERNOITE:</Text> {`\n`+String(item.endereco.cep)}
                       </Text>
                       <Text
                         style={{
