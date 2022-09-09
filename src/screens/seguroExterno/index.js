@@ -17,21 +17,24 @@ import { validateCEP, validateCPF, validatePlaca, validateYear } from '../../uti
 import { addYears, endOfDay, setHours, setMinutes } from 'date-fns';
 
 import firebase from '../../../firebase';
+import generateToken from '../../hooks/generateToken';
 
-export default function SeguroExterno({ navigation }) {
+export default function SeguroExterno({ navigation, route }) {
   const { corretora, setCPF: setCPFContext } = useAuth();
 
-  const [placa, setPlaca] = useState('');
-  const [seguradora, setSeguradora] = useState('');
-  const [vigenciaInicio, setVigenciaInicio] = useState('');
-  const [vigenciaFinal, setVigenciaFinal] = useState('');
-  const [veiculo, setVeiculo] = useState('');
-  const [anoModelo, setAnoModelo] = useState('');
-  const [usoVeiculo, setUsoVeiculo] = useState('');
-  const [segurado, setSegurado] = useState('');
-  const [cpf, setCPF] = useState('');
-  const [cepPernoite, setCEPPernoite] = useState('');
-  const [telefone, setTelefone] = useState('');
+  const params = route.params;
+
+  const [placa, setPlaca] = useState(params?.placa || '');
+  const [seguradora, setSeguradora] = useState(params?.seguradora || '');
+  const [vigenciaInicio, setVigenciaInicio] = useState(params?.vigenciaInicio || '');
+  const [vigenciaFinal, setVigenciaFinal] = useState(params?.vigenciaFinal || '');
+  const [veiculo, setVeiculo] = useState(params?.veiculo || '');
+  const [anoModelo, setAnoModelo] = useState(params?.anoModelo || '');
+  const [usoVeiculo, setUsoVeiculo] = useState(params?.usoVeiculo || '');
+  const [segurado, setSegurado] = useState(params?.segurado || '');
+  const [cpf, setCPF] = useState(params?.cpf || '');
+  const [cepPernoite, setCEPPernoite] = useState(params?.cep || '');
+  const [telefone, setTelefone] = useState(params?.telefone || '');
 
   const [seguradoras, setSeguradoras] = useState([]);
 
@@ -39,7 +42,7 @@ export default function SeguroExterno({ navigation }) {
 
   const [loading, setLoading] = useState(false);
 
-  const [accept, setAccept] = useState(false);
+  const [accept, setAccept] = useState(params?.type === 'edit' ? true : false);
 
   useEffect(() => {
     firebase.firestore().collection('seguradoras').get()
@@ -73,7 +76,8 @@ export default function SeguroExterno({ navigation }) {
       title: 'ENVIANDO...'
     });
 
-    await firebase.firestore().collection('seguros').add({
+    const data = {
+      uid: route?.params?.type === 'edit' ? route.params.uid : generateToken(),
       seguradora: {
         uid: seguradoras.filter(x => x.uid === seguradora)[0].uid,
         razao_social: seguradoras.filter(x => x.uid === seguradora)[0].razao_social,
@@ -84,7 +88,8 @@ export default function SeguroExterno({ navigation }) {
         placa: placa,
         placaQuery: placa ? `${placa[3]}${placa[5]}${placa[6]}` : null,
         modelo: null,
-        cepPernoite: cepPernoite
+        cepPernoite: cepPernoite,
+        anoModelo: anoModelo || null
       },
       endereco: {
         cep: cepPernoite,
@@ -114,23 +119,25 @@ export default function SeguroExterno({ navigation }) {
       tipo: 'veicular',
       externo: true,
       created: new Date()
+    };
+
+    await firebase.firestore().collection('seguros').doc(data.uid).set(data, {
+      merge: true
     })
-    .then((response) => {
-      firebase.firestore().collection('seguros').doc(response.id).set({
-        uid: response.id
-      }, { merge: true })
+    .then(() => {
       Toast.closeAll();
       Toast.show({
-        title: 'REGISTRADO COM SUCESSO!',
+        title: `${params.type === 'edit' ? 'ALTERADO COM SUCESSO' : 'REGISTRADO'} COM SUCESSO!`,
         description: 'redirecionando para página de seguros...'
       });
 
       setCPFContext(cpf);
       setTimeout(() => {
+        Toast.closeAll();
         navigation.navigate('meusSeguros', {
           cpf: cpf
         });
-      }, 1000);
+      }, 1200);
     })
     .catch(() => setLoading(false))
     .finally(() => {
@@ -141,7 +148,7 @@ export default function SeguroExterno({ navigation }) {
   return (
     <>
       <StatusBar style='light' />
-      <Header title='ADICIONAR MEU SEGURO' navigation={navigation} />
+      <Header title={`${route?.params?.type === 'edit' ? 'ALTERAR' : 'ADICIONAR'} MEU SEGURO`} navigation={navigation} />
       <KeyboardAvoidingView
         style={{
           flex: 1,
@@ -163,59 +170,63 @@ export default function SeguroExterno({ navigation }) {
               margin: 5,
               marginBottom: 100,
               paddingHorizontal: 20,
-              paddingTop: 10,
+              paddingTop: route?.params?.type === 'edit' ? 30 : 10,
               paddingBottom: 50
             }}
           >
-            <TouchableOpacity
-              style={{
-                marginTop: 20,
-                flexDirection: 'row',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-              }}
-              onPress={() => setAccept(e => !e)}
-            >
-              <View
-                style={{
-                  borderWidth: !accept ? 1 : 0,
-                  borderRadius: 5,
-                  width: 20,
-                  height: 20,
-                  marginRight: 10,
-                  backgroundColor: !accept ? 'white' : COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }}
-              >
-                {accept && <CheckIcon size={5} style={{ color: 'white' }} />}
-              </View>
-              <Text
-                style={{
-                  fontSize: 12,
-                  flex: 1,
-                  textAlign: 'justify'
-                }}
-              >
-                Fornecer as informações para o calculo do seguro e receber gratuitamente e sem compromisso nossa cotação.
-              </Text>
-            </TouchableOpacity>
-            <Text
-              style={{
-                marginTop: 10,
-                fontSize: 12,
-                textAlign: 'justify'
-              }}
-            >
-              <Text
-                style={{
-                  fontWeight: 'bold'
-                }}
-              >
-                OBS.
-              </Text> Segurado XCAR CORRETORA DE SEGUROS concorre mensalmente a 35% de desconto na renovação do seu seguro.
-            </Text>
-            <Divider style={{ marginVertical: 20 }} />
+            {route?.params?.type !== 'edit' && (
+              <>
+                <TouchableOpacity
+                  style={{
+                    marginTop: 20,
+                    flexDirection: 'row',
+                    justifyContent: 'flex-start',
+                    alignItems: 'center',
+                  }}
+                  onPress={() => setAccept(e => !e)}
+                >
+                  <View
+                    style={{
+                      borderWidth: !accept ? 1 : 0,
+                      borderRadius: 5,
+                      width: 20,
+                      height: 20,
+                      marginRight: 10,
+                      backgroundColor: !accept ? 'white' : COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
+                      justifyContent: 'center',
+                      alignItems: 'center'
+                    }}
+                  >
+                    {accept && <CheckIcon size={5} style={{ color: 'white' }} />}
+                  </View>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      flex: 1,
+                      textAlign: 'justify'
+                    }}
+                  >
+                    Fornecer as informações para o calculo do seguro e receber gratuitamente e sem compromisso nossa cotação.
+                  </Text>
+                </TouchableOpacity>
+                <Text
+                  style={{
+                    marginTop: 10,
+                    fontSize: 12,
+                    textAlign: 'justify'
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    OBS.
+                  </Text> Segurado XCAR CORRETORA DE SEGUROS concorre mensalmente a 35% de desconto na renovação do seu seguro.
+                </Text>
+                <Divider style={{ marginVertical: 20 }} />
+              </>
+            )}
             <FormControl isInvalid={errors.includes('segurado')}>
               <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>NOME DO SEGURADO: <Text style={{ color: 'red' }}>*</Text></Text>
               <InputStyle editable={accept} borderColor='#999' value={segurado} returnKeyType='done' placeholder='NOME DO SEGURADO' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'

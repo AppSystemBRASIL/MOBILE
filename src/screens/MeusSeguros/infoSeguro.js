@@ -10,7 +10,10 @@ import { StatusBar } from 'expo-status-bar';
 import Header from '../../components/Header';
 import { format } from 'date-fns';
 
-const ComoProcederInfoContent = ({ route, navigation }) => {
+import Feather from 'react-native-vector-icons/Feather'
+import { COLORS } from '../../utils/constants';
+
+const ComoProcederInfoContent = ({ navigation, route }) => {
   if(Platform.OS === 'android') {
     require('intl');
     require('intl/locale-data/jsonp/pt-BR');
@@ -66,6 +69,48 @@ const ComoProcederInfoContent = ({ route, navigation }) => {
             paddingTop: 30,
           }}
         >
+          {dataSeguro.externo && (
+            <TouchableOpacity
+              style={{
+                position: 'absolute',
+                top: 10,
+                right: 10,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'flex-start'
+              }}
+              
+              onPress={() => navigation.navigate('seguroExterno', {
+                type: 'edit',
+                placa: dataSeguro.veiculo.placa,
+                seguradora: dataSeguro.seguradora.uid,
+                segurado: dataSeguro.segurado.nome,
+                telefone: dataSeguro.segurado.telefone,
+                cpf: dataSeguro.segurado.cpf,
+                vigenciaInicio: format(dataSeguro.seguro.vigencia.toDate(), 'dd/MM/yyyy'),
+                vigenciaFinal: format(dataSeguro.seguro.vigenciaFinal.toDate(), 'dd/MM/yyyy'),
+                veiculo: dataSeguro.veiculo.veiculo,
+                anoModelo: dataSeguro?.veiculo?.anoModelo || '',
+                usoVeiculo: dataSeguro.riscos.usoVeiculo,
+                cep: dataSeguro.endereco.cep,
+                uid: dataSeguro.uid
+              })}
+            >
+              <Text
+                style={{
+                  fontSize: 15,
+                  marginRight: 5
+                }}
+              >
+                ALTERAR
+              </Text>
+              <Feather
+                name='edit'
+                size={15}
+                color={COLORS(corretora ? corretora.layout.theme : themeDefault).primary}
+              />
+            </TouchableOpacity>
+          )}
           <View style={{
             width: '100%',
             height: '100%',
