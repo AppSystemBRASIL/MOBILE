@@ -23,6 +23,8 @@ import ContatosSeguradoras from './src/screens/ContatosSeguradoras';
 import InformacaoSeguro from './src/screens/FacaSeuSeguro/description';
 import FormularioSeguro from './src/screens/FacaSeuSeguro/Formulario';
 
+import SeguroExterno from './src/screens/seguroExterno';
+
 import { NativeBaseProvider } from 'native-base';
 import { ContextProvider } from './src/context';
 
@@ -53,6 +55,8 @@ export default function App() {
 
             <Stack.Screen name='informacaoSeguro' component={InformacaoSeguro} />
             <Stack.Screen name='formularioSeguro' component={FormularioSeguro} />
+
+            <Stack.Screen name='seguroExterno' component={SeguroExterno} />
           </Stack.Navigator>
         </NavigationContainer>
       </NativeBaseProvider>

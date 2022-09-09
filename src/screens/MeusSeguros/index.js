@@ -24,7 +24,7 @@ import { StatusBar } from 'expo-status-bar';
 import Header from '../../components/Header';
 import { format } from 'date-fns';
 
-const MeusSeguros = ({ navigation }) => {  
+const MeusSeguros = ({ navigation, route }) => {  
   const { corretora } = useContext(Context);
 
   const [loading, setLoading] = useState(true);
@@ -44,6 +44,10 @@ const MeusSeguros = ({ navigation }) => {
 
   useEffect(() => {
     buscarSeguros('init');
+
+    if(route?.params?.cpf) {
+      setCPF(route?.params?.cpf);
+    }
   }, []);
 
   const buscarSeguros = async (init) => {

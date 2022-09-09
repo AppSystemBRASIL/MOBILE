@@ -136,21 +136,23 @@ const ComoProcederInfoContent = ({ route, navigation }) => {
                   </>
                 )}
               </View>
-              <View style={{
-                marginBottom: loading ? 20 : 0
-              }}>
-                {loading ? (
-                  <>
-                    <Text style={{fontWeight: 'bold', fontSize: 20}}>FRANQUIA:</Text>
-                    <Text style={{fontWeight: '900', fontSize: 25, color: '#555'}}>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(dataSeguro.valores.franquia)}</Text>
-                  </>
-                ) : (
-                  <>
-                    <Skeleton startColor='gray.100' endColor='gray.300' style={{width: 195, height: 23, marginBottom: 5}} />
-                    <Skeleton startColor='gray.100' endColor='gray.300' style={{width: 150, height: 27}} />
-                  </>
-                )}
-              </View>
+              {dataSeguro?.valores && (
+                <View style={{
+                  marginBottom: loading ? 20 : 0
+                }}>
+                  {loading ? (
+                    <>
+                      <Text style={{fontWeight: 'bold', fontSize: 20}}>FRANQUIA:</Text>
+                      <Text style={{fontWeight: '900', fontSize: 25, color: '#555'}}>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(dataSeguro.valores.franquia)}</Text>
+                    </>
+                  ) : (
+                    <>
+                      <Skeleton startColor='gray.100' endColor='gray.300' style={{width: 195, height: 23, marginBottom: 5}} />
+                      <Skeleton startColor='gray.100' endColor='gray.300' style={{width: 150, height: 27}} />
+                    </>
+                  )}
+                </View>
+              )}
               <View style={{
                 marginBottom: 20
               }}>

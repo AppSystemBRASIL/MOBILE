@@ -22,6 +22,7 @@ import { useToast, Box } from "native-base";
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import compartilharAPP from '../../utils/compartilharAPP';
+import Icon from 'react-native-vector-icons/Feather';
 
 const HomeScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
@@ -356,64 +357,112 @@ const HomeScreen = ({ navigation }) => {
  
   const NotificationFirst = () => {
     return (
-      <View
-        style={{
-          marginTop: 50,
-          height: 250,
-          width: '100%',
-          bottom: 30,
-          paddingHorizontal: 5,
-        }}
-      >
-        <View
+      <>
+        <TouchableOpacity
+          onPress={() => compartilharAPP({
+            corretora: corretora || null,
+            segurado: cpf || null
+          })}
           style={{
-            backgroundColor: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
-            flex: 1,
-            borderRadius: 10,
+            marginTop: 50,
+            width: '100%',
+            bottom: 30,
+            paddingHorizontal: 5,
           }}
         >
           <View
             style={{
-              paddingVertical: 20,
-              paddingHorizontal: 15,
-              alignItems: 'center'
+              backgroundColor: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
+              flex: 1,
+              borderRadius: 10,
             }}
           >
-            <Feather style={{
-              position: 'absolute',
-              top: 5,
-              right: 5
-            }} name='x-circle' size={20} color='white'
-              onPress={async () => {
-                Alert.alert('APAGAR MENSAGEM', 'Deseja realmente apagar a mensagem?', [
-                  {
-                    text: 'NÃO',
-                    style: 'cancel',
-                  },
-                  { text: 'SIM', onPress: () => closeMsg() },
-                ]);
-
-                async function closeMsg() {
-                  AsyncStorage.setItem('firstView', 'true');
-                  setFirstView(false);
-                }                
+            <Icon
+              name='share-2'
+              color='white'
+              size={20}
+              style={{
+                position: 'absolute',
+                top: 10,
+                right: 10
               }}
             />
-            <Text style={{fontSize: 20, color: 'white', fontWeight: '900', textTransform: 'uppercase'}}>
-              {'OLÁ, SEJA BEM-VINDO!'}
-            </Text>
-            <Text style={{
-              marginTop: 10,
-              fontSize: 15,
-              color: 'white',
-              fontWeight: '500',
-              textAlign: 'center',
-            }}>
-              {'Esperamos que nossa parceria lhe seja útil e perdure por muitos anos. \n\n --------- INDIQUE AOS AMIGOS --------- \n Leve a eles estas informações, eles precisam saber. \n\n Fique a vontade para expressar suas opiniões e comentários.'}
-            </Text>
+            <View
+              style={{
+                paddingVertical: 20,
+                paddingHorizontal: 15,
+                alignItems: 'center'
+              }}
+            >
+              <Text style={{fontSize: 20, color: 'white', fontWeight: '900', textTransform: 'uppercase'}}>
+                SEGURADO XCAR
+              </Text>
+              <Text style={{
+                marginTop: 10,
+                fontSize: 15,
+                color: 'white',
+                fontWeight: '500',
+                textAlign: 'center',
+              }}>
+                Indique 5 amigos ou mais e concorra na sua renovação: 35% de desconto, limitado a R$1.000,00
+              </Text>
+            </View>
           </View>
-        </View>
-      </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('seguroExterno')}
+          style={{
+            marginTop: 10,
+            width: '100%',
+            bottom: 30,
+            paddingHorizontal: 5,
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
+              flex: 1,
+              borderRadius: 10,
+            }}
+          >
+            <Icon
+              name='link-2'
+              color='white'
+              size={20}
+              style={{
+                position: 'absolute',
+                top: 10,
+                right: 10
+              }}
+            />
+            <View
+              style={{
+                paddingVertical: 20,
+                paddingHorizontal: 15,
+                alignItems: 'center'
+              }}
+            >
+              <Text style={{fontSize: 20, color: 'white', fontWeight: '900', textTransform: 'uppercase'}}>
+                SEGURADO EXTERNO
+              </Text>
+              <Text style={{fontSize: 17, color: 'white', fontWeight: '900', textTransform: 'uppercase', textAlign: 'center' }}>
+                SEU APLICATIVO DE SEGUROS GRÁTIS
+              </Text>
+              <Text style={{
+                marginTop: 10,
+                fontSize: 15,
+                color: 'white',
+                fontWeight: '500',
+                textAlign: 'center',
+              }}>
+                CLIQUE! Preencha os dados e tenha as informações do seu seguro na palma da mão.
+                {'\n'}
+                Na renovação, receba nossa cotação com os melhores preços - Tudo Grátis
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </>
     )
   }
 
@@ -453,9 +502,7 @@ const HomeScreen = ({ navigation }) => {
         }}>
           <Body data={dataList.slice(6, dataList.length)} numColumns={3} />
         </View>
-        {firstView ? (
-          <NotificationFirst />
-        ) : <Notification />}
+        <NotificationFirst />
       </ScrollView>
     </View>
   ) : <Onboarding setViewedOnboarding={setViewedOnboarding} />;
