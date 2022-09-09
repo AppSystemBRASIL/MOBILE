@@ -105,6 +105,7 @@ export default function SeguroExterno({ navigation }) {
       ativo: true,
       tipo: 'veicular',
       externo: true,
+      created: new Date()
     })
     .then(() => {
       Toast.closeAll();
