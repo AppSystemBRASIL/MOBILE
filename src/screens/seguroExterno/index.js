@@ -38,6 +38,8 @@ export default function SeguroExterno({ navigation }) {
 
   const [loading, setLoading] = useState(false);
 
+  const [accept, setAccept] = useState(false);
+
   useEffect(() => {
     firebase.firestore().collection('seguradoras').get()
     .then((response) => {
@@ -58,6 +60,11 @@ export default function SeguroExterno({ navigation }) {
 
     if(errors.length > 0) {
       Alert.prompt('Algum campo está inválido');
+      return;
+    }
+
+    if(!accept) {
+      Alert.prompt('Aceite os termos de condições');
       return;
     }
 
@@ -417,6 +424,38 @@ export default function SeguroExterno({ navigation }) {
               </FormControl.ErrorMessage>
             </FormControl>
             <TouchableOpacity
+              style={{
+                marginTop: 20,
+                flexDirection: 'row',
+                justifyContent: 'flex-start',
+                alignItems: 'center'
+              }}
+              onPress={() => setAccept(e => !e)}
+            >
+              <View
+                style={{
+                  borderWidth: !accept ? 1 : 0,
+                  borderRadius: 5,
+                  width: 20,
+                  height: 20,
+                  marginRight: 10,
+                  backgroundColor: !accept ? 'white' : COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                {accept && <CheckIcon size={5} style={{ color: 'white' }} />}
+              </View>
+              <Text
+                style={{
+                  fontSize: 12,
+                  flex: 1
+                }}
+              >
+                Ao publicar você concorda em fornecer as informações para receber gratuitamente e sem compromisso nossa cotação de seguro para seu veículo.
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
               disabled={loading}
               onPress={adicionarSeguroExterno}
               style={{
@@ -427,7 +466,7 @@ export default function SeguroExterno({ navigation }) {
                 borderRadius: 5,
                 width: '100%',
                 marginRight: 5,
-                marginTop: 30
+                marginTop: 20
               }}
             >
               <Text
