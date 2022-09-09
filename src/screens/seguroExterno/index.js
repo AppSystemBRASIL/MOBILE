@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { FormControl, Select, Input, WarningOutlineIcon, CheckIcon, Toast } from 'native-base';
+import { FormControl, Select, Input, WarningOutlineIcon, CheckIcon, Toast, Divider } from 'native-base';
 import { useEffect, useState } from 'react';
 import { Platform, KeyboardAvoidingView, ScrollView, View, Text, TouchableOpacity, Alert } from 'react-native';
 
@@ -12,10 +12,11 @@ import { maskCEP, maskCPF, maskDate, maskPhone, maskPlaca, maskYear } from '../.
 import Feather from 'react-native-vector-icons/Feather';
 
 import useAuth from '../../hooks/useAuth';
-import { validateCEP, validateCPF, validateDate, validatePlaca, validateYear } from '../../utils/validateInput';
+import { validateCEP, validateCPF, validatePlaca, validateYear } from '../../utils/validateInput';
+
+import { addYears, endOfDay, setHours, setMinutes } from 'date-fns';
 
 import firebase from '../../../firebase';
-import { addYears, endOfDay, setHours, setMinutes } from 'date-fns';
 
 export default function SeguroExterno({ navigation }) {
   const { corretora } = useAuth()
@@ -53,6 +54,11 @@ export default function SeguroExterno({ navigation }) {
   }, []);
 
   async function adicionarSeguroExterno() {
+    if(!accept) {
+      Alert.alert('Aceite os termos de condições');
+      return;
+    }
+    
     if(!placa || !seguradora || !vigenciaInicio || !vigenciaFinal || !veiculo || !anoModelo || !usoVeiculo || !segurado || !cpf || !cepPernoite || !telefone) {
       Alert.alert('Preencha todos os campos!');
       return;
@@ -60,11 +66,6 @@ export default function SeguroExterno({ navigation }) {
 
     if(errors.length > 0) {
       Alert.prompt('Algum campo está inválido');
-      return;
-    }
-
-    if(!accept) {
-      Alert.prompt('Aceite os termos de condições');
       return;
     }
 
@@ -161,26 +162,121 @@ export default function SeguroExterno({ navigation }) {
               margin: 5,
               marginBottom: 100,
               paddingHorizontal: 20,
-              paddingTop: 30,
+              paddingTop: 10,
               paddingBottom: 50
             }}
           >
-            <FormControl isInvalid={errors.includes('placa')}>
-              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>PLACA: <Text style={{ color: 'red' }}>*</Text></Text>
-              <InputStyle borderColor='#999' value={placa} returnKeyType='done' placeholder='AAA0000 ou AAA0A00' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
+            <TouchableOpacity
+              style={{
+                marginTop: 20,
+                flexDirection: 'row',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+              }}
+              onPress={() => setAccept(e => !e)}
+            >
+              <View
+                style={{
+                  borderWidth: !accept ? 1 : 0,
+                  borderRadius: 5,
+                  width: 20,
+                  height: 20,
+                  marginRight: 10,
+                  backgroundColor: !accept ? 'white' : COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                {accept && <CheckIcon size={5} style={{ color: 'white' }} />}
+              </View>
+              <Text
+                style={{
+                  fontSize: 12,
+                  flex: 1,
+                  textAlign: 'justify'
+                }}
+              >
+                Fornecer as informações para o calculo do seguro e receber gratuitamente e sem compromisso nossa cotação.
+              </Text>
+            </TouchableOpacity>
+            <Text
+              style={{
+                marginTop: 10,
+                fontSize: 12,
+                textAlign: 'justify'
+              }}
+            >
+              <Text
+                style={{
+                  fontWeight: 'bold'
+                }}
+              >
+                OBS.
+              </Text> Segurado XCAR CORRETORA DE SEGUROS concorre mensalmente a 35% de desconto na renovação do seu seguro.
+            </Text>
+            <Divider style={{ marginVertical: 20 }} />
+            <FormControl isInvalid={errors.includes('segurado')}>
+              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>NOME DO SEGURADO: <Text style={{ color: 'red' }}>*</Text></Text>
+              <InputStyle editable={accept} borderColor='#999' value={segurado} returnKeyType='done' placeholder='NOME DO SEGURADO' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
                 onChangeText={(value) => {
                   if(!value) {
-                    setPlaca('');
+                    setSegurado('');
                     return;
                   }
-
-                  setPlaca(maskPlaca(value));
+                  
+                  setSegurado(value);
                 }}
                 onBlur={() => {
-                  if(validatePlaca(placa)) {
-                    setErrors(e => e.filter(x => x !== 'placa'));
+                  if(segurado) {
+                    setErrors(e => e.filter(x => x !== 'segurado'));
                   }else {
-                    setErrors(e => [...e, 'placa'])
+                    setErrors(e => [...e, 'segurado'])
+                  }
+                }}
+              />
+              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                Campo inválido
+              </FormControl.ErrorMessage>
+            </FormControl>
+            <FormControl isInvalid={errors.includes('telefone')} style={{ marginTop: 20 }}>
+              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>TELEFONE: <Text style={{ color: 'red' }}>*</Text></Text>
+              <InputStyle editable={accept} borderColor='#999' value={telefone} returnKeyType='done' placeholder='(00) 00000-0000' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
+                onChangeText={(value) => {
+                  if(!value) {
+                    setTelefone('');
+                    return;
+                  }
+                  
+                  setTelefone(maskPhone(value));
+                }}
+                onBlur={() => {
+                  if(String(telefone).length === 15) {
+                    setErrors(e => e.filter(x => x !== 'telefone'));
+                  }else {
+                    setErrors(e => [...e, 'telefone'])
+                  }
+                }}
+              />
+              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                Campo inválido
+              </FormControl.ErrorMessage>
+            </FormControl>
+            <FormControl isInvalid={errors.includes('cpf')} style={{ marginTop: 20 }}>
+              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>CPF: <Text style={{ color: 'red' }}>*</Text></Text>
+              <InputStyle editable={accept} borderColor='#999' value={cpf} returnKeyType='done' placeholder='000.000.000-00' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
+                onChangeText={(value) => {
+                  if(!value) {
+                    setCPF('');
+                    return;
+                  }
+                  
+                  setCPF(maskCPF(value));
+                }}
+                onBlur={() => {
+                  if(validateCPF(cpf)) {
+                    setErrors(e => e.filter(x => x !== 'cpf'));
+                  }else {
+                    setErrors(e => [...e, 'cpf'])
                   }
                 }}
               />
@@ -190,7 +286,7 @@ export default function SeguroExterno({ navigation }) {
             </FormControl>
             <FormControl isInvalid={errors.includes('seguradora')} style={{ marginTop: 20 }}>
               <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>SEGURADORA: <Text style={{ color: 'red' }}>*</Text></Text>
-              <SelectStyle borderColor='#999' selectedValue={seguradora} placeholder='SEGURADORA' onValueChange={(value) => {
+              <SelectStyle editable={accept} borderColor='#999' selectedValue={seguradora} placeholder='SEGURADORA' onValueChange={(value) => {
                 if(value) {
                   setSeguradora(value);
                   setErrors(e => e.filter(x => x !== value))
@@ -217,7 +313,7 @@ export default function SeguroExterno({ navigation }) {
             </FormControl>
             <FormControl isInvalid={errors.includes('vigenciaInicio')} style={{ marginTop: 20 }}>
               <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>INÍCIO DE VIGÊNCIA: <Text style={{ color: 'red' }}>*</Text></Text>
-              <InputStyle borderColor='#999' value={vigenciaInicio} returnKeyType='done' placeholder='00/00/0000' keyboardType='number-pad' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
+              <InputStyle editable={accept} borderColor='#999' value={vigenciaInicio} returnKeyType='done' placeholder='00/00/0000' keyboardType='number-pad' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
                 onChangeText={(value) => {
                   if(!value) {
                     setVigenciaInicio('');
@@ -240,7 +336,7 @@ export default function SeguroExterno({ navigation }) {
             </FormControl>
             <FormControl isInvalid={errors.includes('vigenciaFinal')} style={{ marginTop: 20 }}>
               <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>FINAL DE VIGÊNCIA: <Text style={{ color: 'red' }}>*</Text></Text>
-              <InputStyle borderColor='#999' value={vigenciaFinal} returnKeyType='done' placeholder='00/00/0000' keyboardType='number-pad' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
+              <InputStyle editable={accept} borderColor='#999' value={vigenciaFinal} returnKeyType='done' placeholder='00/00/0000' keyboardType='number-pad' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
                 onChangeText={(value) => {
                   if(!value) {
                     setVigenciaFinal('');
@@ -263,7 +359,7 @@ export default function SeguroExterno({ navigation }) {
             </FormControl>
             <FormControl isInvalid={errors.includes('veiculo')} style={{ marginTop: 20 }}>
               <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>VEÍCULO: <Text style={{ color: 'red' }}>*</Text></Text>
-              <InputStyle borderColor='#999' value={veiculo} returnKeyType='done' placeholder='MODELO DO VEÍCULO' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
+              <InputStyle editable={accept} borderColor='#999' value={veiculo} returnKeyType='done' placeholder='MODELO DO VEÍCULO' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
                 onChangeText={(value) => {
                   if(!value) {
                     setVeiculo('');
@@ -286,7 +382,7 @@ export default function SeguroExterno({ navigation }) {
             </FormControl>
             <FormControl isInvalid={errors.includes('anoModelo')} style={{ marginTop: 20 }}>
               <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>ANO DO MODELO: <Text style={{ color: 'red' }}>*</Text></Text>
-              <InputStyle borderColor='#999' value={anoModelo} returnKeyType='done' placeholder='MODELO DO VEÍCULO' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
+              <InputStyle editable={accept} borderColor='#999' value={anoModelo} returnKeyType='done' placeholder='MODELO DO VEÍCULO' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
                 onChangeText={(value) => {
                   if(!value) {
                     setAnoModelo('');
@@ -309,7 +405,7 @@ export default function SeguroExterno({ navigation }) {
             </FormControl>
             <FormControl isInvalid={errors.includes('usoVeiculo')} style={{ marginTop: 20 }}>
               <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>USO DO VEÍCULO: <Text style={{ color: 'red' }}>*</Text></Text>
-              <SelectStyle borderColor='#999' selectedValue={usoVeiculo} placeholder='USO DO VEÍCULO' onValueChange={(value) => {
+              <SelectStyle editable={accept} borderColor='#999' selectedValue={usoVeiculo} placeholder='USO DO VEÍCULO' onValueChange={(value) => {
                 if(value) {
                   setUsoVeiculo(value);
                   setErrors(e => e.filter(x => x !== value))
@@ -334,78 +430,9 @@ export default function SeguroExterno({ navigation }) {
                 Campo inválido
               </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl isInvalid={errors.includes('segurado')} style={{ marginTop: 20 }}>
-              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>NOME DO SEGURADO: <Text style={{ color: 'red' }}>*</Text></Text>
-              <InputStyle borderColor='#999' value={segurado} returnKeyType='done' placeholder='NOME DO SEGURADO' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
-                onChangeText={(value) => {
-                  if(!value) {
-                    setSegurado('');
-                    return;
-                  }
-                  
-                  setSegurado(value);
-                }}
-                onBlur={() => {
-                  if(segurado) {
-                    setErrors(e => e.filter(x => x !== 'segurado'));
-                  }else {
-                    setErrors(e => [...e, 'segurado'])
-                  }
-                }}
-              />
-              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                Campo inválido
-              </FormControl.ErrorMessage>
-            </FormControl>
-            <FormControl isInvalid={errors.includes('cpf')} style={{ marginTop: 20 }}>
-              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>CPF: <Text style={{ color: 'red' }}>*</Text></Text>
-              <InputStyle borderColor='#999' value={cpf} returnKeyType='done' placeholder='000.000.000-00' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
-                onChangeText={(value) => {
-                  if(!value) {
-                    setCPF('');
-                    return;
-                  }
-                  
-                  setCPF(maskCPF(value));
-                }}
-                onBlur={() => {
-                  if(validateCPF(cpf)) {
-                    setErrors(e => e.filter(x => x !== 'cpf'));
-                  }else {
-                    setErrors(e => [...e, 'cpf'])
-                  }
-                }}
-              />
-              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                Campo inválido
-              </FormControl.ErrorMessage>
-            </FormControl>
-            <FormControl isInvalid={errors.includes('telefone')} style={{ marginTop: 20 }}>
-              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>TELEFONE: <Text style={{ color: 'red' }}>*</Text></Text>
-              <InputStyle borderColor='#999' value={telefone} returnKeyType='done' placeholder='(00) 00000-0000' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
-                onChangeText={(value) => {
-                  if(!value) {
-                    setTelefone('');
-                    return;
-                  }
-                  
-                  setTelefone(maskPhone(value));
-                }}
-                onBlur={() => {
-                  if(String(telefone).length === 15) {
-                    setErrors(e => e.filter(x => x !== 'telefone'));
-                  }else {
-                    setErrors(e => [...e, 'telefone'])
-                  }
-                }}
-              />
-              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                Campo inválido
-              </FormControl.ErrorMessage>
-            </FormControl>
             <FormControl isInvalid={errors.includes('cepPernoite')} style={{ marginTop: 20 }}>
               <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>CEP: <Text style={{ color: 'red' }}>*</Text></Text>
-              <InputStyle borderColor='#999' value={cepPernoite} returnKeyType='done' placeholder='00000-000' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
+              <InputStyle editable={accept} borderColor='#999' value={cepPernoite} returnKeyType='done' placeholder='00000-000' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
                 onChangeText={(value) => {
                   if(!value) {
                     setCEPPernoite('');
@@ -426,38 +453,29 @@ export default function SeguroExterno({ navigation }) {
                 Campo inválido
               </FormControl.ErrorMessage>
             </FormControl>
-            <TouchableOpacity
-              style={{
-                marginTop: 20,
-                flexDirection: 'row',
-                justifyContent: 'flex-start',
-                alignItems: 'center'
-              }}
-              onPress={() => setAccept(e => !e)}
-            >
-              <View
-                style={{
-                  borderWidth: !accept ? 1 : 0,
-                  borderRadius: 5,
-                  width: 20,
-                  height: 20,
-                  marginRight: 10,
-                  backgroundColor: !accept ? 'white' : COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
-                  justifyContent: 'center',
-                  alignItems: 'center'
+            <FormControl isInvalid={errors.includes('placa')} style={{ marginTop: 20 }}>
+              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>PLACA: <Text style={{ color: 'red' }}>*</Text></Text>
+              <InputStyle editable={accept} borderColor='#999' value={placa} returnKeyType='done' placeholder='AAA0000 ou AAA0A00' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
+                onChangeText={(value) => {
+                  if(!value) {
+                    setPlaca('');
+                    return;
+                  }
+
+                  setPlaca(maskPlaca(value));
                 }}
-              >
-                {accept && <CheckIcon size={5} style={{ color: 'white' }} />}
-              </View>
-              <Text
-                style={{
-                  fontSize: 12,
-                  flex: 1
+                onBlur={() => {
+                  if(validatePlaca(placa)) {
+                    setErrors(e => e.filter(x => x !== 'placa'));
+                  }else {
+                    setErrors(e => [...e, 'placa'])
+                  }
                 }}
-              >
-                Ao publicar você concorda em fornecer as informações para receber gratuitamente e sem compromisso nossa cotação de seguro para seu veículo.
-              </Text>
-            </TouchableOpacity>
+              />
+              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                Campo inválido
+              </FormControl.ErrorMessage>
+            </FormControl>
             <TouchableOpacity
               disabled={loading}
               onPress={adicionarSeguroExterno}
