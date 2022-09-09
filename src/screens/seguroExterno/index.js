@@ -114,7 +114,10 @@ export default function SeguroExterno({ navigation }) {
       externo: true,
       created: new Date()
     })
-    .then(() => {
+    .then((response) => {
+      firebase.firestore().collection('seguros').doc(response.id).set({
+        uid: response.id
+      }, { merge: true })
       Toast.closeAll();
       Toast.show({
         title: 'REGISTRADO COM SUCESSO!',
