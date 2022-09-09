@@ -12,9 +12,9 @@ import Context from '../../context';
 import Feather from 'react-native-vector-icons/Feather';
 
 import { StatusBar } from 'expo-status-bar';
-import { useNavigation } from '@react-navigation/native';
+import { StackActions, useNavigation } from '@react-navigation/native';
 
-const Header = ({ title, showBackPage }) => {
+const Header = ({ title, showBackPage, backHome }) => {
   const { corretora, notificationUser, setNotificationUser, viewNotificationUser, setViewNotificationUser } = useContext(Context);
 
   const { width } = useWindowDimensions();
@@ -151,7 +151,7 @@ const Header = ({ title, showBackPage }) => {
         borderBottomColor: '#777',
       }}>
         {(showBackPage === undefined || showBackPage === true) ? (
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={() => backHome ? navigation.dispatch(StackActions.popToTop()) : navigation.goBack()}>
             <Feather name='chevron-left' size={40} color='white' />
           </TouchableOpacity>
         ) : (

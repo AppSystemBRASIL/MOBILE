@@ -25,11 +25,9 @@ import Header from '../../components/Header';
 import { format } from 'date-fns';
 
 const MeusSeguros = ({ navigation, route }) => {  
-  const { corretora } = useContext(Context);
+  const { dataSeguros, setDataSeguros, cpf, setCPF, corretora } = useContext(Context);
 
   const [loading, setLoading] = useState(true);
-
-  const { dataSeguros, setDataSeguros, cpf, setCPF } = useContext(Context);
 
   const [errors, setErrors] = useState([]);
 
@@ -44,10 +42,6 @@ const MeusSeguros = ({ navigation, route }) => {
 
   useEffect(() => {
     buscarSeguros('init');
-
-    if(route?.params?.cpf) {
-      setCPF(route?.params?.cpf);
-    }
   }, []);
 
   const buscarSeguros = async (init) => {
@@ -316,7 +310,7 @@ const MeusSeguros = ({ navigation, route }) => {
       }}
     >
       <StatusBar style='light' />
-      <Header title='MEUS SEGUROS' navigation={navigation} />
+      <Header title='MEUS SEGUROS' navigation={navigation} backHome />
       {dataSeguros ? <Body /> : (
         <KeyboardAvoidingView
           style={{ flex: 1 }}

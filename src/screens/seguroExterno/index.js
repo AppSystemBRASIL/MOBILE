@@ -19,7 +19,7 @@ import { addYears, endOfDay, setHours, setMinutes } from 'date-fns';
 import firebase from '../../../firebase';
 
 export default function SeguroExterno({ navigation }) {
-  const { corretora } = useAuth()
+  const { corretora, setCPF: setCPFContext } = useAuth();
 
   const [placa, setPlaca] = useState('');
   const [seguradora, setSeguradora] = useState('');
@@ -47,8 +47,8 @@ export default function SeguroExterno({ navigation }) {
       const array = [];
       response.forEach(item => {
         array.push(item.data());
-      })
-
+      });
+      
       setSeguradoras(array);
     })
   }, []);
@@ -125,6 +125,7 @@ export default function SeguroExterno({ navigation }) {
         description: 'redirecionando para página de seguros...'
       });
 
+      setCPFContext(cpf);
       setTimeout(() => {
         navigation.navigate('meusSeguros', {
           cpf: cpf
@@ -240,7 +241,7 @@ export default function SeguroExterno({ navigation }) {
             </FormControl>
             <FormControl isInvalid={errors.includes('telefone')} style={{ marginTop: 20 }}>
               <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>TELEFONE: <Text style={{ color: 'red' }}>*</Text></Text>
-              <InputStyle editable={accept} borderColor='#999' value={telefone} returnKeyType='done' placeholder='(00) 00000-0000' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
+              <InputStyle editable={accept} borderColor='#999' value={telefone} returnKeyType='done' placeholder='(00) 00000-0000' keyboardType='number-pad' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
                 onChangeText={(value) => {
                   if(!value) {
                     setTelefone('');
@@ -263,7 +264,7 @@ export default function SeguroExterno({ navigation }) {
             </FormControl>
             <FormControl isInvalid={errors.includes('cpf')} style={{ marginTop: 20 }}>
               <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>CPF: <Text style={{ color: 'red' }}>*</Text></Text>
-              <InputStyle editable={accept} borderColor='#999' value={cpf} returnKeyType='done' placeholder='000.000.000-00' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
+              <InputStyle editable={accept} borderColor='#999' value={cpf} returnKeyType='done' placeholder='000.000.000-00' keyboardType='number-pad' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
                 onChangeText={(value) => {
                   if(!value) {
                     setCPF('');
@@ -432,7 +433,7 @@ export default function SeguroExterno({ navigation }) {
             </FormControl>
             <FormControl isInvalid={errors.includes('cepPernoite')} style={{ marginTop: 20 }}>
               <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>CEP: <Text style={{ color: 'red' }}>*</Text></Text>
-              <InputStyle editable={accept} borderColor='#999' value={cepPernoite} returnKeyType='done' placeholder='00000-000' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
+              <InputStyle editable={accept} borderColor='#999' value={cepPernoite} returnKeyType='done' placeholder='00000-000' keyboardType='number-pad' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
                 onChangeText={(value) => {
                   if(!value) {
                     setCEPPernoite('');
