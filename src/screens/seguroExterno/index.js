@@ -227,267 +227,271 @@ export default function SeguroExterno({ navigation, route }) {
                 <Divider style={{ marginVertical: 20 }} />
               </>
             )}
-            <FormControl isInvalid={errors.includes('segurado')}>
-              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>NOME DO SEGURADO: <Text style={{ color: 'red' }}>*</Text></Text>
-              <InputStyle editable={accept} borderColor='#999' value={segurado} returnKeyType='done' placeholder='NOME DO SEGURADO' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
-                onChangeText={(value) => {
-                  if(!value) {
-                    setSegurado('');
-                    return;
+            {accept && (
+              <>
+                <FormControl isInvalid={errors.includes('segurado')}>
+                <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>NOME DO SEGURADO: <Text style={{ color: 'red' }}>*</Text></Text>
+                <InputStyle editable={accept} borderColor='#999' value={segurado} returnKeyType='done' placeholder='NOME DO SEGURADO' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
+                  onChangeText={(value) => {
+                    if(!value) {
+                      setSegurado('');
+                      return;
+                    }
+                    
+                    setSegurado(value);
+                  }}
+                  onBlur={() => {
+                    if(segurado) {
+                      setErrors(e => e.filter(x => x !== 'segurado'));
+                    }else {
+                      setErrors(e => [...e, 'segurado'])
+                    }
+                  }}
+                />
+                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                  Campo inválido
+                </FormControl.ErrorMessage>
+              </FormControl>
+              <FormControl isInvalid={errors.includes('telefone')} style={{ marginTop: 20 }}>
+                <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>TELEFONE: <Text style={{ color: 'red' }}>*</Text></Text>
+                <InputStyle editable={accept} borderColor='#999' value={telefone} returnKeyType='done' placeholder='(00) 00000-0000' keyboardType='number-pad' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
+                  onChangeText={(value) => {
+                    if(!value) {
+                      setTelefone('');
+                      return;
+                    }
+                    
+                    setTelefone(maskPhone(value));
+                  }}
+                  onBlur={() => {
+                    if(String(telefone).length === 15) {
+                      setErrors(e => e.filter(x => x !== 'telefone'));
+                    }else {
+                      setErrors(e => [...e, 'telefone'])
+                    }
+                  }}
+                />
+                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                  Campo inválido
+                </FormControl.ErrorMessage>
+              </FormControl>
+              <FormControl isInvalid={errors.includes('cpf')} style={{ marginTop: 20 }}>
+                <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>CPF: <Text style={{ color: 'red' }}>*</Text></Text>
+                <InputStyle editable={accept} borderColor='#999' value={cpf} returnKeyType='done' placeholder='000.000.000-00' keyboardType='number-pad' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
+                  onChangeText={(value) => {
+                    if(!value) {
+                      setCPF('');
+                      return;
+                    }
+                    
+                    setCPF(maskCPF(value));
+                  }}
+                  onBlur={() => {
+                    if(validateCPF(cpf)) {
+                      setErrors(e => e.filter(x => x !== 'cpf'));
+                    }else {
+                      setErrors(e => [...e, 'cpf'])
+                    }
+                  }}
+                />
+                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                  Campo inválido
+                </FormControl.ErrorMessage>
+              </FormControl>
+              <FormControl isInvalid={errors.includes('seguradora')} style={{ marginTop: 20 }}>
+                <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>SEGURADORA: <Text style={{ color: 'red' }}>*</Text></Text>
+                <SelectStyle editable={accept} borderColor='#999' selectedValue={seguradora} placeholder='SEGURADORA' onValueChange={(value) => {
+                  if(value) {
+                    setSeguradora(value);
+                    setErrors(e => e.filter(x => x !== value))
                   }
-                  
-                  setSegurado(value);
-                }}
-                onBlur={() => {
-                  if(segurado) {
-                    setErrors(e => e.filter(x => x !== 'segurado'));
-                  }else {
-                    setErrors(e => [...e, 'segurado'])
+                }} _selectedItem={{
+                  bg: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
+                  endIcon: <CheckIcon size="5" />,
+                }} collapsable
+                  onBlur={() => {
+                    if(seguradora) {
+                      setErrors(e => e.filter(x => x !== 'seguradora'));
+                    }else {
+                      setErrors(e => [...e, 'seguradora'])
+                    }
+                  }}
+                >
+                  {seguradoras.map((item, index) => (
+                    <Select.Item value={item.uid} label={String(item.razao_social).toUpperCase()} key={index}>{item.razao_social}</Select.Item>
+                  ))}
+                </SelectStyle>
+                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                  Campo inválido
+                </FormControl.ErrorMessage>
+              </FormControl>
+              <FormControl isInvalid={errors.includes('vigenciaInicio')} style={{ marginTop: 20 }}>
+                <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>INÍCIO DE VIGÊNCIA: <Text style={{ color: 'red' }}>*</Text></Text>
+                <InputStyle editable={accept} borderColor='#999' value={vigenciaInicio} returnKeyType='done' placeholder='00/00/0000' keyboardType='number-pad' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
+                  onChangeText={(value) => {
+                    if(!value) {
+                      setVigenciaInicio('');
+                      return;
+                    }
+                    
+                    setVigenciaInicio(maskDate(value));
+                  }}
+                  onBlur={() => {
+                    if(vigenciaInicio.length === 10) {
+                      setErrors(e => e.filter(x => x !== 'vigenciaInicio'));
+                    }else {
+                      setErrors(e => [...e, 'vigenciaInicio'])
+                    }
+                  }}
+                />
+                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                  Campo inválido
+                </FormControl.ErrorMessage>
+              </FormControl>
+              <FormControl isInvalid={errors.includes('vigenciaFinal')} style={{ marginTop: 20 }}>
+                <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>FINAL DE VIGÊNCIA: <Text style={{ color: 'red' }}>*</Text></Text>
+                <InputStyle editable={accept} borderColor='#999' value={vigenciaFinal} returnKeyType='done' placeholder='00/00/0000' keyboardType='number-pad' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
+                  onChangeText={(value) => {
+                    if(!value) {
+                      setVigenciaFinal('');
+                      return;
+                    }
+                    
+                    setVigenciaFinal(maskDate(value));
+                  }}
+                  onBlur={() => {
+                    if(vigenciaFinal.length === 10) {
+                      setErrors(e => e.filter(x => x !== 'vigenciaFinal'));
+                    }else {
+                      setErrors(e => [...e, 'vigenciaFinal'])
+                    }
+                  }}
+                />
+                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                  Campo inválido
+                </FormControl.ErrorMessage>
+              </FormControl>
+              <FormControl isInvalid={errors.includes('veiculo')} style={{ marginTop: 20 }}>
+                <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>VEÍCULO: <Text style={{ color: 'red' }}>*</Text></Text>
+                <InputStyle editable={accept} borderColor='#999' value={veiculo} returnKeyType='done' placeholder='MODELO DO VEÍCULO' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
+                  onChangeText={(value) => {
+                    if(!value) {
+                      setVeiculo('');
+                      return;
+                    }
+                    
+                    setVeiculo(value);
+                  }}
+                  onBlur={() => {
+                    if(veiculo) {
+                      setErrors(e => e.filter(x => x !== 'veiculo'));
+                    }else {
+                      setErrors(e => [...e, 'veiculo'])
+                    }
+                  }}
+                />
+                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                  Campo inválido
+                </FormControl.ErrorMessage>
+              </FormControl>
+              <FormControl isInvalid={errors.includes('anoModelo')} style={{ marginTop: 20 }}>
+                <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>ANO DO MODELO: <Text style={{ color: 'red' }}>*</Text></Text>
+                <InputStyle editable={accept} borderColor='#999' value={anoModelo} returnKeyType='done' placeholder='MODELO DO VEÍCULO' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
+                  onChangeText={(value) => {
+                    if(!value) {
+                      setAnoModelo('');
+                      return;
+                    }
+                    
+                    setAnoModelo(maskYear(value));
+                  }}
+                  onBlur={() => {
+                    if(validateYear(anoModelo)) {
+                      setErrors(e => e.filter(x => x !== 'anoModelo'));
+                    }else {
+                      setErrors(e => [...e, 'anoModelo'])
+                    }
+                  }}
+                />
+                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                  Campo inválido
+                </FormControl.ErrorMessage>
+              </FormControl>
+              <FormControl isInvalid={errors.includes('usoVeiculo')} style={{ marginTop: 20 }}>
+                <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>USO DO VEÍCULO: <Text style={{ color: 'red' }}>*</Text></Text>
+                <SelectStyle editable={accept} borderColor='#999' selectedValue={usoVeiculo} placeholder='USO DO VEÍCULO' onValueChange={(value) => {
+                  if(value) {
+                    setUsoVeiculo(value);
+                    setErrors(e => e.filter(x => x !== value))
                   }
-                }}
-              />
-              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                Campo inválido
-              </FormControl.ErrorMessage>
-            </FormControl>
-            <FormControl isInvalid={errors.includes('telefone')} style={{ marginTop: 20 }}>
-              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>TELEFONE: <Text style={{ color: 'red' }}>*</Text></Text>
-              <InputStyle editable={accept} borderColor='#999' value={telefone} returnKeyType='done' placeholder='(00) 00000-0000' keyboardType='number-pad' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
-                onChangeText={(value) => {
-                  if(!value) {
-                    setTelefone('');
-                    return;
-                  }
-                  
-                  setTelefone(maskPhone(value));
-                }}
-                onBlur={() => {
-                  if(String(telefone).length === 15) {
-                    setErrors(e => e.filter(x => x !== 'telefone'));
-                  }else {
-                    setErrors(e => [...e, 'telefone'])
-                  }
-                }}
-              />
-              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                Campo inválido
-              </FormControl.ErrorMessage>
-            </FormControl>
-            <FormControl isInvalid={errors.includes('cpf')} style={{ marginTop: 20 }}>
-              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>CPF: <Text style={{ color: 'red' }}>*</Text></Text>
-              <InputStyle editable={accept} borderColor='#999' value={cpf} returnKeyType='done' placeholder='000.000.000-00' keyboardType='number-pad' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
-                onChangeText={(value) => {
-                  if(!value) {
-                    setCPF('');
-                    return;
-                  }
-                  
-                  setCPF(maskCPF(value));
-                }}
-                onBlur={() => {
-                  if(validateCPF(cpf)) {
-                    setErrors(e => e.filter(x => x !== 'cpf'));
-                  }else {
-                    setErrors(e => [...e, 'cpf'])
-                  }
-                }}
-              />
-              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                Campo inválido
-              </FormControl.ErrorMessage>
-            </FormControl>
-            <FormControl isInvalid={errors.includes('seguradora')} style={{ marginTop: 20 }}>
-              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>SEGURADORA: <Text style={{ color: 'red' }}>*</Text></Text>
-              <SelectStyle editable={accept} borderColor='#999' selectedValue={seguradora} placeholder='SEGURADORA' onValueChange={(value) => {
-                if(value) {
-                  setSeguradora(value);
-                  setErrors(e => e.filter(x => x !== value))
-                }
-              }} _selectedItem={{
-                bg: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
-                endIcon: <CheckIcon size="5" />,
-              }} collapsable
-                onBlur={() => {
-                  if(seguradora) {
-                    setErrors(e => e.filter(x => x !== 'seguradora'));
-                  }else {
-                    setErrors(e => [...e, 'seguradora'])
-                  }
-                }}
-              >
-                {seguradoras.map((item, index) => (
-                  <Select.Item value={item.uid} label={String(item.razao_social).toUpperCase()} key={index}>{item.razao_social}</Select.Item>
-                ))}
-              </SelectStyle>
-              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                Campo inválido
-              </FormControl.ErrorMessage>
-            </FormControl>
-            <FormControl isInvalid={errors.includes('vigenciaInicio')} style={{ marginTop: 20 }}>
-              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>INÍCIO DE VIGÊNCIA: <Text style={{ color: 'red' }}>*</Text></Text>
-              <InputStyle editable={accept} borderColor='#999' value={vigenciaInicio} returnKeyType='done' placeholder='00/00/0000' keyboardType='number-pad' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
-                onChangeText={(value) => {
-                  if(!value) {
-                    setVigenciaInicio('');
-                    return;
-                  }
-                  
-                  setVigenciaInicio(maskDate(value));
-                }}
-                onBlur={() => {
-                  if(vigenciaInicio.length === 10) {
-                    setErrors(e => e.filter(x => x !== 'vigenciaInicio'));
-                  }else {
-                    setErrors(e => [...e, 'vigenciaInicio'])
-                  }
-                }}
-              />
-              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                Campo inválido
-              </FormControl.ErrorMessage>
-            </FormControl>
-            <FormControl isInvalid={errors.includes('vigenciaFinal')} style={{ marginTop: 20 }}>
-              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>FINAL DE VIGÊNCIA: <Text style={{ color: 'red' }}>*</Text></Text>
-              <InputStyle editable={accept} borderColor='#999' value={vigenciaFinal} returnKeyType='done' placeholder='00/00/0000' keyboardType='number-pad' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
-                onChangeText={(value) => {
-                  if(!value) {
-                    setVigenciaFinal('');
-                    return;
-                  }
-                  
-                  setVigenciaFinal(maskDate(value));
-                }}
-                onBlur={() => {
-                  if(vigenciaFinal.length === 10) {
-                    setErrors(e => e.filter(x => x !== 'vigenciaFinal'));
-                  }else {
-                    setErrors(e => [...e, 'vigenciaFinal'])
-                  }
-                }}
-              />
-              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                Campo inválido
-              </FormControl.ErrorMessage>
-            </FormControl>
-            <FormControl isInvalid={errors.includes('veiculo')} style={{ marginTop: 20 }}>
-              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>VEÍCULO: <Text style={{ color: 'red' }}>*</Text></Text>
-              <InputStyle editable={accept} borderColor='#999' value={veiculo} returnKeyType='done' placeholder='MODELO DO VEÍCULO' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
-                onChangeText={(value) => {
-                  if(!value) {
-                    setVeiculo('');
-                    return;
-                  }
-                  
-                  setVeiculo(value);
-                }}
-                onBlur={() => {
-                  if(veiculo) {
-                    setErrors(e => e.filter(x => x !== 'veiculo'));
-                  }else {
-                    setErrors(e => [...e, 'veiculo'])
-                  }
-                }}
-              />
-              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                Campo inválido
-              </FormControl.ErrorMessage>
-            </FormControl>
-            <FormControl isInvalid={errors.includes('anoModelo')} style={{ marginTop: 20 }}>
-              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>ANO DO MODELO: <Text style={{ color: 'red' }}>*</Text></Text>
-              <InputStyle editable={accept} borderColor='#999' value={anoModelo} returnKeyType='done' placeholder='MODELO DO VEÍCULO' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
-                onChangeText={(value) => {
-                  if(!value) {
-                    setAnoModelo('');
-                    return;
-                  }
-                  
-                  setAnoModelo(maskYear(value));
-                }}
-                onBlur={() => {
-                  if(validateYear(anoModelo)) {
-                    setErrors(e => e.filter(x => x !== 'anoModelo'));
-                  }else {
-                    setErrors(e => [...e, 'anoModelo'])
-                  }
-                }}
-              />
-              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                Campo inválido
-              </FormControl.ErrorMessage>
-            </FormControl>
-            <FormControl isInvalid={errors.includes('usoVeiculo')} style={{ marginTop: 20 }}>
-              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>USO DO VEÍCULO: <Text style={{ color: 'red' }}>*</Text></Text>
-              <SelectStyle editable={accept} borderColor='#999' selectedValue={usoVeiculo} placeholder='USO DO VEÍCULO' onValueChange={(value) => {
-                if(value) {
-                  setUsoVeiculo(value);
-                  setErrors(e => e.filter(x => x !== value))
-                }
-              }} _selectedItem={{
-                bg: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
-                endIcon: <CheckIcon size="5" />,
-              }} collapsable
-                onBlur={() => {
-                  if(usoVeiculo) {
-                    setErrors(e => e.filter(x => x !== 'usoVeiculo'));
-                  }else {
-                    setErrors(e => [...e, 'usoVeiculo'])
-                  }
-                }}
-              >
-                {['lazer e ida e volta ao trabalho', 'só lazer', 'visita a clientes', 'motorista de aplicativo', 'táxi', 'para entregas'].map((item, index) => (
-                  <Select.Item value={item} label={String(item).toUpperCase()} key={index}>{item}</Select.Item>
-                ))}
-              </SelectStyle>
-              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                Campo inválido
-              </FormControl.ErrorMessage>
-            </FormControl>
-            <FormControl isInvalid={errors.includes('cepPernoite')} style={{ marginTop: 20 }}>
-              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>CEP: <Text style={{ color: 'red' }}>*</Text></Text>
-              <InputStyle editable={accept} borderColor='#999' value={cepPernoite} returnKeyType='done' placeholder='00000-000' keyboardType='number-pad' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
-                onChangeText={(value) => {
-                  if(!value) {
-                    setCEPPernoite('');
-                    return;
-                  }
-                  
-                  setCEPPernoite(maskCEP(value));
-                }}
-                onBlur={() => {
-                  if(validateCEP(cepPernoite)) {
-                    setErrors(e => e.filter(x => x !== 'cepPernoite'));
-                  }else {
-                    setErrors(e => [...e, 'cepPernoite'])
-                  }
-                }}
-              />
-              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                Campo inválido
-              </FormControl.ErrorMessage>
-            </FormControl>
-            <FormControl isInvalid={errors.includes('placa')} style={{ marginTop: 20 }}>
-              <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>PLACA: <Text style={{ color: 'red' }}>*</Text></Text>
-              <InputStyle editable={accept} borderColor='#999' value={placa} returnKeyType='done' placeholder='AAA0000 ou AAA0A00' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
-                onChangeText={(value) => {
-                  if(!value) {
-                    setPlaca('');
-                    return;
-                  }
+                }} _selectedItem={{
+                  bg: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
+                  endIcon: <CheckIcon size="5" />,
+                }} collapsable
+                  onBlur={() => {
+                    if(usoVeiculo) {
+                      setErrors(e => e.filter(x => x !== 'usoVeiculo'));
+                    }else {
+                      setErrors(e => [...e, 'usoVeiculo'])
+                    }
+                  }}
+                >
+                  {['lazer e ida e volta ao trabalho', 'só lazer', 'visita a clientes', 'motorista de aplicativo', 'táxi', 'para entregas'].map((item, index) => (
+                    <Select.Item value={item} label={String(item).toUpperCase()} key={index}>{item}</Select.Item>
+                  ))}
+                </SelectStyle>
+                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                  Campo inválido
+                </FormControl.ErrorMessage>
+              </FormControl>
+              <FormControl isInvalid={errors.includes('cepPernoite')} style={{ marginTop: 20 }}>
+                <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>CEP: <Text style={{ color: 'red' }}>*</Text></Text>
+                <InputStyle editable={accept} borderColor='#999' value={cepPernoite} returnKeyType='done' placeholder='00000-000' keyboardType='number-pad' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
+                  onChangeText={(value) => {
+                    if(!value) {
+                      setCEPPernoite('');
+                      return;
+                    }
+                    
+                    setCEPPernoite(maskCEP(value));
+                  }}
+                  onBlur={() => {
+                    if(validateCEP(cepPernoite)) {
+                      setErrors(e => e.filter(x => x !== 'cepPernoite'));
+                    }else {
+                      setErrors(e => [...e, 'cepPernoite'])
+                    }
+                  }}
+                />
+                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                  Campo inválido
+                </FormControl.ErrorMessage>
+              </FormControl>
+              <FormControl isInvalid={errors.includes('placa')} style={{ marginTop: 20 }}>
+                <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 5 }}>PLACA: <Text style={{ color: 'red' }}>*</Text></Text>
+                <InputStyle editable={accept} borderColor='#999' value={placa} returnKeyType='done' placeholder='AAA0000 ou AAA0A00' keyboardType='default' autoCapitalize='characters' autoCorrect={false} autoCompleteType='off'
+                  onChangeText={(value) => {
+                    if(!value) {
+                      setPlaca('');
+                      return;
+                    }
 
-                  setPlaca(maskPlaca(value));
-                }}
-                onBlur={() => {
-                  if(validatePlaca(placa)) {
-                    setErrors(e => e.filter(x => x !== 'placa'));
-                  }else {
-                    setErrors(e => [...e, 'placa'])
-                  }
-                }}
-              />
-              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                Campo inválido
-              </FormControl.ErrorMessage>
-            </FormControl>
+                    setPlaca(maskPlaca(value));
+                  }}
+                  onBlur={() => {
+                    if(validatePlaca(placa)) {
+                      setErrors(e => e.filter(x => x !== 'placa'));
+                    }else {
+                      setErrors(e => [...e, 'placa'])
+                    }
+                  }}
+                />
+                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                  Campo inválido
+                </FormControl.ErrorMessage>
+              </FormControl>
+              </>
+            )}
             <TouchableOpacity
               disabled={loading}
               onPress={adicionarSeguroExterno}
