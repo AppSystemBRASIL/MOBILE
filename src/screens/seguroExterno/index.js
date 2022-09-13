@@ -209,21 +209,23 @@ export default function SeguroExterno({ navigation, route }) {
                     Fornecer as informações para o calculo do seguro e receber gratuitamente e sem compromisso nossa cotação.
                   </Text>
                 </TouchableOpacity>
-                <Text
-                  style={{
-                    marginTop: 10,
-                    fontSize: 12,
-                    textAlign: 'justify'
-                  }}
-                >
+                {/*
                   <Text
                     style={{
-                      fontWeight: 'bold'
+                      marginTop: 10,
+                      fontSize: 12,
+                      textAlign: 'justify'
                     }}
                   >
-                    OBS.
-                  </Text> Segurado XCAR CORRETORA DE SEGUROS concorre mensalmente a 35% de desconto na renovação do seu seguro.
-                </Text>
+                    <Text
+                      style={{
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      OBS.
+                    </Text> Segurado XCAR CORRETORA DE SEGUROS concorre mensalmente a 35% de desconto na renovação do seu seguro.
+                  </Text>
+                */}
                 <Divider style={{ marginVertical: 20 }} />
               </>
             )}
