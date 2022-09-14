@@ -127,8 +127,9 @@ export default function SeguroExterno({ navigation, route }) {
     .then(() => {
       Toast.closeAll();
       Toast.show({
-        title: `${params.type === 'edit' ? 'ALTERADO COM SUCESSO' : 'REGISTRADO'} COM SUCESSO!`,
-        description: 'redirecionando para página de seguros...'
+        title: `${params.type === 'edit' ? 'ALTERADO' : 'ENVIADO'} COM SUCESSO!`,
+        description: 'redirecionando para página de seguros...',
+        placement: 'top'
       });
 
       setCPFContext(cpf);
@@ -297,7 +298,7 @@ export default function SeguroExterno({ navigation, route }) {
                   }}
                 />
                 <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                  Campo inválido
+                  CPF inválido
                 </FormControl.ErrorMessage>
               </FormControl>
               <FormControl isInvalid={errors.includes('seguradora')} style={{ marginTop: 20 }}>
