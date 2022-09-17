@@ -444,7 +444,7 @@ const HomeScreen = ({ navigation }) => {
               }}
             >
               <Text style={{fontSize: 20, color: 'white', fontWeight: '900', textTransform: 'uppercase'}}>
-                ADICIONE SEU SEGURO
+                SEGURADO EXTERNO
               </Text>
               <Text style={{
                 marginTop: 10,
