@@ -465,23 +465,9 @@ export default function SeguroExterno({ navigation, route }) {
                     textAlign: 'left'
                   }}
                 >
-                1 - fornecer as informações para o calculo do seguro do seu veículo e receber,
+                1 - fornecer as informações para o cálculo do seguro do seu veículo e receber,
                 {'\n'}
                 gratuitamente e sem compromisso, nossa cotação.
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 15,
-                    flex: 1,
-                    textAlign: 'left',
-                    marginTop: 10
-                  }}
-                >
-                  <Text style={{
-                    fontWeight: 'bold'
-                  }}>
-                    OBS.
-                  </Text> Após clicar em concordo os dados deverão subir para o APP
                 </Text>
                 <TouchableOpacity
                   style={{
@@ -513,16 +499,16 @@ export default function SeguroExterno({ navigation, route }) {
                       textAlign: 'justify'
                     }}
                   >
-                    CONCORDAR AS REGRAS
+                    CONCORDAR
                   </Text>
                 </TouchableOpacity>
               </>
             )}
             <TouchableOpacity
-              disabled={loading}
+              disabled={loading && !accept}
               onPress={adicionarSeguroExterno}
               style={{
-                backgroundColor: COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
+                backgroundColor: !accept ? '#D1D1D1' : COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
                 padding: 10,
                 paddingVertical: 12,
                 alignItems: 'center',
@@ -535,7 +521,7 @@ export default function SeguroExterno({ navigation, route }) {
               <Text
                 style={{
                   fontWeight: '800',
-                  color: 'white',
+                  color: !accept ? 'black' : 'white',
                   fontSize: 20,
                 }}
               >ENVIAR</Text>

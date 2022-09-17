@@ -404,7 +404,7 @@ const HomeScreen = ({ navigation }) => {
                 fontWeight: '500',
                 textAlign: 'center',
               }}>
-                Indique 5 amigos ou mais e concorra na sua renovação: 35% de desconto, limitado a R$1.000,00
+                CLIQUE,  indique aos amigos, eles terão totalmente grátis este aplicativo para inserir seus veículos e ainda receberão nossa cotação com os melhores preços para a renovação do seguro.
               </Text>
             </View>
           </View>
@@ -453,9 +453,9 @@ const HomeScreen = ({ navigation }) => {
                 fontWeight: '500',
                 textAlign: 'center',
               }}>
-                CLIQUE, indique aos amigos, eles terão totalmente grátis este aplicativo para
-                inserir seus veículos e ainda receberão nossa cotação com os melhores preços
-                para a renovação do seguro.
+                CLIQUE! Preencha os dados e tenha as informações do seu seguro na palma da mão.
+                {'\n'}
+                Na renovação, receba nossas cotações com os melhores preços - Tudo Grátis
               </Text>
             </View>
           </View>
