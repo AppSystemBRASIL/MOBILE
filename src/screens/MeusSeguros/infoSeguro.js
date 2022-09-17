@@ -1,10 +1,9 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, ScrollView, Linking, TouchableOpacity, Platform } from 'react-native'
 import firebase from '../../../firebase';
 
-import { Skeleton } from 'native-base';
+import { AlertDialog, Button, Skeleton, Toast } from 'native-base';
 
-import Context from '../../context';
 import { StatusBar } from 'expo-status-bar';
 
 import Header from '../../components/Header';
@@ -12,6 +11,7 @@ import { format } from 'date-fns';
 
 import Feather from 'react-native-vector-icons/Feather'
 import { COLORS } from '../../utils/constants';
+import useAuth from '../../hooks/useAuth';
 
 const ComoProcederInfoContent = ({ navigation, route }) => {
   if(Platform.OS === 'android') {
@@ -21,7 +21,7 @@ const ComoProcederInfoContent = ({ navigation, route }) => {
 
   const item = route.params;
 
-  const { corretora } = useContext(Context);
+  const { corretora, cpf, setCPF: setCPFContext } = useAuth();
 
   const Body = () => {
     const [loading, setLoading] = useState(false);
@@ -46,6 +46,30 @@ const ComoProcederInfoContent = ({ navigation, route }) => {
       });
     }, []);
 
+    const cancelRef = useRef(null);
+    const [isOpen, setIsOpen] = useState(false);
+    const onClose = () => setIsOpen(false);
+
+    function excluirSeguro() {
+      firebase.firestore().collection('seguros').doc(item.uid).delete()
+      .then(() => {
+        onClose();
+
+        Toast.show({
+          title: 'SEGURO EXCLUÍDO COM SUCESSO',
+          placement: 'top'
+        });
+
+        setCPFContext(cpf);
+        setTimeout(() => {
+          Toast.closeAll();
+          navigation.navigate('meusSeguros', {
+            cpf: cpf
+          });
+        }, 1200);
+      })
+    }
+
     if(dataSeguro.tipo !== 'veicular') {
       return <></>;
     }
@@ -58,6 +82,28 @@ const ComoProcederInfoContent = ({ navigation, route }) => {
           paddingTop: 20
         }}
       >
+        <AlertDialog leastDestructiveRef={cancelRef} isOpen={isOpen} onClose={onClose}>
+          <AlertDialog.Content>
+            <AlertDialog.CloseButton />
+            <AlertDialog.Header>DESEJA REALMENTE EXLCUIR O SEGURO</AlertDialog.Header>
+            <AlertDialog.Body>
+              Ao excluir o seguro, o mesmo não poderá ser recuperado.
+              Para que tenha registrado o seguro novamente, é necessário que insira novamente na página de adição de seguros externos
+            </AlertDialog.Body>
+            <AlertDialog.Footer>
+              <Button.Group space={2}>
+                <Button variant="unstyled" colorScheme="coolGray" onPress={onClose} ref={cancelRef}>
+                  CANCELAR
+                </Button>
+                <Button bgColor={COLORS(corretora ? corretora.layout.theme : themeDefault).primary} onPress={() => {
+                  excluirSeguro()
+                }}>
+                  EXCLUIR
+                </Button>
+              </Button.Group>
+            </AlertDialog.Footer>
+          </AlertDialog.Content>
+        </AlertDialog>
         <View
           activeOpacity={1} 
           style={{
@@ -70,46 +116,78 @@ const ComoProcederInfoContent = ({ navigation, route }) => {
           }}
         >
           {dataSeguro.externo && (
-            <TouchableOpacity
+            <View
               style={{
                 position: 'absolute',
                 top: 10,
                 right: 10,
                 flexDirection: 'row',
                 alignItems: 'center',
-                justifyContent: 'flex-start'
+                justifyContent: 'flex-end'
               }}
-              
-              onPress={() => navigation.navigate('seguroExterno', {
-                type: 'edit',
-                placa: dataSeguro.veiculo.placa,
-                seguradora: dataSeguro.seguradora.uid,
-                segurado: dataSeguro.segurado.nome,
-                telefone: dataSeguro.segurado.telefone,
-                cpf: dataSeguro.segurado.cpf,
-                vigenciaInicio: format(dataSeguro.seguro.vigencia.toDate(), 'dd/MM/yyyy'),
-                vigenciaFinal: format(dataSeguro.seguro.vigenciaFinal.toDate(), 'dd/MM/yyyy'),
-                veiculo: dataSeguro.veiculo.veiculo,
-                anoModelo: dataSeguro?.veiculo?.anoModelo || '',
-                usoVeiculo: dataSeguro.riscos.usoVeiculo,
-                cep: dataSeguro.endereco.cep,
-                uid: dataSeguro.uid
-              })}
             >
-              <Text
+              <TouchableOpacity
                 style={{
-                  fontSize: 15,
-                  marginRight: 5
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'flex-start'
+                }}
+                onPress={() => navigation.navigate('seguroExterno', {
+                  type: 'edit',
+                  placa: dataSeguro.veiculo.placa,
+                  seguradora: dataSeguro.seguradora.uid,
+                  segurado: dataSeguro.segurado.nome,
+                  telefone: dataSeguro.segurado.telefone,
+                  cpf: dataSeguro.segurado.cpf,
+                  vigenciaInicio: format(dataSeguro.seguro.vigencia.toDate(), 'dd/MM/yyyy'),
+                  vigenciaFinal: format(dataSeguro.seguro.vigenciaFinal.toDate(), 'dd/MM/yyyy'),
+                  veiculo: dataSeguro.veiculo.veiculo,
+                  anoModelo: dataSeguro?.veiculo?.anoModelo || '',
+                  usoVeiculo: dataSeguro.riscos.usoVeiculo,
+                  cep: dataSeguro.endereco.cep,
+                  uid: dataSeguro.uid
+                })}
+              >
+                <Text
+                  style={{
+                    fontSize: 15,
+                    marginRight: 5
+                  }}
+                >
+                  ALTERAR
+                </Text>
+                <Feather
+                  name='edit'
+                  size={15}
+                  color={COLORS(corretora ? corretora.layout.theme : themeDefault).primary}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'flex-start',
+                  marginLeft: 20
+                }}
+                onPress={() => {
+                  setIsOpen(true);
                 }}
               >
-                ALTERAR
-              </Text>
-              <Feather
-                name='edit'
-                size={15}
-                color={COLORS(corretora ? corretora.layout.theme : themeDefault).primary}
-              />
-            </TouchableOpacity>
+                <Text
+                  style={{
+                    fontSize: 15,
+                    marginRight: 5
+                  }}
+                >
+                  EXCLUIR
+                </Text>
+                <Feather
+                  name='archive'
+                  size={15}
+                  color={COLORS(corretora ? corretora.layout.theme : themeDefault).primary}
+                />
+              </TouchableOpacity>
+            </View>
           )}
           <View style={{
             width: '100%',

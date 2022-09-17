@@ -413,6 +413,7 @@ const HomeScreen = ({ navigation }) => {
           onPress={() => navigation.navigate('seguroExterno')}
           style={{
             marginTop: 10,
+            marginBottom: 50,
             width: '100%',
             bottom: 30,
             paddingHorizontal: 5,
@@ -443,10 +444,7 @@ const HomeScreen = ({ navigation }) => {
               }}
             >
               <Text style={{fontSize: 20, color: 'white', fontWeight: '900', textTransform: 'uppercase'}}>
-                SEGURADO EXTERNO
-              </Text>
-              <Text style={{fontSize: 17, color: 'white', fontWeight: '900', textTransform: 'uppercase', textAlign: 'center' }}>
-                SEU APLICATIVO DE SEGUROS GRÁTIS
+                ADICIONE SEU SEGURO
               </Text>
               <Text style={{
                 marginTop: 10,
@@ -455,9 +453,9 @@ const HomeScreen = ({ navigation }) => {
                 fontWeight: '500',
                 textAlign: 'center',
               }}>
-                CLIQUE! Preencha os dados e tenha as informações do seu seguro na palma da mão.
-                {'\n'}
-                Na renovação, receba nossa cotação com os melhores preços - Tudo Grátis
+                CLIQUE, indique aos amigos, eles terão totalmente grátis este aplicativo para
+                inserir seus veículos e ainda receberão nossa cotação com os melhores preços
+                para a renovação do seguro.
               </Text>
             </View>
           </View>
