@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { FormControl, Select, Input, WarningOutlineIcon, CheckIcon, Toast, Divider } from 'native-base';
 import { useEffect, useState } from 'react';
-import { Platform, KeyboardAvoidingView, ScrollView, View, Text, TouchableOpacity, Alert } from 'react-native';
+import { Platform, KeyboardAvoidingView, ScrollView, View, Text, TouchableOpacity, Alert, Keyboard } from 'react-native';
 
 import styled from 'styled-components';
 
@@ -71,7 +71,9 @@ export default function SeguroExterno({ navigation, route }) {
       return;
     }
 
-    const placaValidated = firebase.firestore().collection('seguros').where('veiculo.placa', '==', placa).get()
+    const placaValidated = firebase.firestore().collection('seguros')
+    .where('ativo', '==', true)
+    .where('veiculo.placa', '==', placa).get()
     .then((response) => {
       if(response.size) {
         return true;
@@ -87,10 +89,6 @@ export default function SeguroExterno({ navigation, route }) {
       Alert.alert('Placa existente', 'Essa placa já consta nos registro da corretora');
       return;
     }
-
-    Toast.show({
-      title: 'ENVIANDO...'
-    });
 
     const data = {
       uid: route?.params?.type === 'edit' ? route.params.uid : generateToken(),
@@ -115,7 +113,7 @@ export default function SeguroExterno({ navigation, route }) {
       },
       seguro: {
         vigencia: setMinutes(setHours(new Date(vigenciaInicio.split('/')[2], (vigenciaInicio.split('/')[1] - 1), vigenciaInicio.split('/')[0]), 0), 0),
-        vigenciaFinal: addYears(endOfDay(setMinutes(setHours(addYears(new Date(vigenciaInicio.split('/')[2], (vigenciaInicio.split('/')[1] - 1), vigenciaInicio.split('/')[0]), 1), 0), 0)), 1)
+        vigenciaFinal: endOfDay(setMinutes(setHours(addYears(new Date(vigenciaInicio.split('/')[2], (vigenciaInicio.split('/')[1] - 1), vigenciaInicio.split('/')[0]), 1), 0), 0))
       },
       segurado: {
         anoAdesao: null,
@@ -137,27 +135,32 @@ export default function SeguroExterno({ navigation, route }) {
       created: new Date()
     };
 
+    Toast.show({
+      title: 'ENVIANDO...'
+    });
+
+    setLoading(true);
     await firebase.firestore().collection('seguros').doc(data.uid).set(data, {
       merge: true
     })
     .then(() => {
+      Keyboard.dismiss();
       Toast.closeAll();
+
       Toast.show({
-        title: `${params.type === 'edit' ? 'ALTERADO' : 'ENVIADO'} COM SUCESSO!`,
+        title: `${params?.type === 'edit' ? 'ALTERADO' : 'ENVIADO'} COM SUCESSO!`,
         description: 'redirecionando para página de seguros...',
-        placement: 'top'
+        placement: 'bottom'
       });
 
       setCPFContext(cpf);
       setTimeout(() => {
-        Toast.closeAll();
         navigation.navigate('meusSeguros', {
           cpf: cpf
         });
-      }, 500);
+      }, 1500);
     })
-    .catch(() => setLoading(false))
-    .finally(() => {
+    .catch((error) => {
       setLoading(false);
     });
   }
@@ -280,7 +283,7 @@ export default function SeguroExterno({ navigation, route }) {
                   }
                 }}
               >
-                {seguradoras.map((item, index) => (
+                {seguradoras.sort((a, b) => String(a.razao_social).localeCompare(b.razao_social)).map((item, index) => (
                   <Select.Item value={item.uid} label={String(item.razao_social).toUpperCase()} key={index}>{item.razao_social}</Select.Item>
                 ))}
               </SelectStyle>
@@ -397,7 +400,7 @@ export default function SeguroExterno({ navigation, route }) {
                   setPlaca(placaMasked);
 
                   if(placaMasked.length === 7) {
-                    firebase.firestore().collection('seguros').where('veiculo.placa', '==', placaMasked).get()
+                    firebase.firestore().collection('seguros').where('ativo', '==', true).where('veiculo.placa', '==', placaMasked).get()
                     .then((response) => {
                       
                       if(response.size) {
@@ -505,10 +508,10 @@ export default function SeguroExterno({ navigation, route }) {
               </>
             )}
             <TouchableOpacity
-              disabled={loading && !accept}
+              disabled={!accept || loading}
               onPress={adicionarSeguroExterno}
               style={{
-                backgroundColor: !accept ? '#D1D1D1' : COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
+                backgroundColor: !accept || loading ? '#D1D1D1' : COLORS(corretora ? corretora.layout.theme : themeDefault).primary,
                 padding: 10,
                 paddingVertical: 12,
                 alignItems: 'center',
@@ -521,7 +524,7 @@ export default function SeguroExterno({ navigation, route }) {
               <Text
                 style={{
                   fontWeight: '800',
-                  color: !accept ? 'black' : 'white',
+                  color: !accept || loading ? 'black' : 'white',
                   fontSize: 20,
                 }}
               >ENVIAR</Text>

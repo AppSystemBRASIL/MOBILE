@@ -1,6 +1,6 @@
 {
   "main": "node_modules/expo/AppEntry.js",
-  "version": "1.5.5",
+  "version": "1.6.0",
   "scripts": {
     "start": "npx expo-cli start",
     "git": "git add . && git commit -m 'first commit' && git push",

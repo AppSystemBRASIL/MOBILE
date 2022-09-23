@@ -5,7 +5,7 @@ import Feather from 'react-native-vector-icons/Feather';
 
 import { COLORS } from '../../utils/constants';
 
-import { Input, Skeleton, FormControl } from 'native-base';
+import { Input, Skeleton, FormControl, Toast } from 'native-base';
 import { maskCPF } from '../../utils/maskedInput';
 
 import firebase from '../../../firebase';
@@ -41,6 +41,7 @@ const MeusSeguros = ({ navigation, route }) => {
   }
 
   useEffect(() => {
+    Toast.closeAll();
     buscarSeguros('init');
   }, []);
 
@@ -229,15 +230,17 @@ const MeusSeguros = ({ navigation, route }) => {
                           <Text style={{fontWeight: 'bold'}}>VIGÊNCIA:</Text>{'\n'}{format(item.seguro.vigencia.seconds * 1000, 'dd/MM/yyyy')} até {format(item.seguro.vigenciaFinal.seconds * 1000, 'dd/MM/yyyy')} {`\n`}
                         </Text> 
                       </Text>
-                      <Text
-                        style={{
-                          fontSize: 17,
-                          color: '#333',
-                          fontWeight: '500'
-                        }}
-                      >
-                        <Text style={{fontWeight: 'bold'}}>PRINCIPAL CONDUTOR:</Text> {`\n`+String((item.veiculo.condutor === 'O MESMO' || item.veiculo.condutor === '' || !item.veiculo.condutor) ? item.segurado.nome : item.veiculo.condutor).toUpperCase()} {`\n`}
-                      </Text>
+                      {item?.veiculo?.condutor && (
+                        <Text
+                          style={{
+                            fontSize: 17,
+                            color: '#333',
+                            fontWeight: '500'
+                          }}
+                        >
+                          <Text style={{fontWeight: 'bold'}}>PRINCIPAL CONDUTOR:</Text> {`\n`+String((item.veiculo.condutor === 'O MESMO' || item.veiculo.condutor === '' || !item.veiculo.condutor) ? item.segurado.nome : item.veiculo.condutor).toUpperCase()} {`\n`}
+                        </Text>
+                      )}
                       <Text
                         style={{
                           fontSize: 17,
