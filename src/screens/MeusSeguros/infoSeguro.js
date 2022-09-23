@@ -61,12 +61,10 @@ const ComoProcederInfoContent = ({ navigation, route }) => {
         });
 
         setCPFContext(cpf);
-        setTimeout(() => {
-          Toast.closeAll();
-          navigation.navigate('meusSeguros', {
-            cpf: cpf
-          });
-        }, 1200);
+        Toast.closeAll();
+        navigation.navigate('meusSeguros', {
+          cpf: cpf
+        });
       })
     }
 
