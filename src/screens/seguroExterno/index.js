@@ -154,7 +154,7 @@ export default function SeguroExterno({ navigation, route }) {
         navigation.navigate('meusSeguros', {
           cpf: cpf
         });
-      }, 1200);
+      }, 500);
     })
     .catch(() => setLoading(false))
     .finally(() => {
