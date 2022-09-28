@@ -1,7 +1,7 @@
-import { View, Text } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { maskCEP, maskCNPJ, maskCPF, maskCurrency, maskDate, maskLetters, maskPhone, maskPlaca, maskYear } from '../../utils/maskedInput';
-import { validateCEP, validatePlaca, validateYear, validateEmail } from '../../utils/validateInput';
+import { validateCEP, validateEmail, validatePlaca, validateYear } from '../../utils/validateInput';
 import cidades from '../cidades';
 import seguradoras from '../seguradoras';
 
@@ -929,7 +929,7 @@ const array = [
           {`\n`}
           - Assistência funeral
           {`\n`}
-          - Entre outras
+          - Entre outras 
         </Text>
       </View>
     ]
