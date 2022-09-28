@@ -1,11 +1,11 @@
-import React, { useState, useContext, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Alert, Image, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { Alert, Image, KeyboardAvoidingView, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 import Feather from 'react-native-vector-icons/Feather';
 
 import { COLORS } from '../../utils/constants';
 
-import { Input, Skeleton, FormControl, Toast } from 'native-base';
+import { AlertDialog, Button, FormControl, Input, Skeleton, Toast } from 'native-base';
 import { maskCPF } from '../../utils/maskedInput';
 
 import firebase from '../../../firebase';
@@ -21,11 +21,11 @@ import { validateCPF } from '../../utils/validateInput';
 
 import { StatusBar } from 'expo-status-bar';
 
-import Header from '../../components/Header';
 import { format } from 'date-fns';
+import Header from '../../components/Header';
 
 const MeusSeguros = ({ navigation, route }) => {  
-  const { dataSeguros, setDataSeguros, cpf, setCPF, corretora } = useContext(Context);
+  const { dataSeguros, setDataSeguros, cpf, setCPF, corretora, setCPFContext } = useContext(Context);
 
   const [loading, setLoading] = useState(true);
 
@@ -122,8 +122,27 @@ const MeusSeguros = ({ navigation, route }) => {
     setLoading(true);
   }
 
-  const Body = () => {
+  const cancelRef = useRef(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const onClose = () => setIsOpen(false);
 
+  function excluirSeguro() {
+    firebase.firestore().collection('seguros').doc(dataSeguros[0].uid).delete()
+    .then(() => {
+      onClose();
+
+      Toast.show({
+        title: 'SEGURO EXCLUÍDO COM SUCESSO',
+        placement: 'top'
+      });
+
+      setTimeout(() => {
+        Toast.closeAll();
+      }, 1000);
+    })
+  }
+
+  const Body = () => {
     return (
       <KeyboardAvoidingView
         style={{
@@ -137,6 +156,28 @@ const MeusSeguros = ({ navigation, route }) => {
         <ScrollView style={{
           paddingTop: 20
         }}>
+          <AlertDialog leastDestructiveRef={cancelRef} isOpen={isOpen} onClose={onClose}>
+            <AlertDialog.Content>
+              <AlertDialog.CloseButton />
+              <AlertDialog.Header>DESEJA REALMENTE EXLCUIR O SEGURO</AlertDialog.Header>
+              <AlertDialog.Body>
+                Ao excluir o seguro, o mesmo não poderá ser recuperado.
+                Para que tenha registrado o seguro novamente, é necessário que insira novamente na página de adição de seguros externos
+              </AlertDialog.Body>
+              <AlertDialog.Footer>
+                <Button.Group space={2}>
+                  <Button variant="unstyled" colorScheme="coolGray" onPress={onClose} ref={cancelRef}>
+                    CANCELAR
+                  </Button>
+                  <Button bgColor={COLORS(corretora ? corretora.layout.theme : themeDefault).primary} onPress={() => {
+                    excluirSeguro();
+                  }}>
+                    EXCLUIR
+                  </Button>
+                </Button.Group>
+              </AlertDialog.Footer>
+            </AlertDialog.Content>
+          </AlertDialog>
           {dataSeguros.length > 0 && (
             <TouchableOpacity
               activeOpacity={1}
@@ -285,6 +326,63 @@ const MeusSeguros = ({ navigation, route }) => {
                           }}
                         >CORRETORA: {String(item.corretora.razao_social).toUpperCase()}</Text>
                       )}
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          marginTop: 20,
+                        }}
+                      >
+                        <TouchableOpacity
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            marginRight: 20,
+                            zIndex: 10
+                          }}
+                          onPress={() => navigation.navigate('seguroExterno', {
+                            type: 'edit',
+                            placa: dataSeguros[0].veiculo.placa,
+                            seguradora: dataSeguros[0].seguradora.uid,
+                            segurado: dataSeguros[0].segurado.nome,
+                            telefone: dataSeguros[0].segurado.telefone,
+                            cpf: dataSeguros[0].segurado.cpf,
+                            vigenciaInicio: format(dataSeguros[0].seguro.vigencia.toDate(), 'dd/MM/yyyy'),
+                            vigenciaFinal: format(dataSeguros[0].seguro.vigenciaFinal.toDate(), 'dd/MM/yyyy'),
+                            veiculo: dataSeguros[0].veiculo.veiculo,
+                            anoModelo: dataSeguros[0]?.veiculo?.anoModelo || '',
+                            usoVeiculo: dataSeguros[0].riscos.usoVeiculo,
+                            cep: dataSeguros[0].endereco.cep,
+                            uid: dataSeguros[0].uid
+                          })}
+                        >
+                          <Text
+                            style={{
+                              marginRight: 5
+                            }}
+                          >
+                            Alterar
+                          </Text>
+                          <Feather name='edit' size={20} color={COLORS(corretora ? corretora.layout.theme : themeDefault).primary} />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center'
+                          }}
+                          onPress={() => {
+                            setIsOpen(true);
+                          }}
+                        >
+                          <Text
+                            style={{
+                              marginRight: 5
+                            }}
+                          >
+                            Excluir
+                          </Text>
+                          <Feather name='x' size={20} color={COLORS(corretora ? corretora.layout.theme : themeDefault).primary} />
+                        </TouchableOpacity>
+                      </View>
                       <View
                         style={{
                           position: 'absolute',

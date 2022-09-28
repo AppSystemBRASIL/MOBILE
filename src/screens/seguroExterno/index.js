@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
-import { FormControl, Select, Input, WarningOutlineIcon, CheckIcon, Toast, Divider } from 'native-base';
+import { CheckIcon, Divider, FormControl, Input, Select, Toast, WarningOutlineIcon } from 'native-base';
 import { useEffect, useState } from 'react';
-import { Platform, KeyboardAvoidingView, ScrollView, View, Text, TouchableOpacity, Alert, Keyboard } from 'react-native';
+import { Alert, Keyboard, KeyboardAvoidingView, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 import styled from 'styled-components';
 
@@ -61,12 +61,12 @@ export default function SeguroExterno({ navigation, route }) {
       return;
     }
     
-    if((!placa || placa.length < 7) || !seguradora || !vigenciaInicio || !veiculo || !anoModelo || !usoVeiculo || !segurado || !cpf || !cepPernoite || !telefone) {
+    if((!placa || placa?.length < 7) || !seguradora || !vigenciaInicio || !veiculo || !anoModelo || !usoVeiculo || !segurado || !cpf || !cepPernoite || !telefone) {
       Alert.alert('Preencha todos os campos!');
       return;
     }
 
-    if(errors.length > 0) {
+    if(errors?.length > 0) {
       Alert.prompt('Algum campo está inválido');
       return;
     }
@@ -155,7 +155,7 @@ export default function SeguroExterno({ navigation, route }) {
 
       setCPFContext(cpf);
       setTimeout(() => {
-        navigation.navigate('meusSeguros', {
+        navigation.navigate('home', {
           cpf: cpf
         });
       }, 1500);
