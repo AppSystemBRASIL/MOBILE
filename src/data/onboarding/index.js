@@ -17,4 +17,4 @@ export default onboarding = [
     description: 'Descrição da informação',
     img: require('../../assets/onboarding/Selfi.png')
   }
-]
+];
