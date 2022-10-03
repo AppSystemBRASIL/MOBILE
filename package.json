@@ -1,11 +1,11 @@
 {
   "main": "node_modules/expo/AppEntry.js",
-  "version": "1.6.5",
+  "version": "1.8.0",
   "scripts": {
     "start": "npx expo-cli start",
     "git": "git add . && git commit -m 'first commit' && git push",
-    "build": "yarn git && npx eas-cli build",
-    "submit": "yarn git && npx eas-cli build --auto-submit"
+    "build": "npx eas-cli build",
+    "submit": "npx eas-cli build --auto-submit"
   },
   "dependencies": {
     "@motify/skeleton": "^0.15.3",
