@@ -17,6 +17,11 @@
     ],
     "ios": {
       "supportsTablet": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "3a189a7f-6c6d-4fa9-9f0e-0f55c5b713be"
+      }
     }
   }
 }
