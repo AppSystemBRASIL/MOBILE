@@ -379,7 +379,7 @@ export default function SeguroExterno({ navigation, route }) {
                   }
                 }}
               >
-                {['lazer e ida e volta ao trabalho', 'só lazer', 'visita a clientes', 'motorista de aplicativo', 'táxi', 'para entregas'].map((item, index) => (
+                {['lazer e ida e volta ao trabalho', 'só lazer', 'visita a clientes', 'motorista de aplicativo', 'táxi', 'transporte de mercadorias'].map((item, index) => (
                   <Select.Item value={item} label={String(item).toUpperCase()} key={index}>{item}</Select.Item>
                 ))}
               </SelectStyle>
