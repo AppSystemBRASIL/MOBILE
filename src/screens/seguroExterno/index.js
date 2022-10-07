@@ -67,7 +67,7 @@ export default function SeguroExterno({ navigation, route }) {
     }
 
     if(errors?.length > 0) {
-      Alert.prompt('Algum campo está inválido');
+      Alert.alert('Algum campo está inválido');
       return;
     }
 
