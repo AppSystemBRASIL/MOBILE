@@ -326,63 +326,65 @@ const MeusSeguros = ({ navigation, route }) => {
                           }}
                         >CORRETORA: {String(item.corretora.razao_social).toUpperCase()}</Text>
                       )}
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          marginTop: 20,
-                        }}
-                      >
-                        <TouchableOpacity
+                      {item.externo && (
+                        <View
                           style={{
                             flexDirection: 'row',
-                            alignItems: 'center',
-                            marginRight: 20,
-                            zIndex: 10
-                          }}
-                          onPress={() => navigation.navigate('seguroExterno', {
-                            type: 'edit',
-                            placa: dataSeguros[0].veiculo.placa,
-                            seguradora: dataSeguros[0].seguradora.uid,
-                            segurado: dataSeguros[0].segurado.nome,
-                            telefone: dataSeguros[0].segurado.telefone,
-                            cpf: dataSeguros[0].segurado.cpf,
-                            vigenciaInicio: format(dataSeguros[0].seguro.vigencia.toDate(), 'dd/MM/yyyy'),
-                            vigenciaFinal: format(dataSeguros[0].seguro.vigenciaFinal.toDate(), 'dd/MM/yyyy'),
-                            veiculo: dataSeguros[0].veiculo.veiculo,
-                            anoModelo: dataSeguros[0]?.veiculo?.anoModelo || '',
-                            usoVeiculo: dataSeguros[0].riscos.usoVeiculo,
-                            cep: dataSeguros[0].endereco.cep,
-                            uid: dataSeguros[0].uid
-                          })}
-                        >
-                          <Text
-                            style={{
-                              marginRight: 5
-                            }}
-                          >
-                            Alterar
-                          </Text>
-                          <Feather name='edit' size={20} color={COLORS(corretora ? corretora.layout.theme : themeDefault).primary} />
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          style={{
-                            flexDirection: 'row',
-                            alignItems: 'center'
-                          }}
-                          onPress={() => {
-                            setIsOpen(true);
+                            marginTop: 20,
                           }}
                         >
-                          <Text
+                          <TouchableOpacity
                             style={{
-                              marginRight: 5
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              marginRight: 20,
+                              zIndex: 10
+                            }}
+                            onPress={() => navigation.navigate('seguroExterno', {
+                              type: 'edit',
+                              placa: dataSeguros[0].veiculo.placa,
+                              seguradora: dataSeguros[0].seguradora.uid,
+                              segurado: dataSeguros[0].segurado.nome,
+                              telefone: dataSeguros[0].segurado.telefone,
+                              cpf: dataSeguros[0].segurado.cpf,
+                              vigenciaInicio: format(dataSeguros[0].seguro.vigencia.toDate(), 'dd/MM/yyyy'),
+                              vigenciaFinal: format(dataSeguros[0].seguro.vigenciaFinal.toDate(), 'dd/MM/yyyy'),
+                              veiculo: dataSeguros[0].veiculo.veiculo,
+                              anoModelo: dataSeguros[0]?.veiculo?.anoModelo || '',
+                              usoVeiculo: dataSeguros[0].riscos.usoVeiculo,
+                              cep: dataSeguros[0].endereco.cep,
+                              uid: dataSeguros[0].uid
+                            })}
+                          >
+                            <Text
+                              style={{
+                                marginRight: 5
+                              }}
+                            >
+                              Alterar
+                            </Text>
+                            <Feather name='edit' size={20} color={COLORS(corretora ? corretora.layout.theme : themeDefault).primary} />
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center'
+                            }}
+                            onPress={() => {
+                              setIsOpen(true);
                             }}
                           >
-                            Excluir
-                          </Text>
-                          <Feather name='x' size={20} color={COLORS(corretora ? corretora.layout.theme : themeDefault).primary} />
-                        </TouchableOpacity>
-                      </View>
+                            <Text
+                              style={{
+                                marginRight: 5
+                              }}
+                            >
+                              Excluir
+                            </Text>
+                            <Feather name='x' size={20} color={COLORS(corretora ? corretora.layout.theme : themeDefault).primary} />
+                          </TouchableOpacity>
+                        </View>
+                      )}
                       <View
                         style={{
                           position: 'absolute',
