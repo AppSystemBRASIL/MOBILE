@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, ScrollView, Image, TouchableOpacity, SafeAreaView, Alert, useWindowDimensions } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useContext, useEffect, useState } from 'react';
+import { Alert, Image, SafeAreaView, ScrollView, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 
 import Feather from 'react-native-vector-icons/Feather';
 
@@ -13,16 +13,16 @@ import * as WebBrowser from 'expo-web-browser';
 
 import Context from '../../context';
 
+import { StatusBar } from 'expo-status-bar';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import { themeDefault } from '../../config';
-import { StatusBar } from 'expo-status-bar';
 
-import { useToast, Box } from "native-base";
+import { Box, useToast } from "native-base";
 
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-import compartilharAPP from '../../utils/compartilharAPP';
 import Icon from 'react-native-vector-icons/Feather';
+import compartilharAPP from '../../utils/compartilharAPP';
 
 const HomeScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
@@ -395,7 +395,7 @@ const HomeScreen = ({ navigation }) => {
               }}
             >
               <Text style={{fontSize: 20, color: 'white', fontWeight: '900', textTransform: 'uppercase'}}>
-                SEGURADO XCAR
+                COMPARTILHAR
               </Text>
               <Text style={{
                 marginTop: 10,
