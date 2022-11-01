@@ -10,6 +10,8 @@ import { maskCPF } from '../../utils/maskedInput';
 
 import firebase from '../../../firebase';
 
+import { utcToZonedTime } from 'date-fns-tz';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Context from '../../context';
@@ -268,7 +270,7 @@ const MeusSeguros = ({ navigation, route }) => {
                         }}
                       >
                         <Text>
-                          <Text style={{fontWeight: 'bold'}}>VIGÊNCIA:</Text>{'\n'}{format(item.seguro.vigencia.seconds * 1000, 'dd/MM/yyyy')} até {format(item.seguro.vigenciaFinal.seconds * 1000, 'dd/MM/yyyy')} {`\n`}
+                          <Text style={{fontWeight: 'bold'}}>VIGÊNCIA:</Text>{'\n'}{format(utcToZonedTime(new Date(item.seguro.vigencia.seconds * 1000), 'America/Sao_Paulo'), 'dd/MM/yyyy')} até {format(utcToZonedTime(new Date(item.seguro.vigenciaFinal.seconds * 1000), 'America/Sao_Paulo'), 'dd/MM/yyyy')} {`\n`}
                         </Text> 
                       </Text>
                       {item?.veiculo?.condutor && (
