@@ -1,6 +1,6 @@
-const VERSION = '1.9.3';
+const VERSION = '1.9.4';
 const DOMAINS = 'com.xcarcorretora.app';
-const BUILD = 57;
+const BUILD = 58;
 
 const API_KEY_FIREBASE = 'AIzaSyAlGCcQx9S7SmvxAArZ3tvnH1ee8FwvmUY';
 const PROJECT_ID = 'appsystembrasil-seguro';
