@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Linking } from 'react-native'
+import { FlatList, Linking, Text, TouchableOpacity, View } from 'react-native';
 
 import Feather from 'react-native-vector-icons/Feather';
 
@@ -83,7 +83,7 @@ const ContatosUteis = ({ navigation }) => {
                           fontWeight: '800',
                           marginTop: 5
                         }}>
-                          {item1.contatos[0].telefones[1].length > 0 ? item1.contatos[0].telefones[1].telefone : item1.contatos[0].telefones[0].telefone}
+                          {item1.contatos[0].telefones[1]?.length > 0 ? item1.contatos[0].telefones[1].telefone : item1.contatos[0].telefones[0].telefone}
                         </Text>
                       </View>
                     </View>
