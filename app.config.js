@@ -1,6 +1,6 @@
-const VERSION = '1.9.5';
+const VERSION = '1.9.6';
 const DOMAINS = 'com.xcarcorretora.app';
-const BUILD = 59;
+const BUILD = 60;
 
 const API_KEY_FIREBASE = 'AIzaSyAlGCcQx9S7SmvxAArZ3tvnH1ee8FwvmUY';
 const PROJECT_ID = 'appsystembrasil-seguro';
@@ -13,7 +13,7 @@ export default function appConfig({ config }) {
     name: 'Xcar Corretora',
     scheme: 'xcar-corretora',
     slug: 'xcar-corretora',
-    icon: 'https://firebasestorage.googleapis.com/v0/b/appsystembrasil-seguro.appspot.com/o/corretora%2FX0hXIOdA5pOkyLquPIxj%2Ficon%2Ficon.png?alt=media&token=47ea79cf-001a-4b7e-9a70-a0b5dcf6e728',
+    icon: './src/assets/icon.png',
     version: VERSION,
     web: {
       firebase: {

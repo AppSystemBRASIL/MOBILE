@@ -1,24 +1,19 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, ScrollView, Linking, TouchableOpacity, Platform } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react';
+import { Linking, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import firebase from '../../../firebase';
 
 import { AlertDialog, Button, Skeleton, Toast } from 'native-base';
 
 import { StatusBar } from 'expo-status-bar';
 
-import Header from '../../components/Header';
 import { format } from 'date-fns';
+import Header from '../../components/Header';
 
-import Feather from 'react-native-vector-icons/Feather'
-import { COLORS } from '../../utils/constants';
+import Feather from 'react-native-vector-icons/Feather';
 import useAuth from '../../hooks/useAuth';
+import { COLORS } from '../../utils/constants';
 
 const ComoProcederInfoContent = ({ navigation, route }) => {
-  if(Platform.OS === 'android') {
-    require('intl');
-    require('intl/locale-data/jsonp/pt-BR');
-  }
-
   const item = route.params;
 
   const { corretora, cpf, setCPF: setCPFContext } = useAuth();

@@ -26,8 +26,8 @@ import { StatusBar } from 'expo-status-bar';
 import { format } from 'date-fns';
 import Header from '../../components/Header';
 
-const MeusSeguros = ({ navigation, route }) => {  
-  const { dataSeguros, setDataSeguros, cpf, setCPF, corretora, setCPFContext } = useContext(Context);
+const MeusSeguros = ({ navigation }) => {  
+  const { dataSeguros, setDataSeguros, cpf, setCPF, corretora } = useContext(Context);
 
   const [loading, setLoading] = useState(true);
 
